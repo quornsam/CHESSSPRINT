@@ -1,0 +1,4748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chess Sprint v0.61</title>
+  <style>
+    :root {
+      --light-square: #f0d9b5;
+      --dark-square: #b58863;
+      --light-square-bg: var(--light-square);
+      --dark-square-bg: var(--dark-square);
+      --board-border: #111;
+      --board-piece-colour: #111;
+      --board-piece-outline: #111;
+      --cleared-square: #111;
+      --cleared-outline: rgba(255,255,255,0.55);
+      --missed-square: #1b0505;
+      --label-colour: rgba(0,0,0,0.64);
+      --bg: #101114;
+      --panel: #1b1d23;
+      --panel-2: #242733;
+      --text: #f2f2f2;
+      --muted: #aeb3c2;
+      --accent: #f6c85f;
+      --good: #25c46b;
+      --bad: #ff4d4d;
+      --bonus: #9b7cff;
+      --board-size: 420px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      min-height: 100svh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
+      color: var(--text);
+      padding: 8px;
+    }
+
+    .app {
+      width: min(1220px, 100%);
+      height: calc(100svh - 16px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(270px, 320px);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2.4rem);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .version {
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      margin-bottom: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .main-panel,
+    .side-panel {
+      min-height: 0;
+      background: rgba(27, 29, 35, 0.94);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .side-panel {
+      overflow: auto;
+    }
+
+    .top-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .stat {
+      background: var(--panel-2);
+      border-radius: 13px;
+      padding: 8px 10px;
+      min-height: 58px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: clamp(1.35rem, 3vw, 2.1rem);
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .target-box {
+      flex: 0 0 auto;
+      margin: 0;
+      background: linear-gradient(135deg, rgba(246,200,95,0.20), rgba(246,200,95,0.06));
+      border: 1px solid rgba(246,200,95,0.35);
+      border-radius: 15px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .target-box.bonus {
+      background: linear-gradient(135deg, rgba(155,124,255,0.26), rgba(155,124,255,0.08));
+      border-color: rgba(155,124,255,0.50);
+    }
+
+    .target-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .target {
+      font-size: clamp(2.2rem, 6.2vw, 4.2rem);
+      font-weight: 1000;
+      line-height: 0.95;
+      margin-top: 1px;
+      letter-spacing: -0.05em;
+      min-height: clamp(2.2rem, 6.2vw, 4.2rem);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .target.piece-target {
+      min-height: clamp(3.1rem, 8vw, 5.1rem);
+    }
+
+    .target-piece-card {
+      width: clamp(74px, 14vw, 122px);
+      height: clamp(74px, 14vw, 122px);
+      display: block;
+      overflow: visible;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,0.36));
+    }
+
+    .board-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .board-frame {
+      display: grid;
+      grid-template-columns: clamp(18px, 3vmin, 30px) var(--board-size);
+      grid-template-rows: var(--board-size) clamp(18px, 3vmin, 30px);
+      gap: 4px;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .outside-ranks {
+      grid-column: 1;
+      grid-row: 1;
+      display: grid;
+      grid-template-rows: repeat(8, 1fr);
+      align-items: center;
+      justify-items: center;
+      color: var(--muted);
+      font-weight: 950;
+      font-size: clamp(0.68rem, 1.8vmin, 0.95rem);
+      opacity: 0.9;
+      user-select: none;
+    }
+
+    .outside-files {
+      grid-column: 2;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      align-items: center;
+      justify-items: center;
+      color: var(--muted);
+      font-weight: 950;
+      font-size: clamp(0.68rem, 1.8vmin, 0.95rem);
+      opacity: 0.9;
+      user-select: none;
+    }
+
+    .board {
+      grid-column: 2;
+      grid-row: 1;
+      width: var(--board-size);
+      height: var(--board-size);
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      border: clamp(5px, 1.4vmin, 10px) solid var(--board-border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      user-select: none;
+      touch-action: manipulation;
+      flex: 0 0 auto;
+      background: #fff;
+    }
+
+    .square {
+      position: relative;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.04s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14);
+    }
+
+    .square:active {
+      transform: scale(0.96);
+    }
+
+    .square.light {
+      background: var(--light-square-bg);
+    }
+
+    .square.dark {
+      background: var(--dark-square-bg);
+    }
+
+    .square.correct {
+      box-shadow: inset 0 0 0 999px rgba(37, 196, 107, 0.65);
+    }
+
+    .square.wrong {
+      box-shadow: inset 0 0 0 999px rgba(255, 77, 77, 0.70);
+    }
+
+    .square.cleared {
+      background: var(--cleared-square, #111) !important;
+      cursor: default;
+      box-shadow: inset 0 0 0 1px var(--cleared-outline, rgba(255,255,255,0.55));
+    }
+
+    .square.cleared::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+
+    .square.missed {
+      background: var(--missed-square, #1b0505) !important;
+      cursor: default;
+      box-shadow: inset 0 0 0 1px rgba(255,120,120,0.78);
+    }
+
+    .square.missed::before,
+    .square.missed::after {
+      content: "";
+      position: absolute;
+      width: 54%;
+      height: 8%;
+      border-radius: 99px;
+      background: rgba(255,77,77,0.95);
+      transform: rotate(45deg);
+      z-index: 1;
+    }
+
+    .square.missed::after {
+      transform: rotate(-45deg);
+    }
+
+    .square:focus-visible {
+      outline: 4px solid var(--accent);
+      outline-offset: -4px;
+      z-index: 2;
+    }
+
+    .edge-label {
+      display: none;
+    }
+
+    .rank-label {
+      left: 5px;
+      top: 3px;
+    }
+
+    .file-label {
+      right: 6px;
+      bottom: 3px;
+    }
+
+    .piece-holder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .piece {
+      display: none;
+      width: 74%;
+      height: 74%;
+      pointer-events: none;
+      color: var(--board-piece-colour);
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,0.25));
+      overflow: visible;
+    }
+
+    .black-piece .piece-fill {
+      fill: var(--piece-black-fill, #111);
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 2.6);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .white-piece .piece-fill {
+      fill: var(--piece-white-fill, #ffffff);
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 3.2);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .white-piece .piece-detail {
+      stroke: var(--piece-white-detail, #111);
+      stroke-width: calc(var(--piece-stroke, 3.2) * 0.82);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .black-piece .piece-detail {
+      stroke: var(--piece-black-detail, #ffffff);
+      stroke-width: calc(var(--piece-stroke, 2.6) * 0.68);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: none;
+      opacity: 0.9;
+    }
+
+    .piece-3d-shadow .piece-fill {
+      fill: rgba(0,0,0,0.32) !important;
+      stroke: rgba(0,0,0,0.32) !important;
+    }
+
+    .piece-3d-shadow .piece-detail {
+      display: none;
+    }
+
+    .piece-line {
+      fill: none;
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 3.6);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .style-modern .piece-fill,
+    .style-modern .piece-detail,
+    .style-modern .piece-line,
+    .style-modern .piece-line-fillless {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .style-cartoon .piece-fill {
+      stroke-width: var(--piece-stroke, 3.4);
+    }
+
+    .piece-line-fillless {
+      fill: none;
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 3.6);
+    }
+
+    .piece-dot {
+      fill: #111;
+      stroke: #111;
+    }
+
+    .white-piece .piece-line {
+      stroke: #111;
+    }
+
+    .black-piece .piece-line {
+      stroke: #111;
+      filter: drop-shadow(0 0 0 #111);
+    }
+
+    .style-minimal.black-piece .piece-line {
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 3.6);
+    }
+
+    .style-minimal.white-piece .piece-line {
+      stroke: #111;
+      stroke-width: var(--piece-stroke, 3.6);
+    }
+
+    .style-block.white-piece .piece-fill {
+      fill: #fdfdfd;
+    }
+
+    .style-block.black-piece .piece-fill {
+      fill: #080808;
+    }
+
+    .board.bonus-mode .piece {
+      display: block;
+    }
+
+    .board.bonus-mode .edge-label {
+      opacity: 0.30;
+    }
+
+    .hint {
+      color: var(--muted);
+      line-height: 1.22;
+      font-size: 0.82rem;
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    .controls {
+      display: grid;
+      gap: 9px;
+    }
+
+    .theme-grid,
+    .mode-grid,
+    .piece-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .theme-button,
+    .mode-button,
+    .piece-button {
+      min-height: 42px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 13px;
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 900;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      text-align: left;
+    }
+
+    .theme-button.active,
+    .mode-button.active,
+    .piece-button.active {
+      border-color: rgba(246,200,95,0.75);
+      box-shadow: 0 0 0 2px rgba(246,200,95,0.18);
+    }
+
+    .mode-button {
+      grid-template-columns: 1fr;
+      text-align: center;
+      justify-items: center;
+    }
+
+    .piece-button {
+      grid-template-columns: 36px 1fr;
+    }
+
+    .piece-preview {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+    }
+
+    .piece-preview svg {
+      width: 50px;
+      height: 50px;
+      display: block;
+      overflow: visible;
+    }
+
+    .theme-swatch {
+      width: 34px;
+      height: 26px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid rgba(0,0,0,0.35);
+    }
+
+    .theme-swatch span:first-child {
+      background: var(--swatch-light);
+    }
+
+    .theme-swatch span:last-child {
+      background: var(--swatch-dark);
+    }
+
+    .theme-swatch.diagram span:last-child {
+      background:
+        repeating-linear-gradient(
+          135deg,
+          #efefef 0px,
+          #efefef 4px,
+          #666 4px,
+          #666 5.5px
+        );
+    }
+
+    button.action {
+      min-height: 42px;
+      border: 0;
+      border-radius: 13px;
+      background: var(--accent);
+      color: #111;
+      font-weight: 950;
+      font-size: 0.93rem;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(246,200,95,0.18);
+      padding: 0 12px;
+    }
+
+    button.action.full-width {
+      width: 100%;
+    }
+
+    button.action.secondary {
+      background: #353948;
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    button.action:active,
+    .theme-button:active,
+    .mode-button:active,
+    .piece-button:active {
+      transform: translateY(1px);
+    }
+
+    .message {
+      min-height: 42px;
+      color: var(--muted);
+      line-height: 1.25;
+      background: rgba(255,255,255,0.04);
+      border-radius: 13px;
+      padding: 9px 10px;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .scoreboard h2,
+    .settings h2 {
+      margin: 2px 0 8px;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .high-score {
+      background: rgba(246,200,95,0.12);
+      border: 1px solid rgba(246,200,95,0.25);
+      border-radius: 14px;
+      padding: 9px 10px;
+      margin-bottom: 8px;
+    }
+
+    .high-score .big {
+      font-size: 2.2rem;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .scores-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .score-item {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 11px;
+      padding: 7px 9px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .score-item .place {
+      color: var(--accent);
+      font-weight: 1000;
+    }
+
+    .score-item strong {
+      color: var(--text);
+      font-size: 1.05rem;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(440px, 100%);
+      background: #1b1d23;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.55);
+      text-align: center;
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 8vw, 2.8rem);
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+    }
+
+    .modal-score {
+      font-size: clamp(4rem, 20vw, 7rem);
+      font-weight: 1000;
+      color: var(--accent);
+      line-height: 0.92;
+      margin: 12px 0 4px;
+      letter-spacing: -0.08em;
+    }
+
+    .modal-rank {
+      font-size: clamp(1.5rem, 7vw, 2.5rem);
+      font-weight: 1000;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .modal-note {
+      color: var(--muted);
+      margin: 0 0 16px;
+      line-height: 1.35;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+
+    .piece-pixel {
+      fill: var(--piece-white-fill, #fff);
+      stroke: #111;
+      stroke-width: 2.2;
+      shape-rendering: crispEdges;
+    }
+
+    .black-piece .piece-pixel {
+      fill: var(--piece-black-fill, #111);
+      stroke: #111;
+    }
+
+    .white-piece .piece-pixel {
+      fill: var(--piece-white-fill, #fff);
+      stroke: #111;
+    }
+
+    .piece-cut {
+      fill: #111;
+      stroke: none;
+      shape-rendering: crispEdges;
+    }
+
+    .black-piece .piece-cut {
+      fill: #fff;
+    }
+
+    .piece-eye {
+      fill: #111;
+      stroke: none;
+      shape-rendering: crispEdges;
+    }
+
+    .black-piece .piece-eye {
+      fill: #fff;
+    }
+
+    .style-pixel {
+      image-rendering: pixelated;
+    }
+
+    .style-line .piece-fill {
+      fill: none !important;
+    }
+
+
+    .unicode-piece {
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-weight: normal;
+      line-height: 1;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      user-select: none;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .piece-holder .unicode-piece.piece {
+      display: none;
+      width: 100%;
+      height: 100%;
+      font-size: calc(var(--board-size) / 10.2);
+    }
+
+    .board.bonus-mode .piece-holder .unicode-piece.piece {
+      display: inline-flex;
+    }
+
+    .unicode-white {
+      color: #f7f7f2;
+      -webkit-text-stroke: 1.2px rgba(20,20,20,0.78);
+      text-shadow: 0 1px 1px rgba(0,0,0,0.32);
+    }
+
+    .unicode-black {
+      color: #15161a;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.16);
+    }
+
+    .target-piece-card.unicode-piece {
+      display: inline-flex;
+      width: clamp(58px, 8vw, 78px);
+      height: clamp(58px, 8vw, 78px);
+      font-size: clamp(46px, 6.4vw, 66px);
+      background: rgba(250,250,250,0.96);
+      border-radius: 12px;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(0,0,0,0.10);
+      margin: 4px auto 0;
+    }
+
+    .target-piece-card.unicode-white {
+      color: #f7f7f2;
+      -webkit-text-stroke: 1.4px rgba(20,20,20,0.88);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.42);
+    }
+
+    .target-piece-card.unicode-black {
+      color: #111216;
+      text-shadow: none;
+    }
+
+    @media (max-width: 850px) {
+      .target-piece-card.unicode-piece {
+        width: 54px;
+        height: 54px;
+        font-size: 44px;
+      }
+    }
+
+
+    /* v0.30: fixed-height target bar to stop layout jump during bonus */
+    .target-box {
+      min-height: 112px;
+      height: 112px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      align-items: center;
+      justify-items: center;
+      overflow: hidden;
+    }
+
+    .target {
+      min-height: 0 !important;
+      height: 74px;
+      width: 100%;
+      display: grid !important;
+      place-items: center;
+      line-height: 1;
+      overflow: hidden;
+    }
+
+    .target.piece-target {
+      min-height: 0 !important;
+      height: 74px;
+    }
+
+    .target-label {
+      line-height: 1;
+      margin: 0;
+    }
+
+    /* v0.30: consistent Unicode piece centring */
+    .unicode-piece {
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 0.86;
+      transform: translateY(0.03em);
+      font-variant-emoji: text;
+    }
+
+    .piece-holder {
+      display: grid !important;
+      place-items: center !important;
+      overflow: hidden;
+    }
+
+    .piece-holder .unicode-piece.piece {
+      width: 100%;
+      height: 100%;
+      font-size: calc(var(--board-size) / 9.6);
+      line-height: 0.82;
+      transform: translateY(0.035em);
+    }
+
+    /* v0.30: make white pieces bolder and more visible */
+    .unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 1.8px rgba(0,0,0,0.92);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.95),
+        1px 0 0 rgba(0,0,0,0.75),
+        -1px 0 0 rgba(0,0,0,0.75),
+        0 -1px 0 rgba(0,0,0,0.60);
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.45));
+    }
+
+    .target-piece-card.unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 2px rgba(0,0,0,0.95);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.95),
+        1px 0 0 rgba(0,0,0,0.8),
+        -1px 0 0 rgba(0,0,0,0.8),
+        0 -1px 0 rgba(0,0,0,0.65);
+    }
+
+    .target-piece-card.unicode-piece {
+      width: 62px;
+      height: 62px;
+      font-size: 52px;
+      margin: 0 auto;
+      line-height: 0.82;
+      transform: translateY(0);
+      display: inline-grid;
+      place-items: center;
+    }
+
+    @media (max-width: 850px) {
+      .target-box {
+        min-height: 88px;
+        height: 88px;
+      }
+
+      .target,
+      .target.piece-target {
+        height: 54px;
+      }
+
+      .target-piece-card.unicode-piece {
+        width: 48px;
+        height: 48px;
+        font-size: 40px;
+      }
+    }
+
+
+    /* v0.31: white pieces use filled glyphs too */
+    .unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 1.9px rgba(0,0,0,0.96);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.98),
+        1px 0 0 rgba(0,0,0,0.88),
+        -1px 0 0 rgba(0,0,0,0.88),
+        0 -1px 0 rgba(0,0,0,0.72);
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.40));
+    }
+
+    .unicode-black {
+      color: #101116;
+      -webkit-text-stroke: 0.25px rgba(255,255,255,0.08);
+      text-shadow: none;
+      filter: none;
+    }
+
+    .target-piece-card.unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 2.1px rgba(0,0,0,0.98);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.98),
+        1px 0 0 rgba(0,0,0,0.90),
+        -1px 0 0 rgba(0,0,0,0.90),
+        0 -1px 0 rgba(0,0,0,0.72);
+    }
+
+    .target-piece-card.unicode-black {
+      color: #101116;
+      -webkit-text-stroke: 0.25px rgba(255,255,255,0.08);
+    }
+
+
+    /* v0.32: filled white pieces, but less bold/heavy */
+    .unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 1.15px rgba(0,0,0,0.90);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.72),
+        1px 0 0 rgba(0,0,0,0.38),
+        -1px 0 0 rgba(0,0,0,0.38);
+      filter: none;
+    }
+
+    .unicode-black {
+      color: #14151a;
+      -webkit-text-stroke: 0;
+      text-shadow: none;
+      filter: none;
+    }
+
+    .target-piece-card.unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 1.3px rgba(0,0,0,0.92);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.78),
+        1px 0 0 rgba(0,0,0,0.42),
+        -1px 0 0 rgba(0,0,0,0.42);
+    }
+
+    .target-piece-card.unicode-black {
+      color: #14151a;
+      -webkit-text-stroke: 0;
+      text-shadow: none;
+    }
+
+
+    /* v0.33: hide the message strip under New round */
+    .message {
+      display: none !important;
+    }
+
+
+    /* v0.34: target bonus piece in a stable square tile */
+    .target-piece-card {
+      width: 58px !important;
+      height: 58px !important;
+      min-width: 58px !important;
+      min-height: 58px !important;
+      max-width: 58px !important;
+      max-height: 58px !important;
+      display: grid !important;
+      place-items: center !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border-radius: 10px;
+      background: rgba(250,250,250,0.97);
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.22),
+        inset 0 0 0 1px rgba(0,0,0,0.14);
+      overflow: hidden;
+      line-height: 1;
+      transform: none !important;
+    }
+
+    .target-piece-symbol.unicode-piece {
+      width: 52px !important;
+      height: 52px !important;
+      display: grid !important;
+      place-items: center !important;
+      font-size: 46px !important;
+      line-height: 0.78 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: translateY(0.015em) !important;
+      text-align: center;
+    }
+
+    .target-piece-symbol.unicode-white {
+      color: #ffffff;
+      -webkit-text-stroke: 1.15px rgba(0,0,0,0.9);
+      text-shadow:
+        0 1px 0 rgba(0,0,0,0.72),
+        1px 0 0 rgba(0,0,0,0.38),
+        -1px 0 0 rgba(0,0,0,0.38);
+    }
+
+    .target-piece-symbol.unicode-black {
+      color: #14151a;
+      -webkit-text-stroke: 0;
+      text-shadow: none;
+    }
+
+    @media (max-width: 850px) {
+      .target-piece-card {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        max-width: 50px !important;
+        max-height: 50px !important;
+      }
+
+      .target-piece-symbol.unicode-piece {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 40px !important;
+      }
+    }
+
+
+    /* v0.35: bonus target uses SVG text for true centring */
+    .target-piece-card {
+      width: 58px !important;
+      height: 58px !important;
+      min-width: 58px !important;
+      min-height: 58px !important;
+      max-width: 58px !important;
+      max-height: 58px !important;
+      display: grid !important;
+      place-items: center !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border-radius: 10px;
+      background: rgba(250,250,250,0.97);
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.22),
+        inset 0 0 0 1px rgba(0,0,0,0.14);
+      overflow: hidden;
+      line-height: 1;
+      transform: none !important;
+    }
+
+    .target-piece-svg {
+      width: 52px !important;
+      height: 52px !important;
+      display: block !important;
+      overflow: visible;
+    }
+
+    .target-piece-svg text {
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-size: 78px;
+      font-weight: normal;
+      line-height: 1;
+      text-rendering: geometricPrecision;
+      font-variant-emoji: text;
+    }
+
+    .target-piece-svg.unicode-white text {
+      fill: #ffffff;
+      stroke: rgba(0,0,0,0.90);
+      stroke-width: 2.1px;
+      paint-order: stroke fill;
+    }
+
+    .target-piece-svg.unicode-black text {
+      fill: #14151a;
+      stroke: none;
+    }
+
+    @media (max-width: 850px) {
+      .target-piece-card {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        max-width: 50px !important;
+        max-height: 50px !important;
+      }
+
+      .target-piece-svg {
+        width: 45px !important;
+        height: 45px !important;
+      }
+
+      .target-piece-svg text {
+        font-size: 78px;
+      }
+    }
+
+
+    /* v0.36: target piece has parity with board pieces */
+    .target-piece-card {
+      width: 58px !important;
+      height: 58px !important;
+      min-width: 58px !important;
+      min-height: 58px !important;
+      max-width: 58px !important;
+      max-height: 58px !important;
+      display: grid !important;
+      place-items: center !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border-radius: 10px;
+      background: rgba(250,250,250,0.97);
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.22),
+        inset 0 0 0 1px rgba(0,0,0,0.14);
+      overflow: hidden;
+      line-height: 1;
+      transform: none !important;
+    }
+
+    .target-piece-symbol.unicode-piece {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      height: 100% !important;
+      font-size: 48px !important;
+      line-height: 0.82 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: translateY(0.035em) !important;
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-weight: normal !important;
+      text-align: center !important;
+      font-variant-emoji: text;
+    }
+
+    .target-piece-svg {
+      display: none !important;
+    }
+
+    @media (max-width: 850px) {
+      .target-piece-card {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        max-width: 50px !important;
+        max-height: 50px !important;
+      }
+
+      .target-piece-symbol.unicode-piece {
+        font-size: 41px !important;
+      }
+    }
+
+
+    /* v0.37: custom board colour picker */
+    .custom-board {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .custom-board-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+    }
+
+    .custom-colour-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .custom-colour-row label {
+      display: grid;
+      grid-template-columns: 1fr 42px;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 9px;
+    }
+
+    .custom-colour-row input[type="color"] {
+      width: 42px;
+      height: 32px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .custom-board-apply {
+      width: 100%;
+      border: 1px solid rgba(246,200,91,0.55);
+      background: rgba(246,200,91,0.12);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .custom-board-apply:hover {
+      background: rgba(246,200,91,0.22);
+    }
+
+
+    /* v0.39: King finder mode */
+    .king-progress {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 34px;
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-size: clamp(23px, 3vw, 34px);
+      line-height: 1;
+      letter-spacing: 0;
+      user-select: none;
+    }
+
+    .king-progress span {
+      color: rgba(255,255,255,0.28);
+      -webkit-text-stroke: 0.7px rgba(0,0,0,0.62);
+      text-shadow: none;
+      transform: translateY(0.03em);
+    }
+
+    .king-progress span.done {
+      color: #f6c85b;
+      -webkit-text-stroke: 0.85px rgba(0,0,0,0.72);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+    }
+
+    .board.king-find-hidden .piece-holder {
+      visibility: hidden;
+    }
+
+    .board.king-finder-mode .piece-holder .unicode-piece.piece {
+      display: inline-flex;
+    }
+
+    .board.king-finder-mode .square {
+      cursor: crosshair;
+    }
+
+    .king-find-waiting .target {
+      font-size: clamp(34px, 6vw, 70px);
+    }
+
+
+    /* v0.40: show three game modes */
+    .mode-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 8px !important;
+    }
+
+    .mode-button {
+      min-width: 0 !important;
+      white-space: normal !important;
+      text-align: center !important;
+      line-height: 1.15 !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
+
+    @media (max-width: 850px) {
+      .mode-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+
+    /* v0.44: King finder countdown and answer reveal */
+    .board-wrap {
+      position: relative;
+    }
+
+    .king-countdown-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.96);
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 120ms ease, transform 120ms ease;
+      font-size: clamp(3.2rem, 11vw, 7.8rem);
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.05em;
+      color: #f6c85b;
+      text-shadow:
+        0 5px 0 rgba(0,0,0,0.65),
+        0 12px 28px rgba(0,0,0,0.65);
+      text-transform: uppercase;
+    }
+
+    .king-countdown-overlay.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .square.king-answer {
+      box-shadow:
+        inset 0 0 0 5px #f6c85b,
+        inset 0 0 0 9px rgba(0,0,0,0.45),
+        0 0 20px rgba(246,200,91,0.8);
+      z-index: 6;
+    }
+
+
+    /* v0.47: King finder XTREME MODE toggle */
+    .king-xtreme-toggle {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border: 1px solid rgba(246,200,91,0.45);
+      border-radius: 14px;
+      background: rgba(246,200,91,0.10);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "title switch"
+        "note switch";
+      gap: 3px 12px;
+      align-items: center;
+    }
+
+    .king-xtreme-toggle.hidden {
+      display: none !important;
+    }
+
+    .king-xtreme-toggle span:first-child {
+      grid-area: title;
+      font-size: 13px;
+      font-weight: 1000;
+      letter-spacing: 0.12em;
+      color: #f6c85b;
+    }
+
+    .king-xtreme-toggle small {
+      grid-area: note;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .king-xtreme-toggle .switch {
+      grid-area: switch;
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 30px;
+    }
+
+    .king-xtreme-toggle .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .king-xtreme-toggle .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.24);
+      transition: 160ms ease;
+      border-radius: 999px;
+    }
+
+    .king-xtreme-toggle .slider:before {
+      content: "";
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      transition: 160ms ease;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+
+    .king-xtreme-toggle input:checked + .slider {
+      background: #f6c85b;
+      border-color: #f6c85b;
+    }
+
+    .king-xtreme-toggle input:checked + .slider:before {
+      transform: translateX(24px);
+      background: #11131a;
+    }
+
+
+    /* v0.48: exact centre for Ready / Set / GO */
+    .board {
+      position: relative;
+    }
+
+    .board .king-countdown-overlay {
+      position: absolute !important;
+      inset: 0 !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      transform: none !important;
+      display: grid !important;
+      place-items: center !important;
+      text-align: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .board .king-countdown-overlay.show {
+      transform: none !important;
+    }
+
+
+    /* v0.49: draggable result popup and lighter score weight */
+    .modal {
+      position: relative;
+      touch-action: none;
+    }
+
+    .modal.dragging {
+      cursor: grabbing;
+      user-select: none;
+    }
+
+    #resultTitle {
+      cursor: grab;
+      user-select: none;
+    }
+
+    .modal-score {
+      font-weight: 850 !important;
+      font-size: clamp(2.4rem, 7vw, 4.8rem) !important;
+      letter-spacing: -0.055em !important;
+      line-height: 0.95 !important;
+    }
+
+
+    /* v0.50: CHESS SPRINT branding */
+    .brand,
+    .app-title,
+    header h1,
+    .topbar h1,
+    .header h1 {
+      text-align: center !important;
+      width: 100% !important;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .brand-title,
+    .title-main,
+    header h1,
+    .topbar h1,
+    .header h1,
+    h1:first-of-type {
+      font-weight: 1000 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.18em !important;
+      font-size: clamp(2.1rem, 6vw, 5rem) !important;
+      line-height: 0.9 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+      color: var(--text);
+      text-shadow:
+        0 4px 0 rgba(0,0,0,0.42),
+        0 12px 28px rgba(0,0,0,0.35);
+    }
+
+    .version,
+    .brand small,
+    header small,
+    .topbar small {
+      text-align: center !important;
+      display: block !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+
+    /* v0.51: centred CHESSPRINT logo */
+    .app-header {
+      grid-column: 1 / -1;
+      display: grid !important;
+      grid-template-columns: 1fr auto 1fr !important;
+      align-items: center !important;
+      gap: 12px;
+      min-height: 44px;
+    }
+
+    .app-header .title-wrap {
+      grid-column: 2;
+      justify-self: center;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: max-content;
+      max-width: 100%;
+    }
+
+    .app-header .header-actions {
+      grid-column: 3;
+      justify-self: end;
+      align-self: start;
+    }
+
+    .app-header .version {
+      text-align: center !important;
+      margin-bottom: 5px !important;
+      letter-spacing: 0.06em !important;
+    }
+
+    .wordmark {
+      margin: 0;
+      text-align: center !important;
+      font-weight: 1000 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.045em !important;
+      font-size: clamp(2.2rem, 6vw, 5rem) !important;
+      line-height: 0.88 !important;
+      color: var(--text);
+      text-shadow:
+        0 4px 0 rgba(0,0,0,0.42),
+        0 12px 28px rgba(0,0,0,0.35);
+      white-space: nowrap;
+    }
+
+    .wordmark-king {
+      display: inline-block;
+      margin-left: 0.08em;
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-size: 0.92em;
+      transform: translateY(0.02em);
+      color: #f6c85b;
+      -webkit-text-stroke: 0.8px rgba(0,0,0,0.6);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,0.45),
+        0 8px 18px rgba(0,0,0,0.30);
+    }
+
+    @media (max-width: 850px) {
+      .app-header {
+        grid-template-columns: 1fr !important;
+      }
+
+      .app-header .title-wrap,
+      .app-header .header-actions {
+        grid-column: 1;
+        justify-self: center;
+      }
+
+      .app-header .header-actions {
+        margin-top: 6px;
+      }
+
+      .wordmark {
+        letter-spacing: 0.03em !important;
+        font-size: clamp(1.9rem, 9vw, 3.6rem) !important;
+      }
+    }
+
+
+    /* v0.52: CHESS ♚ SPRINT logo */
+    .wordmark {
+      display: inline-flex !important;
+      align-items: baseline !important;
+      justify-content: center !important;
+      gap: 0.18em !important;
+      white-space: nowrap;
+    }
+
+    .wordmark-text {
+      display: inline-block;
+    }
+
+    .wordmark-king {
+      display: inline-block;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-size: 0.86em !important;
+      line-height: 1 !important;
+      transform: translateY(-0.10em) !important;
+      color: #f6c85b;
+      -webkit-text-stroke: 0.8px rgba(0,0,0,0.6);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,0.45),
+        0 8px 18px rgba(0,0,0,0.30);
+      vertical-align: baseline !important;
+    }
+
+    @media (max-width: 850px) {
+      .wordmark {
+        gap: 0.14em !important;
+      }
+
+      .wordmark-king {
+        transform: translateY(-0.08em) !important;
+      }
+    }
+
+
+    /* v0.53: PICK UP mode */
+    .mode-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .pickup-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 14;
+      pointer-events: none;
+      overflow: visible;
+      --pickup-piece-size: 38px;
+    }
+
+    .pickup-layer.hidden {
+      display: none !important;
+    }
+
+    .pickup-piece {
+      position: absolute;
+      width: var(--pickup-piece-size);
+      height: var(--pickup-piece-size);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      background: rgba(20,22,28,0.92);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+      display: grid;
+      place-items: center;
+      padding: 0;
+      cursor: grab;
+      pointer-events: auto;
+      transition: transform 90ms ease, box-shadow 90ms ease, border-color 90ms ease;
+    }
+
+    .pickup-piece:active {
+      cursor: grabbing;
+      transform: scale(0.94);
+    }
+
+    .pickup-piece.selected {
+      border-color: #f6c85b;
+      box-shadow:
+        0 0 0 3px rgba(246,200,91,0.20),
+        0 8px 18px rgba(0,0,0,0.42);
+      transform: translateY(-2px);
+    }
+
+    .pickup-piece .unicode-piece,
+    .pickup-piece-symbol.unicode-piece {
+      display: inline-flex !important;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--pickup-piece-size) * 0.88);
+      line-height: 0.82;
+      transform: translateY(0.035em);
+      pointer-events: none;
+    }
+
+    .board.pickup-mode .piece-holder .unicode-piece.piece {
+      display: inline-flex;
+      width: 100%;
+      height: 100%;
+      font-size: calc(var(--board-size) / 9.8);
+      line-height: 0.82;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(0.035em);
+    }
+
+    .board.pickup-mode .square {
+      cursor: crosshair;
+    }
+
+    .pickup-ready .target {
+      font-weight: 1000;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 850px) {
+      .pickup-layer {
+        --pickup-piece-size: 30px;
+      }
+    }
+
+
+    /* v0.54: improved PICK UP layout and start instruction */
+    .target.instruction-target {
+      font-size: clamp(0.95rem, 2.15vw, 1.38rem) !important;
+      line-height: 1.12 !important;
+      letter-spacing: 0 !important;
+      font-weight: 900 !important;
+      height: 54px !important;
+      min-height: 54px !important;
+      padding: 0 10px !important;
+      text-wrap: balance;
+    }
+
+    .pickup-piece {
+      background: rgba(247, 241, 221, 0.97) !important;
+      border: 1px solid rgba(30, 30, 30, 0.26) !important;
+    }
+
+    .pickup-piece .unicode-black,
+    .board.pickup-mode .unicode-black {
+      color: #101116 !important;
+      -webkit-text-stroke: 1.05px rgba(255,255,255,0.78) !important;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,0.62),
+        0 0 7px rgba(255,255,255,0.48) !important;
+    }
+
+    .pickup-piece .unicode-white,
+    .board.pickup-mode .unicode-white {
+      color: #f7f7f2 !important;
+      -webkit-text-stroke: 1.35px rgba(12,12,14,0.88) !important;
+      text-shadow:
+        0 1px 2px rgba(0,0,0,0.75),
+        0 0 7px rgba(0,0,0,0.45) !important;
+    }
+
+    .pickup-piece {
+      border-radius: 999px !important;
+    }
+
+    @media (max-width: 850px) {
+      .target.instruction-target {
+        font-size: clamp(0.82rem, 4vw, 1.06rem) !important;
+        height: 46px !important;
+        min-height: 46px !important;
+      }
+    }
+
+
+    /* v0.55: PICK UP bigger edge pieces + Easter egg */
+    .pickup-layer {
+      --pickup-piece-size: 46px;
+    }
+
+    .pickup-piece {
+      width: var(--pickup-piece-size) !important;
+      height: var(--pickup-piece-size) !important;
+      padding: 3px !important;
+      box-sizing: border-box !important;
+    }
+
+    .pickup-piece .unicode-piece,
+    .pickup-piece-symbol.unicode-piece {
+      font-size: calc(var(--pickup-piece-size) * 0.76) !important;
+      transform: translateY(0.02em) !important;
+    }
+
+    .logo-king {
+      cursor: pointer;
+      outline: none;
+      border-radius: 8px;
+      padding: 0 0.02em;
+    }
+
+    .logo-king:hover,
+    .logo-king:focus-visible {
+      filter: brightness(1.25);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,0.45),
+        0 8px 18px rgba(0,0,0,0.30),
+        0 0 18px rgba(246,200,91,0.75) !important;
+    }
+
+    .easter-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.48);
+      backdrop-filter: blur(4px);
+    }
+
+    .easter-modal-backdrop.show {
+      display: flex;
+    }
+
+    .easter-modal {
+      position: relative;
+      max-width: 620px;
+      width: min(620px, 94vw);
+      max-height: min(76vh, 620px);
+      overflow: auto;
+      padding: 28px 28px 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(246,200,91,0.38);
+      background:
+        radial-gradient(circle at top left, rgba(246,200,91,0.14), transparent 36%),
+        rgba(18,20,27,0.97);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.58);
+      color: var(--text);
+    }
+
+    .easter-modal h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      letter-spacing: 0.08em;
+      font-weight: 1000;
+      text-align: center;
+      color: #f6c85b;
+    }
+
+    .easter-modal p {
+      margin: 0 0 13px;
+      font-size: clamp(0.95rem, 2.2vw, 1.08rem);
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
+    .easter-modal p:last-child {
+      margin-bottom: 0;
+    }
+
+    .easter-close {
+      position: absolute;
+      right: 14px;
+      top: 12px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.10);
+      color: var(--text);
+      font-size: 1.7rem;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .easter-close:hover {
+      background: rgba(246,200,91,0.20);
+    }
+
+    @media (max-width: 850px) {
+      .pickup-layer {
+        --pickup-piece-size: 34px;
+      }
+
+      .pickup-piece .unicode-piece,
+      .pickup-piece-symbol.unicode-piece {
+        font-size: calc(var(--pickup-piece-size) * 0.74) !important;
+      }
+
+      .easter-modal {
+        padding: 24px 20px 20px;
+      }
+    }
+
+
+    /* v0.56: Easter egg logo alignment */
+    .easter-logo {
+      display: inline-flex !important;
+      align-items: baseline !important;
+      justify-content: center !important;
+      gap: 0.18em !important;
+      width: 100% !important;
+      white-space: nowrap;
+    }
+
+    .easter-logo-king {
+      display: inline-block;
+      font-family: FreeSerif, "GNU FreeSerif", "DejaVu Serif", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", "Segoe UI Symbol", serif;
+      font-size: 0.88em;
+      line-height: 1;
+      transform: translateY(-0.08em);
+      color: #f6c85b;
+      -webkit-text-stroke: 0.8px rgba(0,0,0,0.6);
+    }
+
+
+    /* v0.59: Rainbow Easter egg. Does not affect layout. */
+    .rainbow-egg {
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .rainbow-egg:hover,
+    .rainbow-egg:focus-visible {
+      color: #f6c85b;
+      outline: none;
+      text-shadow:
+        0 0 14px rgba(246,200,91,0.9),
+        0 4px 0 rgba(0,0,0,0.42),
+        0 12px 28px rgba(0,0,0,0.35);
+    }
+
+    .board.rainbow-board-active .square {
+      background: var(--rainbow-square-colour) !important;
+    }
+
+    .rainbow-toast {
+      position: fixed;
+      z-index: 999;
+      left: 50%;
+      top: 18px;
+      transform: translate(-50%, -120%);
+      opacity: 0;
+      pointer-events: none;
+      padding: 12px 18px;
+      border-radius: 16px;
+      background: rgba(18,20,27,0.97);
+      border: 1px solid rgba(246,200,91,0.48);
+      color: #f6c85b;
+      box-shadow: 0 16px 44px rgba(0,0,0,0.48);
+      font-weight: 1000;
+      text-align: center;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .rainbow-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+
+    /* v0.61: discreet instructions */
+    .section-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .section-heading-row h2 {
+      margin: 0;
+    }
+
+    .tiny-info-button {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.24);
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-weight: 1000;
+      font-size: 0.8rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .tiny-info-button:hover,
+    .tiny-info-button:focus-visible {
+      color: #f6c85b;
+      border-color: rgba(246,200,91,0.6);
+      background: rgba(246,200,91,0.10);
+      outline: none;
+    }
+
+    .instructions-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.46);
+      backdrop-filter: blur(4px);
+    }
+
+    .instructions-modal-backdrop.show {
+      display: flex;
+    }
+
+    .instructions-modal {
+      position: relative;
+      max-width: 720px;
+      width: min(720px, 94vw);
+      max-height: min(82vh, 760px);
+      overflow: auto;
+      padding: 26px 28px 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background:
+        radial-gradient(circle at top left, rgba(246,200,91,0.11), transparent 34%),
+        rgba(18,20,27,0.98);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.58);
+      color: var(--text);
+    }
+
+    .instructions-modal h2 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 1000;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f6c85b;
+    }
+
+    .instructions-modal h3 {
+      margin: 18px 0 5px;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 1000;
+      color: var(--text);
+    }
+
+    .instructions-modal p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.48;
+      font-weight: 750;
+      font-size: 0.96rem;
+    }
+
+    .instructions-footer {
+      margin-top: 20px !important;
+      color: #f6c85b !important;
+      font-weight: 950 !important;
+      text-align: center;
+    }
+
+    .instructions-close {
+      position: absolute;
+      right: 14px;
+      top: 12px;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.10);
+      color: var(--text);
+      font-size: 1.7rem;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .instructions-close:hover {
+      background: rgba(246,200,91,0.20);
+    }
+
+    @media (max-width: 850px) {
+      .instructions-modal {
+        padding: 24px 20px 20px;
+      }
+
+      .instructions-modal p {
+        font-size: 0.91rem;
+      }
+    }
+
+    :fullscreen {
+      background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
+    }
+
+    :fullscreen .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+    }
+
+    @media (max-width: 850px) {
+      body {
+        padding: 6px;
+      }
+
+      .app {
+        width: 100%;
+        height: calc(100svh - 12px);
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr) minmax(160px, 31svh);
+        gap: 6px;
+      }
+
+      header {
+        min-height: 36px;
+      }
+
+      h1 {
+        font-size: clamp(1.25rem, 5.2vw, 1.8rem);
+      }
+
+      .version {
+        font-size: 0.64rem;
+      }
+
+      .main-panel,
+      .side-panel {
+        border-radius: 14px;
+        padding: 7px;
+      }
+
+      .top-strip {
+        gap: 5px;
+      }
+
+      .stat {
+        min-height: 46px;
+        padding: 6px 7px;
+      }
+
+      .stat-label {
+        font-size: 0.56rem;
+      }
+
+      .stat-value {
+        font-size: clamp(1.15rem, 5vw, 1.6rem);
+      }
+
+      .target-box {
+        padding: 6px 8px;
+      }
+
+      .target-label {
+        font-size: 0.62rem;
+      }
+
+      .target {
+        font-size: clamp(2rem, 12vw, 3.6rem);
+        min-height: clamp(2rem, 12vw, 3.6rem);
+      }
+
+      .target.piece-target {
+        min-height: clamp(3rem, 15vw, 4rem);
+      }
+
+      .target-piece-card {
+        width: clamp(52px, 15vw, 76px);
+        height: clamp(52px, 15vw, 76px);
+      }
+
+      .hint {
+        display: none;
+      }
+
+      .header-actions .action {
+        min-height: 34px;
+        font-size: 0.78rem;
+        padding: 0 9px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .settings h2 {
+        display: none;
+      }
+
+      .message,
+      .scoreboard,
+      .theme-grid,
+      .mode-grid,
+      .piece-grid,
+      .controls > button {
+        grid-column: span 1;
+      }
+
+      .message {
+        min-height: 36px;
+        font-size: 0.78rem;
+        padding: 7px;
+      }
+
+      .theme-grid,
+      .mode-grid,
+      .piece-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .theme-button,
+      .mode-button,
+      .piece-button {
+        min-height: 34px;
+        font-size: 0.7rem;
+        grid-template-columns: 27px 1fr;
+        gap: 5px;
+        padding: 5px;
+      }
+
+      .mode-button {
+        grid-template-columns: 1fr;
+      }
+
+      .piece-preview,
+      .piece-preview svg {
+        width: 27px;
+        height: 27px;
+      }
+
+      .theme-swatch {
+        width: 27px;
+        height: 20px;
+      }
+
+      .scoreboard {
+        grid-column: 1 / -1;
+      }
+
+      .scoreboard h2 {
+        margin: 0 0 5px;
+        font-size: 0.9rem;
+      }
+
+      .high-score {
+        padding: 7px 8px;
+        margin-bottom: 5px;
+      }
+
+      .high-score .big {
+        font-size: 1.7rem;
+      }
+
+      .scores-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+      }
+
+      .score-item {
+        grid-template-columns: 25px 1fr auto;
+        gap: 5px;
+        padding: 5px 6px;
+        font-size: 0.68rem;
+      }
+
+      .score-item:nth-child(n+7) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .scores-list {
+        grid-template-columns: 1fr;
+      }
+
+      .score-item:nth-child(n+6) {
+        display: none;
+      }
+
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="app-header">
+      <div class="title-wrap">
+        <div class="version">Version 0.61</div>
+        <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
+      </div>
+      <div class="header-actions">
+        <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
+      </div>
+    </header>
+
+    <main class="main-panel">
+      <section class="top-strip" aria-label="Game stats">
+        <div class="stat">
+          <div class="stat-label">Time</div>
+          <div class="stat-value" id="timeLeft">30</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label" id="scoreLabel">Score</div>
+          <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Round</div>
+          <div class="stat-value" id="roundState">Ready</div>
+        </div>
+      </section>
+
+      <section class="target-box" id="targetBox" aria-live="polite">
+        <div class="target-label" id="targetLabel">Click this square</div>
+        <div class="target" id="targetSquare">A1</div>
+      </section>
+
+      <div class="board-wrap" id="boardWrap">
+        <div class="board-frame" aria-label="Chess board with outside coordinates">
+          <div class="outside-ranks" aria-hidden="true">
+            <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+          </div>
+          <div class="board" id="board" aria-label="Chess board"></div>
+          <div class="outside-files" aria-hidden="true">
+            <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span>
+          </div>
+        </div>
+        <div class="pickup-layer hidden" id="pickupLayer" aria-label="Pick up pieces"></div>
+      </div>
+    </main>
+
+    <aside class="side-panel">
+      <section class="controls settings">
+        <button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
+        <div class="message" id="message">Click the target square to start the timer.</div>
+
+        <div class="section-heading-row">
+          <h2>Game mode</h2>
+          <button class="tiny-info-button" id="instructionsBtn" type="button" aria-label="Game instructions">i</button>
+        </div>
+        <div class="mode-grid" id="modeGrid"></div>
+
+        <div class="king-xtreme-toggle hidden" id="kingXtremePanel">
+          <span>XTREME MODE</span>
+          <label class="switch">
+            <input type="checkbox" id="kingXtremeToggle">
+            <span class="slider"></span>
+          </label>
+          <small>All 64 squares filled</small>
+        </div>
+
+        <h2>Board type</h2>
+        <div class="theme-grid" id="themeGrid"></div>
+
+        <div class="custom-board" aria-label="Custom board colours">
+          <div class="custom-board-title">Custom colours</div>
+          <div class="custom-colour-row">
+            <label>
+              <span>Light</span>
+              <input type="color" id="customLight" value="#eeeed2">
+            </label>
+            <label>
+              <span>Dark</span>
+              <input type="color" id="customDark" value="#769656">
+            </label>
+          </div>
+          <button class="custom-board-apply" type="button" id="applyCustomBoard">Apply custom board</button>
+        </div>
+
+        <section class="scoreboard" id="sprintLeaderboard" aria-live="polite">
+          <h2>30s sprint leaderboard</h2>
+          <div class="high-score">
+            <div class="stat-label">Best score</div>
+            <div class="big" id="highScore">0</div>
+          </div>
+          <ul class="scores-list" id="scoresList"></ul>
+        </section>
+
+        <section class="scoreboard" id="sixtyFourLeaderboard" aria-live="polite">
+          <h2>64 squares leaderboard</h2>
+          <div class="high-score">
+            <div class="stat-label">Best time</div>
+            <div class="big" id="bestTime">—</div>
+          </div>
+          <ul class="scores-list" id="timeScoresList"></ul>
+        </section>
+
+        <section class="scoreboard hidden" id="pickupLeaderboard" aria-live="polite">
+          <h2>PICK UP leaderboard</h2>
+          <div class="high-score">
+            <div class="stat-label">Best time</div>
+            <div class="big" id="bestPickup">—</div>
+          </div>
+          <ul class="scores-list" id="pickupScoresList"></ul>
+        </section>
+
+        <section class="scoreboard hidden" id="kingFinderLeaderboard" aria-live="polite">
+          <h2>King finder leaderboard</h2>
+          <div class="high-score">
+            <div class="stat-label">Best time</div>
+            <div class="big" id="bestKingFinder">—</div>
+          </div>
+          <ul class="scores-list" id="kingFinderScoresList"></ul>
+        </section>
+
+        <section class="scoreboard hidden" id="kingFinderXtremeLeaderboard" aria-live="polite">
+          <h2>King finder XTREME leaderboard</h2>
+          <div class="high-score">
+            <div class="stat-label">Best time</div>
+            <div class="big" id="bestKingFinderXtreme">—</div>
+          </div>
+          <ul class="scores-list" id="kingFinderXtremeScoresList"></ul>
+        </section>
+
+        <button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
+      </section>
+    </aside>
+
+    <div class="modal-backdrop" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="modal">
+      <h2 id="resultTitle">Time up</h2>
+      <div class="modal-score" id="modalScore">0</div>
+      <div class="modal-rank" id="modalRank">Tortoise</div>
+      <p class="modal-note" id="modalNote">Click below for another go.</p>
+      <div class="modal-actions">
+        <button class="action" id="modalAgainBtn">Another round</button>
+        <button class="action secondary" id="modalCloseBtn">Close</button>
+      </div>
+    </div>
+    </div>
+
+    <div class="easter-modal-backdrop" id="easterEggModal" role="dialog" aria-modal="true" aria-labelledby="easterEggTitle">
+      <div class="easter-modal">
+        <button class="easter-close" id="easterEggClose" type="button" aria-label="Close">×</button>
+        <h2 id="easterEggTitle" class="easter-logo"><span>CHESS</span><span class="easter-logo-king">♚</span><span>SPRINT</span></h2>
+        <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
+        <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
+        <p>CHESS SPRINT is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="rainbowToast" class="rainbow-toast" role="status" aria-live="polite">Rainbow mode activated</div>
+
+  <div class="instructions-modal-backdrop" id="instructionsModal" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
+    <div class="instructions-modal">
+      <button class="instructions-close" id="instructionsClose" type="button" aria-label="Close">×</button>
+      <h2 id="instructionsTitle">How to play</h2>
+
+      <h3>30s sprint</h3>
+      <p>You have 30 seconds to click the square shown at the top of the screen. Correct clicks score points, wrong clicks lose points, and bonus piece rounds may appear to keep you awake. This mode is about speed, board vision, and getting your mouse moving fast without freezing.</p>
+
+      <h3>64 squares</h3>
+      <p>Every square on the board appears once. Click the requested square as quickly as you can until all 64 are cleared. Wrong clicks add time, so this is less frantic than Sprint but more exacting: learn the board properly and your time will fall.</p>
+
+      <h3>King finder</h3>
+      <p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
+
+      <h3>PICK UP</h3>
+      <p>Put all 32 pieces back on their correct starting squares as fast as possible. Pawns can go on any pawn square of their colour, and paired pieces such as rooks, knights, and bishops can go on either matching square. It is a practical setup drill disguised as a game.</p>
+
+      <p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
+    </div>
+  </div>
+
+  <script>
+    const VERSION = "0.61";
+    const GAME_LENGTH_SECONDS = 30;
+    const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
+
+    const boardThemes = {
+      classic: {
+        name: "Classic",
+        light: "#f0d9b5",
+        dark: "#b58863",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.64)",
+        lightBackground: "#f0d9b5",
+        darkBackground: "#b58863",
+        diagramSwatch: false
+      },
+      green: {
+        name: "Tournament",
+        light: "#eeeed2",
+        dark: "#769656",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.62)",
+        lightBackground: "#eeeed2",
+        darkBackground: "#769656",
+        diagramSwatch: false
+      },
+      blue: {
+        name: "Blue",
+        light: "#dce9f7",
+        dark: "#5e81ac",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.62)",
+        lightBackground: "#dce9f7",
+        darkBackground: "#5e81ac",
+        diagramSwatch: false
+      },
+      slate: {
+        name: "Slate",
+        light: "#d8d8d8",
+        dark: "#707070",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.62)",
+        lightBackground: "#d8d8d8",
+        darkBackground: "#707070",
+        diagramSwatch: false
+      },
+      diagram: {
+        name: "Diagram",
+        light: "#f5f5f5",
+        dark: "#efefef",
+        border: "#404040",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.7)",
+        lightBackground: "#f5f5f5",
+        darkBackground: "repeating-linear-gradient(135deg, #efefef 0px, #efefef 5px, #666 5px, #666 6.5px)",
+        diagramSwatch: true
+      },
+      rainbow: {
+        name: "Rainbow",
+        light: "#ffffff",
+        dark: "#000000",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.70)",
+        lightBackground: "linear-gradient(135deg, #ff4d6d, #ffd166, #06d6a0, #4dabf7, #9d4edd)",
+        darkBackground: "linear-gradient(135deg, #9d4edd, #4dabf7, #06d6a0, #ffd166, #ff4d6d)",
+        diagramSwatch: false,
+        hiddenUntilUnlocked: true
+      },
+      custom: {
+        name: "Custom",
+        light: "#eeeed2",
+        dark: "#769656",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.62)",
+        lightBackground: "#eeeed2",
+        darkBackground: "#769656",
+        diagramSwatch: false
+      }
+    };
+
+    const gameModes = {
+      sprint: {
+        name: "30s sprint"
+      },
+      sixtyFour: {
+        name: "64 squares"
+      },
+      kingFinder: {
+        name: "King finder"
+      },
+      pickup: {
+        name: "PICK UP"
+      }
+    };
+
+    const unicodePieces = {
+      white: { king: "♚", queen: "♛", rook: "♜", bishop: "♝", knight: "♞", pawn: "♟" },
+      black: { king: "♚", queen: "♛", rook: "♜", bishop: "♝", knight: "♞", pawn: "♟" }
+    };
+
+    const bonusPieces = [
+      { key: "king", name: "King", colour: "black" },
+      { key: "queen", name: "Queen", colour: "black" },
+      { key: "rook", name: "Rook", colour: "black" },
+      { key: "bishop", name: "Bishop", colour: "black" },
+      { key: "knight", name: "Knight", colour: "black" },
+      { key: "pawn", name: "Pawn", colour: "black" },
+      { key: "king", name: "King", colour: "white" },
+      { key: "queen", name: "Queen", colour: "white" },
+      { key: "rook", name: "Rook", colour: "white" },
+      { key: "bishop", name: "Bishop", colour: "white" },
+      { key: "knight", name: "Knight", colour: "white" },
+      { key: "pawn", name: "Pawn", colour: "white" }
+    ];
+
+    const app = document.getElementById("app");
+    const board = document.getElementById("board");
+    const boardWrap = document.getElementById("boardWrap");
+    const pickupLayer = document.getElementById("pickupLayer");
+    const targetBox = document.getElementById("targetBox");
+    const targetLabelEl = document.getElementById("targetLabel");
+    const targetSquareEl = document.getElementById("targetSquare");
+    const timeLeftEl = document.getElementById("timeLeft");
+    const scoreEl = document.getElementById("score");
+    const scoreLabelEl = document.getElementById("scoreLabel");
+    const roundStateEl = document.getElementById("roundState");
+    const newRoundBtn = document.getElementById("newRoundBtn");
+    const resetScoresBtn = document.getElementById("resetScoresBtn");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const messageEl = document.getElementById("message");
+    const highScoreEl = document.getElementById("highScore");
+    const scoresListEl = document.getElementById("scoresList");
+    const bestTimeEl = document.getElementById("bestTime");
+    const timeScoresListEl = document.getElementById("timeScoresList");
+    const sprintLeaderboard = document.getElementById("sprintLeaderboard");
+    const sixtyFourLeaderboard = document.getElementById("sixtyFourLeaderboard");
+    const pickupLeaderboard = document.getElementById("pickupLeaderboard");
+    const pickupScoresListEl = document.getElementById("pickupScoresList");
+    const bestPickupEl = document.getElementById("bestPickup");
+    const kingFinderLeaderboard = document.getElementById("kingFinderLeaderboard");
+    const kingFinderScoresListEl = document.getElementById("kingFinderScoresList");
+    const bestKingFinderEl = document.getElementById("bestKingFinder");
+    const kingFinderXtremeLeaderboard = document.getElementById("kingFinderXtremeLeaderboard");
+    const kingFinderXtremeScoresListEl = document.getElementById("kingFinderXtremeScoresList");
+    const bestKingFinderXtremeEl = document.getElementById("bestKingFinderXtreme");
+    const themeGrid = document.getElementById("themeGrid");
+    const customLightInput = document.getElementById("customLight");
+    const customDarkInput = document.getElementById("customDark");
+    const applyCustomBoardBtn = document.getElementById("applyCustomBoard");
+    const modeGrid = document.getElementById("modeGrid");
+    const kingXtremePanel = document.getElementById("kingXtremePanel");
+    const kingXtremeToggle = document.getElementById("kingXtremeToggle");
+    const pieceGrid = document.getElementById("pieceGrid");
+    const resultModal = document.getElementById("resultModal");
+    const modalBox = resultModal.querySelector(".modal");
+    const modalScore = document.getElementById("modalScore");
+    const modalRank = document.getElementById("modalRank");
+    const modalNote = document.getElementById("modalNote");
+    const modalAgainBtn = document.getElementById("modalAgainBtn");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+    const logoKing = document.getElementById("logoKing");
+    const easterEggModal = document.getElementById("easterEggModal");
+    const easterEggClose = document.getElementById("easterEggClose");
+    const rainbowEgg = document.getElementById("rainbowEgg");
+    const rainbowToast = document.getElementById("rainbowToast");
+    const instructionsBtn = document.getElementById("instructionsBtn");
+    const instructionsModal = document.getElementById("instructionsModal");
+    const instructionsClose = document.getElementById("instructionsClose");
+
+    const scoreStorageKey = "chess-square-sprint-scores";
+    const oldScoreStorageKey = "chess-square-sprint-v0-1-scores";
+    const themeStorageKey = "chess-square-sprint-theme";
+    const customThemeStorageKey = "chess-square-sprint-custom-theme";
+    const modeStorageKey = "chess-square-sprint-mode";
+    const kingXtremeStorageKey = "chess-square-sprint-king-xtreme";
+    const rainbowUnlockedStorageKey = "chess-sprint-rainbow-unlocked";
+    const pieceStyleStorageKey = "chess-square-sprint-piece-style";
+    const oldColourStorageKey = "chess-square-sprint-colours";
+
+    let active = false;
+    let roundOver = false;
+    let score = 0;
+    let currentMode = "sprint";
+    let currentPieceStyle = "woodcut";
+    let rainbowUnlocked = false;
+    let rainbowToastTimer = null;
+    let sixtyFourRemaining = [];
+    let sixtyFourCompleted = 0;
+    let penaltySeconds = 0;
+    let currentTarget = "A1";
+    let targetMode = "square";
+    let bonusUsed = false;
+    let bonusCountThisRound = 0;
+    let normalClickCount = 0;
+    let guaranteedBonusDeadlineMs = 10000;
+    let bonusTargetSquare = null;
+    let bonusTargetPiece = null;
+    let kingFinderRound = 0;
+    let kingFinderTargetSquare = null;
+    let kingFinderPreRoundTimer = null;
+    let kingFinderRevealTimer = null;
+    let kingFinderGuessTickTimer = null;
+    let kingFinderGuessTimeoutTimer = null;
+    let kingFinderCountdownTimers = [];
+    let kingFinderAcceptingGuess = false;
+    let kingFinderStarted = false;
+    let kingFinderPhase = "idle";
+    let kingFinderXtreme = false;
+    let kingFinderGuessStartedAt = 0;
+    let kingFinderTotalGuessMs = 0;
+    let kingFinderFinalTimeScore = 0;
+    let pickupPieces = [];
+    let pickupSelectedId = null;
+    let pickupPlacedCount = 0;
+    let pickupStartTime = 0;
+    let pickupElapsedSeconds = 0;
+    let pickupTimer = null;
+    let pickupCountdownTimers = [];
+    let pickupPhase = "idle";
+    let endTime = 0;
+    let startTime = 0;
+    let timer = null;
+    let audioContext = null;
+    let pitchStep = 0;
+
+    function svgForPiece(pieceKey, pieceColour = "black", className = "piece") {
+      const glyph = unicodePieces[pieceColour]?.[pieceKey] || "♟";
+      const colourClass = pieceColour === "white" ? "unicode-white" : "unicode-black";
+
+      if (className === "target-piece-card") {
+        return `
+          <span class="target-piece-card" aria-hidden="true">
+            <span class="target-piece-symbol unicode-piece ${colourClass}">${glyph}</span>
+          </span>
+        `;
+      }
+
+      return `<span class="${className} unicode-piece ${colourClass}" aria-hidden="true">${glyph}</span>`;
+    }
+
+    function buildBoard() {
+      board.innerHTML = "";
+
+      ranksTopToBottom.forEach((rank, rowIndex) => {
+        files.forEach((file, colIndex) => {
+          const squareName = `${file}${rank}`;
+          const square = document.createElement("button");
+          square.type = "button";
+          square.className = `square ${(rowIndex + colIndex) % 2 === 0 ? "light" : "dark"}`;
+          square.dataset.square = squareName;
+          square.style.setProperty("--rainbow-square-colour", randomRainbowSquareColour());
+          square.setAttribute("aria-label", squareName);
+
+          const pieceHolder = document.createElement("span");
+          pieceHolder.className = "piece-holder";
+          square.appendChild(pieceHolder);
+
+          square.addEventListener("click", () => handleSquareClick(squareName, square));
+          square.addEventListener("dragover", event => {
+            if (currentMode === "pickup" && pickupPhase === "playing") {
+              event.preventDefault();
+            }
+          });
+          square.addEventListener("drop", event => {
+            if (currentMode !== "pickup" || pickupPhase !== "playing") return;
+            event.preventDefault();
+            const tokenId = event.dataTransfer.getData("text/pickup-piece");
+            handlePickupPlacement(tokenId, squareName, square);
+          });
+          board.appendChild(square);
+        });
+      });
+    }
+
+    function buildThemeButtons() {
+      themeGrid.innerHTML = "";
+      Object.entries(boardThemes).forEach(([key, theme]) => {
+        if (theme.hiddenUntilUnlocked && !rainbowUnlocked) return;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "theme-button";
+        button.dataset.theme = key;
+        button.innerHTML = `
+          <span class="theme-swatch ${theme.diagramSwatch ? 'diagram' : ''}" style="--swatch-light:${theme.lightBackground}; --swatch-dark:${theme.diagramSwatch ? '#efefef' : theme.darkBackground}">
+            <span></span><span></span>
+          </span>
+          <span>${theme.name}</span>
+        `;
+        button.addEventListener("click", () => setTheme(key));
+        themeGrid.appendChild(button);
+      });
+    }
+
+    function buildModeButtons() {
+      modeGrid.innerHTML = "";
+      Object.entries(gameModes).forEach(([key, mode]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mode-button";
+        button.dataset.mode = key;
+        button.textContent = mode.name;
+        button.addEventListener("click", () => setMode(key));
+        modeGrid.appendChild(button);
+      });
+    }
+
+    function buildPieceButtons() {
+      pieceGrid.innerHTML = "";
+      Object.entries(pieceStyles).forEach(([key, style]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "piece-button";
+        button.dataset.pieceStyle = key;
+        button.innerHTML = `
+          <span class="piece-preview">${svgForPiece("knight", "white", "piece-preview-svg", key)}</span>
+          <span>${style.name}</span>
+        `;
+        button.addEventListener("click", () => setPieceStyle(key));
+        pieceGrid.appendChild(button);
+      });
+    }
+
+    function sizeBoardToWindow() {
+      const rect = boardWrap.getBoundingClientRect();
+      const safePadding = 12;
+      const coordinateGutter = Math.max(22, Math.min(34, Math.floor(Math.min(rect.width, rect.height) * 0.055)));
+      const pickupSideLayout = currentMode === "pickup" && rect.width >= 740;
+      const pickupHorizontalReserve = pickupSideLayout
+        ? Math.min(360, Math.max(230, rect.width * 0.34))
+        : 0;
+      const pickupVerticalReserve = currentMode === "pickup" && !pickupSideLayout
+        ? Math.min(190, Math.max(124, rect.height * 0.26))
+        : 0;
+
+      const availableWidth = Math.max(160, rect.width - safePadding - coordinateGutter - pickupHorizontalReserve);
+      const availableHeight = Math.max(160, rect.height - safePadding - coordinateGutter - pickupVerticalReserve);
+      const size = Math.floor(Math.min(availableWidth, availableHeight));
+      document.documentElement.style.setProperty("--board-size", `${size}px`);
+      document.documentElement.style.setProperty("--coord-gutter", `${coordinateGutter}px`);
+      window.setTimeout(positionPickupPieces, 0);
+    }
+
+    function allSquares() {
+      const squares = [];
+      for (const rank of [1, 2, 3, 4, 5, 6, 7, 8]) {
+        for (const file of files) {
+          squares.push(`${file}${rank}`);
+        }
+      }
+      return squares;
+    }
+
+    function randomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function randomRainbowSquareColour() {
+      const hue = Math.floor(Math.random() * 360);
+      const saturation = 68 + Math.floor(Math.random() * 24);
+      const lightness = 54 + Math.floor(Math.random() * 18);
+      return `hsl(${hue} ${saturation}% ${lightness}%)`;
+    }
+
+    function regenerateRainbowBoardColours() {
+      document.querySelectorAll(".square").forEach(square => {
+        square.style.setProperty("--rainbow-square-colour", randomRainbowSquareColour());
+      });
+    }
+
+    function shuffle(items) {
+      const copy = items.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function setInstructionTarget(text = "Click anywhere on the board to start") {
+      targetSquareEl.classList.remove("piece-target");
+      targetSquareEl.classList.add("instruction-target");
+      targetSquareEl.textContent = text;
+    }
+
+    function clearInstructionTarget() {
+      targetSquareEl.classList.remove("instruction-target");
+    }
+
+    function setNormalTarget(showReadyMessage = true) {
+      targetMode = "square";
+      board.classList.remove("bonus-mode");
+      board.classList.remove("king-finder-mode");
+      board.classList.remove("king-find-hidden");
+      targetBox.classList.remove("bonus");
+      targetSquareEl.classList.remove("piece-target");
+      clearInstructionTarget();
+      targetLabelEl.textContent = currentMode === "sixtyFour" ? "64 squares: click this square" : "Click this square";
+      clearBoardPieces();
+
+      const squares = currentMode === "sixtyFour" ? sixtyFourRemaining : allSquares();
+      if (!squares.length) {
+        targetSquareEl.textContent = "Done";
+        return;
+      }
+
+      let next = randomItem(squares);
+
+      if (squares.length > 1) {
+        while (next === currentTarget) {
+          next = randomItem(squares);
+        }
+      }
+
+      currentTarget = next;
+      targetSquareEl.textContent = currentTarget;
+
+      if (!active && showReadyMessage) {
+        const startText = currentMode === "sixtyFour" ? "Click" : "Click";
+        messageEl.textContent = `${startText} ${currentTarget} to start.`;
+      }
+    }
+
+    function clearBoardPieces() {
+      document.querySelectorAll(".piece-holder").forEach(holder => {
+        holder.innerHTML = "";
+      });
+    }
+
+    function clearSixtyFourMarks() {
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.remove("cleared", "missed");
+      });
+    }
+
+    function markSquareDone(squareName, missed = false) {
+      const square = document.querySelector(`[data-square="${squareName}"]`);
+      if (!square) return;
+      square.classList.remove("correct", "wrong");
+      square.classList.add(missed ? "missed" : "cleared");
+    }
+
+    function removeFromSixtyFour(squareName) {
+      sixtyFourRemaining = sixtyFourRemaining.filter(item => item !== squareName);
+      sixtyFourCompleted = 64 - sixtyFourRemaining.length;
+    }
+
+    function activateBonusRound() {
+      if (!active || targetMode === "piece" || currentMode !== "sprint") return;
+
+      bonusUsed = true;
+      bonusCountThisRound += 1;
+      targetMode = "piece";
+      bonusTargetPiece = randomItem(bonusPieces);
+      const all = shuffle(allSquares());
+
+      bonusTargetSquare = all[0];
+      const totalPieces = 6 + Math.floor(Math.random() * 13);
+      const occupiedSquares = all.slice(0, totalPieces);
+      const decoys = bonusPieces.filter(piece => !(piece.key === bonusTargetPiece.key && piece.colour === bonusTargetPiece.colour));
+
+      board.classList.add("bonus-mode");
+      targetBox.classList.add("bonus");
+      clearInstructionTarget();
+      targetSquareEl.classList.add("piece-target");
+      targetLabelEl.textContent = `Bonus: click the ${bonusTargetPiece.colour} ${bonusTargetPiece.name}`;
+      targetSquareEl.innerHTML = svgForPiece(bonusTargetPiece.key, bonusTargetPiece.colour, "target-piece-card");
+      messageEl.textContent = `Bonus round. Click the ${bonusTargetPiece.colour} ${bonusTargetPiece.name}. Correct = +3.`;
+      roundStateEl.textContent = "Bonus";
+
+      document.querySelectorAll(".square").forEach(square => {
+        const holder = square.querySelector(".piece-holder");
+        holder.innerHTML = "";
+        square.setAttribute("aria-label", square.dataset.square);
+      });
+
+      occupiedSquares.forEach(squareName => {
+        const square = document.querySelector(`[data-square="${squareName}"]`);
+        const holder = square.querySelector(".piece-holder");
+
+        if (squareName === bonusTargetSquare) {
+          holder.innerHTML = svgForPiece(bonusTargetPiece.key, bonusTargetPiece.colour);
+          square.setAttribute("aria-label", `${square.dataset.square}, ${bonusTargetPiece.colour} ${bonusTargetPiece.name}`);
+        } else {
+          const decoy = randomItem(decoys);
+          holder.innerHTML = svgForPiece(decoy.key, decoy.colour);
+          square.setAttribute("aria-label", `${square.dataset.square}, ${decoy.colour} ${decoy.name}`);
+        }
+      });
+
+      // No sound here. The piece round must not have its own audio cue.
+    }
+
+    function resetRound() {
+      active = false;
+      roundOver = false;
+      hideResultModal();
+      clearInterval(timer);
+      clearKingFinderTimers();
+      clearPickupTimers();
+      timer = null;
+      score = 0;
+      endTime = 0;
+      startTime = 0;
+      pitchStep = 0;
+      bonusUsed = false;
+      bonusCountThisRound = 0;
+      normalClickCount = 0;
+      guaranteedBonusDeadlineMs = 10000;
+      bonusTargetSquare = null;
+      bonusTargetPiece = null;
+      kingFinderRound = 0;
+      kingFinderTargetSquare = null;
+      kingFinderAcceptingGuess = false;
+      kingFinderStarted = false;
+      kingFinderPhase = "idle";
+      kingFinderGuessStartedAt = 0;
+      kingFinderTotalGuessMs = 0;
+      kingFinderFinalTimeScore = 0;
+      clearKingFinderAnswerMark();
+      hideKingCountdownWord();
+      board.classList.remove("king-finder-mode");
+      board.classList.remove("king-find-hidden");
+      clearPickupMode();
+      sixtyFourRemaining = allSquares();
+      sixtyFourCompleted = 0;
+      penaltySeconds = 0;
+      clearSixtyFourMarks();
+      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : currentMode === "kingFinder" ? "Kings" : currentMode === "pickup" ? "Pieces" : "Score";
+      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : currentMode === "kingFinder" ? "0/10" : currentMode === "pickup" ? "0/32" : score;
+      timeLeftEl.textContent = currentMode === "sixtyFour" ? "0" : currentMode === "kingFinder" ? "5" : currentMode === "pickup" ? "0.00" : GAME_LENGTH_SECONDS;
+      roundStateEl.textContent = "Ready";
+      newRoundBtn.textContent = "New round";
+
+      if (currentMode === "kingFinder") {
+        targetMode = "kingFinder";
+        targetLabelEl.textContent = kingFinderXtreme ? "King finder XTREME" : "King finder";
+        renderKingProgress();
+        setInstructionTarget(kingFinderXtreme
+          ? "Click anywhere on the board to start XTREME MODE"
+          : "Click anywhere on the board to start");
+        messageEl.textContent = kingFinderXtreme
+          ? "Click anywhere on the board to start XTREME MODE."
+          : "Click anywhere on the board to start the game.";
+      } else if (currentMode === "pickup") {
+        preparePickupMode();
+      } else {
+        setNormalTarget(false);
+        targetLabelEl.textContent = gameModes[currentMode].name;
+        setInstructionTarget("Click anywhere on the board to start");
+        messageEl.textContent = "Click anywhere on the board to start.";
+      }
+
+      sizeBoardToWindow();
+    }
+
+    function startClockOnFirstClick() {
+      if (currentMode === "kingFinder") {
+        startKingFinderGame();
+        return;
+      }
+      if (currentMode === "pickup") {
+        startPickupGame();
+        return;
+      }
+      active = true;
+      roundOver = false;
+      score = 0;
+      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : "Score";
+      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : score;
+      startTime = Date.now();
+      endTime = currentMode === "sixtyFour" ? 0 : startTime + GAME_LENGTH_SECONDS * 1000;
+      pitchStep = 0;
+      bonusUsed = false;
+      bonusCountThisRound = 0;
+      normalClickCount = 0;
+      guaranteedBonusDeadlineMs = 10000;
+      roundStateEl.textContent = "Go";
+      clearInstructionTarget();
+      if (currentMode === "sixtyFour") {
+        targetLabelEl.textContent = "64 squares: click this square";
+        targetSquareEl.textContent = currentTarget;
+      } else {
+        targetLabelEl.textContent = "Click this square";
+        targetSquareEl.textContent = currentTarget;
+      }
+      messageEl.textContent = "Go.";
+      playStartSound();
+
+      clearInterval(timer);
+      timer = setInterval(updateTimer, 100);
+      updateTimer();
+    }
+
+    function nextGameplayPitch() {
+      pitchStep += 1;
+      const clamped = Math.max(0, Math.min(80, pitchStep));
+      // Lower start, longer range. Good for 64-square mode without maxing early.
+      return 85 + clamped * 12.5;
+    }
+
+
+
+
+
+    function clearPickupTimers() {
+      clearInterval(pickupTimer);
+      pickupTimer = null;
+      pickupCountdownTimers.forEach(timerId => clearTimeout(timerId));
+      pickupCountdownTimers = [];
+    }
+
+    function clearPickupMode() {
+      clearPickupTimers();
+      pickupLayer.innerHTML = "";
+      pickupLayer.classList.add("hidden");
+      board.classList.remove("pickup-mode");
+      targetBox.classList.remove("pickup-ready");
+      pickupPieces = [];
+      pickupSelectedId = null;
+      pickupPlacedCount = 0;
+      pickupStartTime = 0;
+      pickupElapsedSeconds = 0;
+      pickupPhase = "idle";
+    }
+
+    function makePickupPiece(id, colour, key, allowedTargets) {
+      return {
+        id,
+        colour,
+        key,
+        allowedTargets,
+        placed: false,
+        placedSquare: null,
+        layoutSide: "left",
+        layoutSlot: 0,
+        jitterX: Math.random(),
+        jitterY: Math.random()
+      };
+    }
+
+    function allowedStartSquares(colour, key) {
+      const rank = colour === "white" ? "1" : "8";
+      const pawnRank = colour === "white" ? "2" : "7";
+
+      if (key === "pawn") return files.map(file => `${file}${pawnRank}`);
+      if (key === "rook") return [`A${rank}`, `H${rank}`];
+      if (key === "knight") return [`B${rank}`, `G${rank}`];
+      if (key === "bishop") return [`C${rank}`, `F${rank}`];
+      if (key === "queen") return [`D${rank}`];
+      if (key === "king") return [`E${rank}`];
+
+      return [];
+    }
+
+    function buildPickupPieces() {
+      const pieces = [];
+      const backRank = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"];
+
+      backRank.forEach((key, index) => {
+        pieces.push(makePickupPiece(`black-back-${index}`, "black", key, allowedStartSquares("black", key)));
+      });
+
+      files.forEach((file, index) => {
+        pieces.push(makePickupPiece(`black-pawn-${index}`, "black", "pawn", allowedStartSquares("black", "pawn")));
+      });
+
+      files.forEach((file, index) => {
+        pieces.push(makePickupPiece(`white-pawn-${index}`, "white", "pawn", allowedStartSquares("white", "pawn")));
+      });
+
+      backRank.forEach((key, index) => {
+        pieces.push(makePickupPiece(`white-back-${index}`, "white", key, allowedStartSquares("white", key)));
+      });
+
+      shuffle(pieces).forEach((piece, index) => {
+        piece.layoutSide = index % 2 === 0 ? "left" : "right";
+        piece.layoutSlot = Math.floor(index / 2);
+        piece.jitterX = Math.random();
+        piece.jitterY = Math.random();
+      });
+
+      return pieces;
+    }
+
+    function positionPickupPieces() {
+      if (currentMode !== "pickup" || !pickupLayer || pickupLayer.classList.contains("hidden")) return;
+
+      const boardRect = board.getBoundingClientRect();
+      const wrapRect = boardWrap.getBoundingClientRect();
+      const squareSize = boardRect.width / 8;
+      const pieceSize = Math.max(32, Math.min(54, squareSize * 0.78));
+      const leftBase = boardRect.left - wrapRect.left;
+      const topBase = boardRect.top - wrapRect.top;
+      const boardBottom = topBase + boardRect.height;
+      const sideSpace = Math.min(leftBase, wrapRect.width - (leftBase + boardRect.width));
+      const useSideLayout = wrapRect.width >= 740 && sideSpace >= pieceSize * 2.05;
+
+      pickupLayer.style.setProperty("--pickup-piece-size", `${pieceSize}px`);
+
+      pickupLayer.querySelectorAll(".pickup-piece").forEach(button => {
+        const side = button.dataset.side;
+        const slot = Number(button.dataset.slot);
+        const jitterX = Number(button.dataset.jitterX || 0.5) - 0.5;
+        const jitterY = Number(button.dataset.jitterY || 0.5) - 0.5;
+
+        let left = 0;
+        let top = 0;
+
+        if (useSideLayout) {
+          const cols = Math.max(2, Math.min(3, Math.floor(sideSpace / (pieceSize * 1.42))));
+          const rows = Math.ceil(16 / cols);
+          const cellW = Math.max(pieceSize * 1.24, sideSpace / cols);
+          const cellH = Math.min(pieceSize * 1.52, boardRect.height / rows);
+          const col = slot % cols;
+          const row = Math.floor(slot / cols);
+          const sideLeft = side === "left"
+            ? leftBase - sideSpace
+            : leftBase + boardRect.width;
+          const startTop = topBase + Math.max(0, (boardRect.height - rows * cellH) / 2);
+
+          left = sideLeft + col * cellW + (cellW - pieceSize) / 2 + jitterX * Math.min(9, pieceSize * 0.22);
+          top = startTop + row * cellH + (cellH - pieceSize) / 2 + jitterY * Math.min(10, pieceSize * 0.24);
+        } else {
+          const topSide = side === "left";
+          const cols = 8;
+          const cellW = boardRect.width / cols;
+          const cellH = pieceSize * 1.18;
+          const mobileIndex = slot;
+          const row = Math.floor(mobileIndex / cols);
+          const col = mobileIndex % cols;
+          const baseTop = topSide
+            ? topBase - (2 - row) * cellH - pieceSize * 0.18
+            : boardBottom + row * cellH + pieceSize * 0.18;
+
+          left = leftBase + col * cellW + (cellW - pieceSize) / 2 + jitterX * Math.min(5, pieceSize * 0.12);
+          top = baseTop + jitterY * Math.min(5, pieceSize * 0.12);
+        }
+
+        button.style.left = `${left}px`;
+        button.style.top = `${top}px`;
+      });
+    }
+
+    function renderPickupPieces() {
+      pickupLayer.innerHTML = "";
+      pickupLayer.classList.remove("hidden");
+
+      pickupPieces
+        .filter(piece => !piece.placed)
+        .forEach(piece => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `pickup-piece ${pickupSelectedId === piece.id ? "selected" : ""}`;
+          button.dataset.id = piece.id;
+          button.dataset.side = piece.layoutSide;
+          button.dataset.slot = piece.layoutSlot;
+          button.dataset.jitterX = piece.jitterX;
+          button.dataset.jitterY = piece.jitterY;
+          button.draggable = true;
+          button.setAttribute("aria-label", `${piece.colour} ${piece.key}`);
+          button.innerHTML = svgForPiece(piece.key, piece.colour, "pickup-piece-symbol");
+
+          button.addEventListener("click", event => {
+            event.stopPropagation();
+            pickupSelectedId = piece.id;
+            updatePickupSelection();
+          });
+
+          button.addEventListener("dragstart", event => {
+            pickupSelectedId = piece.id;
+            updatePickupSelection();
+            event.dataTransfer.setData("text/pickup-piece", piece.id);
+            event.dataTransfer.effectAllowed = "move";
+          });
+
+          pickupLayer.appendChild(button);
+        });
+
+      positionPickupPieces();
+    }
+
+    function updatePickupSelection() {
+      pickupLayer.querySelectorAll(".pickup-piece").forEach(button => {
+        button.classList.toggle("selected", button.dataset.id === pickupSelectedId);
+      });
+    }
+
+    function preparePickupMode() {
+      clearPickupMode();
+      clearBoardPieces();
+      active = false;
+      roundOver = false;
+      targetMode = "pickup";
+      pickupPhase = "idle";
+      scoreLabelEl.textContent = "Pieces";
+      scoreEl.textContent = "0/32";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = "PICK UP";
+      setInstructionTarget("Click anywhere on the board to start");
+      messageEl.textContent = "Click anywhere on the board to start PICK UP.";
+      sizeBoardToWindow();
+    }
+
+    function startPickupGame() {
+      clearPickupMode();
+      clearBoardPieces();
+      hideResultModal();
+      hideKingCountdownWord();
+
+      active = true;
+      roundOver = false;
+      pickupPhase = "countdown";
+      targetMode = "pickup";
+      scoreLabelEl.textContent = "Pieces";
+      scoreEl.textContent = "0/32";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = "PICK UP";
+      clearInstructionTarget();
+      targetSquareEl.textContent = "Ready";
+
+      const words = ["Ready", "Set", "GO"];
+      words.forEach((word, index) => {
+        const timerId = window.setTimeout(() => {
+          showKingCountdownWord(word);
+          playKingCountdownTone(word);
+          roundStateEl.textContent = word;
+          targetSquareEl.textContent = word;
+        }, index * 1000);
+        pickupCountdownTimers.push(timerId);
+      });
+
+      const startTimer = window.setTimeout(() => {
+        hideKingCountdownWord();
+        beginPickupPlay();
+      }, 3000);
+      pickupCountdownTimers.push(startTimer);
+    }
+
+    function beginPickupPlay() {
+      pickupPhase = "playing";
+      board.classList.add("pickup-mode");
+      pickupPieces = buildPickupPieces();
+      pickupSelectedId = null;
+      pickupPlacedCount = 0;
+      pickupStartTime = Date.now();
+      pickupElapsedSeconds = 0;
+      targetLabelEl.textContent = "Set up the board";
+      clearInstructionTarget();
+      targetSquareEl.textContent = "32 pieces";
+      roundStateEl.textContent = "Go";
+      scoreEl.textContent = "0/32";
+      renderPickupPieces();
+      playStartSound();
+
+      clearInterval(pickupTimer);
+      pickupTimer = setInterval(updatePickupTimer, 50);
+      updatePickupTimer();
+    }
+
+    function updatePickupTimer() {
+      if (currentMode !== "pickup" || pickupPhase !== "playing") return;
+      pickupElapsedSeconds = (Date.now() - pickupStartTime) / 1000;
+      timeLeftEl.textContent = pickupElapsedSeconds.toFixed(2);
+    }
+
+    function findPickupPiece(pieceId) {
+      return pickupPieces.find(piece => piece.id === pieceId && !piece.placed);
+    }
+
+    function handlePickupSquareClick(squareName, squareEl) {
+      if (!active && !roundOver) {
+        startPickupGame();
+        return;
+      }
+
+      if (pickupPhase !== "playing" || !pickupSelectedId) return;
+      handlePickupPlacement(pickupSelectedId, squareName, squareEl);
+    }
+
+
+    function pickupOccupiedSquares() {
+      return pickupPieces
+        .filter(piece => piece.placed && piece.placedSquare)
+        .map(piece => piece.placedSquare);
+    }
+
+    function isValidPickupSquare(piece, squareName) {
+      if (!piece.allowedTargets.includes(squareName)) return false;
+      return !pickupOccupiedSquares().includes(squareName);
+    }
+
+    function handlePickupPlacement(pieceId, squareName, squareEl) {
+      if (pickupPhase !== "playing") return;
+
+      const piece = findPickupPiece(pieceId);
+      if (!piece) return;
+
+      if (!isValidPickupSquare(piece, squareName)) {
+        flashSquare(squareEl, "wrong");
+        playWrongSound();
+        return;
+      }
+
+      const holder = squareEl.querySelector(".piece-holder");
+      if (!holder) return;
+
+      piece.placed = true;
+      piece.placedSquare = squareName;
+      pickupSelectedId = null;
+      pickupPlacedCount += 1;
+      holder.innerHTML = svgForPiece(piece.key, piece.colour);
+      squareEl.setAttribute("aria-label", `${squareEl.dataset.square}, ${piece.colour} ${piece.key}`);
+      flashSquare(squareEl, "correct");
+      playCorrectSound(nextGameplayPitch());
+      scoreEl.textContent = `${pickupPlacedCount}/32`;
+      targetSquareEl.textContent = `${32 - pickupPlacedCount} left`;
+      renderPickupPieces();
+
+      if (pickupPlacedCount >= 32) {
+        endPickupGame();
+      }
+    }
+
+    function endPickupGame() {
+      updatePickupTimer();
+      clearPickupTimers();
+      active = false;
+      roundOver = true;
+      pickupPhase = "ended";
+      pickupLayer.classList.add("hidden");
+      pickupElapsedSeconds = (Date.now() - pickupStartTime) / 1000;
+      timeLeftEl.textContent = pickupElapsedSeconds.toFixed(2);
+      scoreLabelEl.textContent = "Pieces";
+      scoreEl.textContent = "32/32";
+      roundStateEl.textContent = "Done";
+      targetLabelEl.textContent = "PICK UP complete";
+      targetSquareEl.textContent = `${pickupElapsedSeconds.toFixed(2)}s`;
+      playEndJingle();
+      saveScore(0, pickupElapsedSeconds);
+      renderScores();
+      showResultModal(0, pickupElapsedSeconds);
+    }
+
+    function clearKingFinderTimers() {
+      clearTimeout(kingFinderPreRoundTimer);
+      clearTimeout(kingFinderRevealTimer);
+      clearTimeout(kingFinderGuessTickTimer);
+      clearTimeout(kingFinderGuessTimeoutTimer);
+      kingFinderCountdownTimers.forEach(timerId => clearTimeout(timerId));
+      kingFinderPreRoundTimer = null;
+      kingFinderRevealTimer = null;
+      kingFinderGuessTickTimer = null;
+      kingFinderGuessTimeoutTimer = null;
+      kingFinderCountdownTimers = [];
+    }
+
+    function getKingCountdownOverlay() {
+      let overlay = document.getElementById("kingCountdownOverlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "kingCountdownOverlay";
+        overlay.className = "king-countdown-overlay";
+        overlay.setAttribute("aria-hidden", "true");
+        board.appendChild(overlay);
+      }
+      return overlay;
+    }
+
+    function showKingCountdownWord(word) {
+      const overlay = getKingCountdownOverlay();
+      overlay.textContent = word;
+      overlay.classList.remove("show");
+      void overlay.offsetWidth;
+      overlay.classList.add("show");
+    }
+
+    function hideKingCountdownWord() {
+      const overlay = document.getElementById("kingCountdownOverlay");
+      if (overlay) {
+        overlay.classList.remove("show");
+      }
+    }
+
+    function clearKingFinderAnswerMark() {
+      document.querySelectorAll(".square.king-answer").forEach(square => {
+        square.classList.remove("king-answer");
+      });
+    }
+
+    function renderKingProgress() {
+      const kings = Array.from({ length: 10 }, (_, index) => {
+        const done = index < kingFinderRound ? "done" : "";
+        return `<span class="${done}">♚</span>`;
+      }).join("");
+      targetSquareEl.innerHTML = `<div class="king-progress" aria-label="${kingFinderRound} of 10 kings found">${kings}</div>`;
+    }
+
+    function kingFinderRevealMs(roundIndex) {
+      // 3.0s, 2.7s, 2.4s ... down to 0.3s.
+      return Math.max(300, 3000 - (roundIndex * 300));
+    }
+
+    function populateKingFinderPieces() {
+      clearKingFinderAnswerMark();
+      clearBoardPieces();
+      board.classList.add("king-finder-mode");
+      board.classList.remove("king-find-hidden");
+
+      const squares = shuffle(allSquares());
+      kingFinderTargetSquare = squares[0];
+
+      const totalPieces = kingFinderXtreme ? 64 : 10 + Math.floor(Math.random() * 9);
+      const occupied = squares.slice(0, totalPieces);
+      const decoys = bonusPieces.filter(piece => piece.key !== "king");
+
+      occupied.forEach(squareName => {
+        const square = document.querySelector(`[data-square="${squareName}"]`);
+        const holder = square?.querySelector(".piece-holder");
+        if (!holder) return;
+
+        if (squareName === kingFinderTargetSquare) {
+          const colour = Math.random() < 0.5 ? "white" : "black";
+          holder.innerHTML = svgForPiece("king", colour);
+          square.setAttribute("aria-label", `${square.dataset.square}, ${colour} king`);
+        } else {
+          const decoy = randomItem(decoys);
+          holder.innerHTML = svgForPiece(decoy.key, decoy.colour);
+          square.setAttribute("aria-label", `${square.dataset.square}, ${decoy.colour} ${decoy.name}`);
+        }
+      });
+    }
+
+
+    function playKingCountdownTone(word) {
+      if (word === "Ready") {
+        playTone(392, 0.00, 0.12, 0.22, "sine");
+      } else if (word === "Set") {
+        playTone(523, 0.00, 0.12, 0.24, "sine");
+      } else {
+        playTone(784, 0.00, 0.28, 0.30, "triangle");
+        playTone(1047, 0.05, 0.24, 0.16, "sine");
+      }
+    }
+
+    function startKingFinderGame() {
+      clearKingFinderTimers();
+      clearKingFinderAnswerMark();
+      clearBoardPieces();
+      hideResultModal();
+
+      active = true;
+      roundOver = false;
+      kingFinderStarted = true;
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = "countdown";
+      kingFinderRound = 0;
+      kingFinderTargetSquare = null;
+      kingFinderGuessStartedAt = 0;
+      kingFinderTotalGuessMs = 0;
+      kingFinderFinalTimeScore = 0;
+
+      scoreLabelEl.textContent = "Kings";
+      scoreEl.textContent = "0/10";
+      timeLeftEl.textContent = "5";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = kingFinderXtreme ? "King finder XTREME" : "King finder";
+      clearInstructionTarget();
+      renderKingProgress();
+
+      prepareKingFinderRound(true);
+    }
+
+    function prepareKingFinderRound(showReadySetGo) {
+      clearKingFinderTimers();
+      clearKingFinderAnswerMark();
+      clearBoardPieces();
+      board.classList.add("king-finder-mode");
+      board.classList.remove("king-find-hidden");
+
+      active = true;
+      roundOver = false;
+      kingFinderStarted = true;
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = showReadySetGo ? "countdown" : "waiting";
+
+      scoreLabelEl.textContent = "Kings";
+      scoreEl.textContent = `${kingFinderRound}/10`;
+      timeLeftEl.textContent = "5";
+      roundStateEl.textContent = showReadySetGo ? "Ready" : `King ${kingFinderRound + 1}`;
+      targetLabelEl.textContent = showReadySetGo ? "King finder" : "Get ready";
+      clearInstructionTarget();
+      renderKingProgress();
+
+      if (showReadySetGo) {
+        const words = ["Ready", "Set", "GO"];
+        words.forEach((word, index) => {
+          const timerId = window.setTimeout(() => {
+            showKingCountdownWord(word);
+            playKingCountdownTone(word);
+            roundStateEl.textContent = word;
+          }, index * 1000);
+          kingFinderCountdownTimers.push(timerId);
+        });
+      } else {
+        hideKingCountdownWord();
+      }
+
+      // Always wait 3 seconds before the next position appears.
+      kingFinderPreRoundTimer = window.setTimeout(() => {
+        hideKingCountdownWord();
+        startKingFinderRound();
+      }, 3000);
+    }
+
+    function startKingFinderRound() {
+      clearKingFinderTimers();
+      hideKingCountdownWord();
+
+      if (kingFinderRound >= 10) {
+        endKingFinder(true);
+        return;
+      }
+
+      active = true;
+      roundOver = false;
+      kingFinderStarted = true;
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = "showing";
+
+      scoreLabelEl.textContent = "Kings";
+      scoreEl.textContent = `${kingFinderRound}/10`;
+      timeLeftEl.textContent = "5";
+      roundStateEl.textContent = `King ${kingFinderRound + 1}`;
+      targetLabelEl.textContent = kingFinderXtreme ? "Memorise the king square — XTREME" : "Memorise the king square";
+      renderKingProgress();
+
+      populateKingFinderPieces();
+
+      const revealMs = kingFinderRevealMs(kingFinderRound);
+      kingFinderRevealTimer = window.setTimeout(() => {
+        if (!active || currentMode !== "kingFinder" || roundOver || kingFinderPhase !== "showing") return;
+        startKingFinderGuessWindow();
+      }, revealMs);
+    }
+
+    function startKingFinderGuessWindow() {
+      board.classList.add("king-find-hidden");
+      kingFinderPhase = "guessing";
+      kingFinderAcceptingGuess = true;
+      targetLabelEl.textContent = "Click the square that had the king";
+      timeLeftEl.textContent = "5";
+
+      kingFinderGuessStartedAt = Date.now();
+      const guessEndsAt = kingFinderGuessStartedAt + 5000;
+
+      const tickGuess = () => {
+        if (!kingFinderAcceptingGuess || currentMode !== "kingFinder" || roundOver || kingFinderPhase !== "guessing") return;
+        const left = Math.max(0, Math.ceil((guessEndsAt - Date.now()) / 1000));
+        timeLeftEl.textContent = left;
+        if (left > 0) {
+          kingFinderGuessTickTimer = window.setTimeout(tickGuess, 100);
+        }
+      };
+
+      tickGuess();
+
+      kingFinderGuessTimeoutTimer = window.setTimeout(() => {
+        if (kingFinderAcceptingGuess && currentMode === "kingFinder" && kingFinderPhase === "guessing") {
+          revealKingFinderAnswer();
+          endKingFinder(false, "Time up.");
+        }
+      }, 5000);
+    }
+
+    function handleKingFinderClick(squareName, squareEl) {
+      if (currentMode !== "kingFinder" || roundOver) return;
+
+      if (kingFinderPhase === "idle" || (!active && !roundOver)) {
+        startKingFinderGame();
+        return;
+      }
+
+      // During the pre-flash pause and the visible flash, clicks are ignored.
+      if (!kingFinderAcceptingGuess || kingFinderPhase !== "guessing") {
+        return;
+      }
+
+      clearKingFinderTimers();
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = "checking";
+      board.classList.remove("king-find-hidden");
+
+      if (squareName === kingFinderTargetSquare) {
+        board.classList.remove("king-find-hidden");
+        squareEl.classList.add("king-answer");
+        flashSquare(squareEl, "correct");
+        playKingFinderDing();
+        const guessElapsedMs = Math.max(0, Date.now() - kingFinderGuessStartedAt);
+        kingFinderTotalGuessMs += Math.min(3000, guessElapsedMs);
+        kingFinderRound += 1;
+        kingFinderFinalTimeScore = kingFinderTotalGuessMs / 1000;
+        scoreEl.textContent = `${kingFinderRound}/10`;
+        renderKingProgress();
+        roundStateEl.textContent = "Correct";
+        targetLabelEl.textContent = "Correct";
+
+        if (kingFinderRound >= 10) {
+          window.setTimeout(() => {
+            clearKingFinderAnswerMark();
+            endKingFinder(true);
+          }, 2000);
+        } else {
+          window.setTimeout(() => {
+            clearKingFinderAnswerMark();
+            prepareKingFinderRound(false);
+          }, 2000);
+        }
+      } else {
+        flashSquare(squareEl, "wrong");
+        revealKingFinderAnswer();
+        endKingFinder(false, `Wrong square. The king was on ${kingFinderTargetSquare}.`);
+      }
+    }
+
+    function revealKingFinderAnswer() {
+      board.classList.remove("king-find-hidden");
+      if (kingFinderTargetSquare) {
+        const targetSquare = document.querySelector(`[data-square="${kingFinderTargetSquare}"]`);
+        if (targetSquare) {
+          targetSquare.classList.add("king-answer");
+        }
+      }
+    }
+
+    function endKingFinder(won, reason = "") {
+      clearKingFinderTimers();
+      hideKingCountdownWord();
+      active = false;
+      roundOver = true;
+      kingFinderStarted = false;
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = "ended";
+      board.classList.remove("king-find-hidden");
+
+      if (won) {
+        board.classList.remove("king-finder-mode");
+      }
+
+      timeLeftEl.textContent = "0";
+      scoreLabelEl.textContent = "Kings";
+      scoreEl.textContent = won ? `${kingFinderFinalTimeScore.toFixed(2)}/30` : `${kingFinderRound}/10`;
+      roundStateEl.textContent = won ? "Won" : "Done";
+      targetLabelEl.textContent = won ? "King finder complete" : "King finder failed";
+      renderKingProgress();
+
+      if (won) {
+        playEndJingle();
+        saveScore(kingFinderFinalTimeScore, 0);
+        renderScores();
+        newRoundBtn.textContent = "New round";
+        showResultModal(kingFinderRound, 0);
+      } else {
+        playWrongSound();
+        renderScores();
+        newRoundBtn.textContent = "New round";
+        window.setTimeout(() => {
+          if (currentMode === "kingFinder" && roundOver) {
+            showResultModal(kingFinderRound, 0);
+          }
+        }, 700);
+      }
+    }
+
+
+    function playKingFinderDing() {
+      // High reward ding for correct King finder guesses.
+      playTone(1047, 0.00, 0.09, 0.30, "sine");
+      playTone(1568, 0.04, 0.13, 0.18, "triangle");
+      playTone(2093, 0.12, 0.12, 0.11, "sine");
+    }
+
+    function shouldTriggerBonus(msLeft) {
+      if (currentMode !== "sprint" || targetMode === "piece" || msLeft <= 5000) return false;
+
+      // Do not trigger almost immediately.
+      if (normalClickCount < 2) return false;
+
+      // 1 in 6 chance on each eligible normal click.
+      if (Math.random() < (1 / 6)) return true;
+
+      // Guarantee at least one bonus round per 30s sprint.
+      if (bonusCountThisRound === 0 && msLeft <= guaranteedBonusDeadlineMs) return true;
+
+      return false;
+    }
+
+    function handleSquareClick(squareName, squareEl) {
+      if (currentMode === "kingFinder") {
+        handleKingFinderClick(squareName, squareEl);
+        return;
+      }
+
+      if (currentMode === "pickup") {
+        handlePickupSquareClick(squareName, squareEl);
+        return;
+      }
+
+      if (roundOver) {
+        resetRound();
+        return;
+      } else if (!active) {
+        startClockOnFirstClick();
+        return;
+      }
+
+      if (currentMode === "sprint" && Date.now() >= endTime) {
+        endGame();
+        return;
+      }
+
+      if (currentMode === "sixtyFour") {
+        handleSixtyFourClick(squareName, squareEl);
+        return;
+      }
+
+      if (targetMode === "piece") {
+        handleBonusClick(squareName, squareEl);
+        return;
+      }
+
+      if (squareName === currentTarget) {
+        score += 1;
+        scoreEl.textContent = score;
+        flashSquare(squareEl, "correct");
+        messageEl.textContent = `Correct: ${squareName}. +1`;
+        playCorrectSound(nextGameplayPitch());
+      } else {
+        score -= 1;
+        scoreEl.textContent = score;
+        flashSquare(squareEl, "wrong");
+        messageEl.textContent = `Wrong: ${squareName}. Needed ${currentTarget}. -1`;
+        playWrongSound();
+      }
+
+      normalClickCount += 1;
+
+      const msLeft = Math.max(0, endTime - Date.now());
+      if (shouldTriggerBonus(msLeft)) {
+        activateBonusRound();
+      } else {
+        setNormalTarget(false);
+      }
+    }
+
+    function handleSixtyFourClick(squareName, squareEl) {
+      if (!sixtyFourRemaining.includes(currentTarget)) {
+        setNormalTarget(false);
+        return;
+      }
+
+      const nextCompleted = sixtyFourCompleted + 1;
+
+      if (squareName === currentTarget) {
+        playCorrectSound(nextGameplayPitch());
+        markSquareDone(currentTarget, false);
+        messageEl.textContent = `Correct: ${currentTarget}. ${nextCompleted}/64`;
+      } else {
+        penaltySeconds += 5;
+        flashSquare(squareEl, "wrong");
+        playWrongSound();
+        markSquareDone(currentTarget, true);
+        timeLeftEl.textContent = Math.floor((Date.now() - startTime) / 1000) + penaltySeconds;
+        messageEl.textContent = `Wrong: ${squareName}. Needed ${currentTarget}. +5s penalty. ${nextCompleted}/64`;
+      }
+
+      removeFromSixtyFour(currentTarget);
+      scoreEl.textContent = `${sixtyFourCompleted}/64`;
+
+      if (!sixtyFourRemaining.length) {
+        endGame();
+        return;
+      }
+
+      setNormalTarget(false);
+    }
+
+    function handleBonusClick(squareName, squareEl) {
+      const holder = squareEl.querySelector(".piece-holder");
+      const clickedHasPiece = holder && holder.innerHTML.trim().length > 0;
+
+      if (squareName === bonusTargetSquare) {
+        score += 3;
+        scoreEl.textContent = score;
+        flashSquare(squareEl, "correct");
+        messageEl.textContent = `Bonus hit: ${bonusTargetPiece.colour} ${bonusTargetPiece.name}. +3`;
+        playCorrectSound(nextGameplayPitch());
+        roundStateEl.textContent = "Go";
+        bonusUsed = false;
+        setNormalTarget(false);
+        return;
+      }
+
+      score -= 3;
+      scoreEl.textContent = score;
+      flashSquare(squareEl, "wrong");
+      messageEl.textContent = clickedHasPiece
+        ? `Wrong piece. Needed ${bonusTargetPiece.colour} ${bonusTargetPiece.name}. -3`
+        : `Empty square. Needed ${bonusTargetPiece.colour} ${bonusTargetPiece.name}. -3`;
+      playWrongSound();
+      roundStateEl.textContent = "Go";
+      bonusUsed = false;
+      setNormalTarget(false);
+    }
+
+    function flashSquare(squareEl, className) {
+      squareEl.classList.add(className);
+      window.setTimeout(() => {
+        squareEl.classList.remove(className);
+      }, 170);
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+
+      if (currentMode === "kingFinder") {
+        scoreLabelEl.textContent = "Kings";
+        scoreEl.textContent = `${kingFinderRound}/10`;
+        return;
+      }
+
+      if (currentMode === "pickup") {
+        updatePickupTimer();
+        return;
+      }
+
+      if (currentMode === "sixtyFour") {
+        const elapsedSeconds = active ? Math.floor((now - startTime) / 1000) + penaltySeconds : 0;
+        timeLeftEl.textContent = elapsedSeconds;
+        scoreLabelEl.textContent = "Done";
+        scoreEl.textContent = `${sixtyFourCompleted}/64`;
+        roundStateEl.textContent = active ? "64" : "Ready";
+        return;
+      }
+
+      const msLeft = Math.max(0, endTime - now);
+      const secondsLeft = Math.ceil(msLeft / 1000);
+      timeLeftEl.textContent = secondsLeft;
+
+      if (msLeft <= 0) {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      if (!active && roundOver) return;
+
+      const finalScore = score;
+      const elapsedSeconds = startTime
+        ? Math.max(0, Math.round((Date.now() - startTime) / 1000) + (currentMode === "sixtyFour" ? penaltySeconds : 0))
+        : 0;
+
+      active = false;
+      roundOver = true;
+      clearInterval(timer);
+      timer = null;
+      timeLeftEl.textContent = currentMode === "sixtyFour" ? elapsedSeconds : "0";
+      roundStateEl.textContent = "Done";
+      playEndSound();
+      saveScore(currentMode === "sixtyFour" ? 0 : score, elapsedSeconds);
+      renderScores();
+
+      if (currentMode === "sprint") {
+        setNormalTarget(false);
+        messageEl.textContent = `Time up. Final score: ${finalScore}. Close this box or press New round to start again.`;
+      } else {
+        // Prepare the next 64-square round immediately, so the user can see where to click next.
+        sixtyFourRemaining = allSquares();
+        sixtyFourCompleted = 0;
+        penaltySeconds = 0;
+        clearSixtyFourMarks();
+        scoreLabelEl.textContent = "Done";
+        scoreEl.textContent = "0/64";
+        timeLeftEl.textContent = "0";
+        roundStateEl.textContent = "Ready";
+        roundOver = false;
+        setNormalTarget(false);
+        messageEl.textContent = `64 squares complete. Time: ${elapsedSeconds}s. Close this box or press New round to start again.`;
+      }
+
+      newRoundBtn.textContent = "Reset round";
+      showResultModal(finalScore, elapsedSeconds);
+    }
+
+    function rankForScore(value) {
+      if (value <= 0) return { title: "Stationary Tortoise", note: "You were barely moving." };
+      if (value <= 3) return { title: "Tortoise", note: "Slow, but technically alive." };
+      if (value <= 6) return { title: "Sleepy Pawn", note: "You know the board exists. Start there." };
+      if (value <= 10) return { title: "Club Beginner", note: "Getting your eye in." };
+      if (value <= 14) return { title: "Knight Jogger", note: "You were moving decently." };
+      if (value <= 18) return { title: "Rook Runner", note: "Solid speed." };
+      if (value <= 22) return { title: "Queen Hunter", note: "Fast and dangerous." };
+      if (value <= 26) return { title: "Board Demon", note: "Very sharp." };
+      if (value <= 29) return { title: "Grandmaster Brain", note: "Ridiculously quick." };
+      return { title: "Super Genius", note: "That was filthy fast." };
+    }
+
+    function showResultModal(finalScore, elapsedSeconds = 0) {
+      if (currentMode === "sixtyFour") {
+        modalScore.textContent = `${elapsedSeconds}s`;
+        modalRank.textContent = timeRankForSeconds(elapsedSeconds);
+        modalNote.textContent = `You cleared all 64 squares.`;
+      } else if (currentMode === "pickup") {
+        modalScore.textContent = `${Number(elapsedSeconds).toFixed(2)}s`;
+        modalRank.textContent = "PICK UP complete";
+        modalNote.textContent = "Board set up correctly.";
+      } else if (currentMode === "kingFinder") {
+        if (kingFinderRound >= 10) {
+          modalScore.textContent = `${kingFinderFinalTimeScore.toFixed(2)}/30`;
+          modalRank.textContent = kingFinderXtreme ? "XTREME King Finder Winner" : "King Finder Winner";
+          modalNote.textContent = "Total guessing time. Lower is better.";
+        } else {
+          modalScore.textContent = `${kingFinderRound}/10`;
+          modalRank.textContent = kingFinderXtreme ? "XTREME King Finder Failed" : "King Finder Failed";
+          modalNote.textContent = "Score not saved unless you complete all 10 kings.";
+        }
+      } else {
+        const rank = rankForScore(finalScore);
+        modalScore.textContent = finalScore;
+        modalRank.textContent = rank.title;
+        modalNote.textContent = rank.note;
+      }
+      resetModalPosition();
+      resultModal.classList.add("show");
+    }
+
+    function timeRankForSeconds(seconds) {
+      if (seconds <= 70) return "Super Genius";
+      if (seconds <= 90) return "Board Demon";
+      if (seconds <= 110) return "Very Sharp";
+      if (seconds <= 140) return "Solid";
+      if (seconds <= 180) return "Steady";
+      return "Tortoise";
+    }
+
+    function hideResultModal() {
+      resultModal.classList.remove("show");
+    }
+
+    function migrateOldScores() {
+      if (localStorage.getItem(scoreStorageKey)) return;
+
+      try {
+        const oldScores = JSON.parse(localStorage.getItem(oldScoreStorageKey)) || [];
+        if (oldScores.length) {
+          localStorage.setItem(scoreStorageKey, JSON.stringify(oldScores));
+        }
+      } catch {}
+    }
+
+    function getScores() {
+      migrateOldScores();
+      try {
+        return JSON.parse(localStorage.getItem(scoreStorageKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveScore(finalScore, elapsedSeconds = null) {
+      const scores = getScores();
+      const storedMode = currentMode === "kingFinder" && kingFinderXtreme ? "kingFinderXtreme" : currentMode;
+
+      scores.push({
+        score: finalScore,
+        timeSeconds: elapsedSeconds,
+        mode: storedMode,
+        scoreType: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? "kingFinderTime" : "standard",
+        completed: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? true : undefined,
+        date: new Date().toLocaleString([], {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      });
+
+      const trimmed = scores
+        .filter(item => Number.isFinite(Number(item.score)))
+        .slice(-150);
+
+      localStorage.setItem(scoreStorageKey, JSON.stringify(trimmed));
+    }
+
+    function topSprintScores() {
+      return getScores()
+        .filter(item => !item.mode || item.mode === "sprint")
+        .slice()
+        .sort((a, b) => {
+          const byScore = Number(b.score) - Number(a.score);
+          if (byScore !== 0) return byScore;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 10);
+    }
+
+    function topSixtyFourTimes() {
+      return getScores()
+        .filter(item => item.mode === "sixtyFour" && Number.isFinite(Number(item.timeSeconds)))
+        .slice()
+        .sort((a, b) => {
+          const byTime = Number(a.timeSeconds) - Number(b.timeSeconds);
+          if (byTime !== 0) return byTime;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 10);
+    }
+
+    function topPickupTimes() {
+      return getScores()
+        .filter(item => item.mode === "pickup" && Number.isFinite(Number(item.timeSeconds)))
+        .slice()
+        .sort((a, b) => {
+          const byTime = Number(a.timeSeconds) - Number(b.timeSeconds);
+          if (byTime !== 0) return byTime;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 10);
+    }
+
+    function topKingFinderScores(modeKey) {
+      return getScores()
+        .filter(item =>
+          item.mode === modeKey &&
+          item.scoreType === "kingFinderTime" &&
+          item.completed === true &&
+          Number.isFinite(Number(item.score)) &&
+          Number(item.score) > 0
+        )
+        .slice()
+        .sort((a, b) => {
+          const byTime = Number(a.score) - Number(b.score);
+          if (byTime !== 0) return byTime;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 10);
+    }
+
+    function renderScores() {
+      const sprintScores = topSprintScores();
+      const high = sprintScores.length ? Number(sprintScores[0].score) : 0;
+      highScoreEl.textContent = high;
+
+      scoresListEl.innerHTML = "";
+      if (!sprintScores.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No sprint scores yet</span><strong>—</strong>`;
+        scoresListEl.appendChild(empty);
+      } else {
+        sprintScores.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${item.score}</strong>`;
+          scoresListEl.appendChild(li);
+        });
+      }
+
+      const times = topSixtyFourTimes();
+      bestTimeEl.textContent = times.length ? `${times[0].timeSeconds}s` : "—";
+
+      timeScoresListEl.innerHTML = "";
+      if (!times.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No 64-square times yet</span><strong>—</strong>`;
+        timeScoresListEl.appendChild(empty);
+      } else {
+        times.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${item.timeSeconds}s</strong>`;
+          timeScoresListEl.appendChild(li);
+        });
+      }
+
+      const pickupTimes = topPickupTimes();
+      bestPickupEl.textContent = pickupTimes.length ? `${Number(pickupTimes[0].timeSeconds).toFixed(2)}s` : "—";
+      pickupScoresListEl.innerHTML = "";
+      if (!pickupTimes.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No PICK UP times yet</span><strong>—</strong>`;
+        pickupScoresListEl.appendChild(empty);
+      } else {
+        pickupTimes.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.timeSeconds).toFixed(2)}s</strong>`;
+          pickupScoresListEl.appendChild(li);
+        });
+      }
+
+      const kingScores = topKingFinderScores("kingFinder");
+      bestKingFinderEl.textContent = kingScores.length ? `${Number(kingScores[0].score).toFixed(2)}/30` : "—";
+      kingFinderScoresListEl.innerHTML = "";
+      if (!kingScores.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No King finder wins yet</span><strong>—</strong>`;
+        kingFinderScoresListEl.appendChild(empty);
+      } else {
+        kingScores.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.score).toFixed(2)}/30</strong>`;
+          kingFinderScoresListEl.appendChild(li);
+        });
+      }
+
+      const kingXtremeScores = topKingFinderScores("kingFinderXtreme");
+      bestKingFinderXtremeEl.textContent = kingXtremeScores.length ? `${Number(kingXtremeScores[0].score).toFixed(2)}/30` : "—";
+      kingFinderXtremeScoresListEl.innerHTML = "";
+      if (!kingXtremeScores.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No XTREME wins yet</span><strong>—</strong>`;
+        kingFinderXtremeScoresListEl.appendChild(empty);
+      } else {
+        kingXtremeScores.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.score).toFixed(2)}/30</strong>`;
+          kingFinderXtremeScoresListEl.appendChild(li);
+        });
+      }
+    }
+
+    function updateLeaderboardVisibility() {
+      const show64 = currentMode === "sixtyFour";
+      const showSprint = currentMode === "sprint";
+      const showPickup = currentMode === "pickup";
+      const showKing = currentMode === "kingFinder" && !kingFinderXtreme;
+      const showKingXtreme = currentMode === "kingFinder" && kingFinderXtreme;
+
+      sprintLeaderboard.classList.toggle("hidden", !showSprint);
+      sixtyFourLeaderboard.classList.toggle("hidden", !show64);
+      pickupLeaderboard.classList.toggle("hidden", !showPickup);
+      kingFinderLeaderboard.classList.toggle("hidden", !showKing);
+      kingFinderXtremeLeaderboard.classList.toggle("hidden", !showKingXtreme);
+    }
+
+    function clearScores() {
+      localStorage.removeItem(scoreStorageKey);
+      localStorage.removeItem(oldScoreStorageKey);
+      renderScores();
+      messageEl.textContent = "Leaderboards cleared.";
+    }
+
+    function loadMode() {
+      const savedMode = localStorage.getItem(modeStorageKey);
+      setMode(gameModes[savedMode] ? savedMode : "sprint", false);
+    }
+
+
+    function updateKingXtremeVisibility() {
+      const isKingFinder = currentMode === "kingFinder";
+      kingXtremePanel.classList.toggle("hidden", !isKingFinder);
+    }
+
+    function loadKingXtremeMode() {
+      kingFinderXtreme = localStorage.getItem(kingXtremeStorageKey) === "true";
+      kingXtremeToggle.checked = kingFinderXtreme;
+    }
+
+    function setKingXtremeMode(enabled) {
+      kingFinderXtreme = Boolean(enabled);
+      kingXtremeToggle.checked = kingFinderXtreme;
+      localStorage.setItem(kingXtremeStorageKey, kingFinderXtreme ? "true" : "false");
+
+      if (currentMode === "kingFinder") {
+        resetRound();
+        targetLabelEl.textContent = kingFinderXtreme
+          ? "Click anywhere on the board to start XTREME MODE"
+          : "Click anywhere on the board to start the game";
+        renderKingProgress();
+        updateLeaderboardVisibility();
+        renderScores();
+      }
+    }
+
+    function setMode(modeKey, showMessage = true) {
+      currentMode = gameModes[modeKey] ? modeKey : "sprint";
+      localStorage.setItem(modeStorageKey, currentMode);
+
+      document.querySelectorAll(".mode-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.mode === currentMode);
+      });
+
+      resetRound();
+
+      if (currentMode === "kingFinder") {
+        scoreLabelEl.textContent = "Kings";
+        scoreEl.textContent = "0/10";
+        timeLeftEl.textContent = "5";
+        roundStateEl.textContent = "Ready";
+        targetMode = "kingFinder";
+        targetLabelEl.textContent = "King finder";
+        renderKingProgress();
+        setInstructionTarget("Click anywhere on the board to start");
+      } else if (currentMode === "pickup") {
+        preparePickupMode();
+      }
+
+      updateKingXtremeVisibility();
+      updateLeaderboardVisibility();
+      renderScores();
+
+      if (showMessage) {
+        messageEl.textContent = currentMode === "kingFinder"
+          ? "King finder selected. Click anywhere on the board to start the game."
+          : currentMode === "pickup"
+            ? "PICK UP selected. Click anywhere on the board to start."
+            : `${gameModes[currentMode].name} mode selected.`;
+      }
+    }
+
+    function loadPieceStyle() {
+      const savedStyle = localStorage.getItem(pieceStyleStorageKey);
+      setPieceStyle(pieceStyles[savedStyle] ? savedStyle : "woodcut", false);
+    }
+
+    function setPieceStyle(styleKey, showMessage = true) {
+      const oldMap = {
+        classic: "woodcut",
+        staunton: "woodcut",
+        modern: "line",
+        minimal: "line",
+        block: "pixel",
+        threeD: "pixel",
+        cartoon: "pixel"
+      };
+      styleKey = oldMap[styleKey] || styleKey;
+      currentPieceStyle = pieceStyles[styleKey] ? styleKey : "woodcut";
+      localStorage.setItem(pieceStyleStorageKey, currentPieceStyle);
+
+  
+      document.querySelectorAll(".piece-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.pieceStyle === currentPieceStyle);
+      });
+
+      if (showMessage) {
+        messageEl.textContent = `${pieceStyles[currentPieceStyle].name} pieces selected.`;
+      }
+    }
+
+
+    function applyCustomThemeValues(light, dark) {
+      boardThemes.custom.light = light;
+      boardThemes.custom.dark = dark;
+      boardThemes.custom.lightBackground = light;
+      boardThemes.custom.darkBackground = dark;
+      boardThemes.custom.border = "#111";
+      boardThemes.custom.labelColour = "rgba(0,0,0,0.62)";
+    }
+
+    function saveAndApplyCustomTheme() {
+      const light = customLightInput.value;
+      const dark = customDarkInput.value;
+      applyCustomThemeValues(light, dark);
+      localStorage.setItem(customThemeStorageKey, JSON.stringify({ light, dark }));
+      buildThemeButtons();
+      setTheme("custom", true);
+    }
+
+    function loadCustomTheme() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(customThemeStorageKey) || "null");
+        if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.light) && /^#[0-9a-fA-F]{6}$/.test(saved.dark)) {
+          customLightInput.value = saved.light;
+          customDarkInput.value = saved.dark;
+          applyCustomThemeValues(saved.light, saved.dark);
+        }
+      } catch {
+        localStorage.removeItem(customThemeStorageKey);
+      }
+    }
+
+    function loadTheme() {
+      let savedTheme = localStorage.getItem(themeStorageKey);
+
+      if (!savedTheme) {
+        try {
+          const oldColours = JSON.parse(localStorage.getItem(oldColourStorageKey));
+          if (oldColours && oldColours.light && oldColours.dark) {
+            const closestTheme = Object.entries(boardThemes).find(([, theme]) => {
+              return theme.light.toLowerCase() === oldColours.light.toLowerCase()
+                && theme.dark.toLowerCase() === oldColours.dark.toLowerCase();
+            });
+            savedTheme = closestTheme ? closestTheme[0] : "classic";
+          }
+        } catch {}
+      }
+
+      if (!savedTheme || !boardThemes[savedTheme]) {
+        savedTheme = "classic";
+      }
+
+      setTheme(savedTheme, false);
+    }
+
+    function setTheme(themeKey, showMessage = true) {
+      const theme = boardThemes[themeKey] || boardThemes.classic;
+      board.classList.toggle("rainbow-board-active", themeKey === "rainbow");
+      document.documentElement.style.setProperty("--light-square", theme.light);
+      document.documentElement.style.setProperty("--dark-square", theme.dark);
+      document.documentElement.style.setProperty("--light-square-bg", theme.lightBackground);
+      document.documentElement.style.setProperty("--dark-square-bg", theme.darkBackground);
+      document.documentElement.style.setProperty("--board-border", theme.border);
+      document.documentElement.style.setProperty("--board-piece-colour", theme.pieceColour);
+      document.documentElement.style.setProperty("--label-colour", theme.labelColour);
+
+      const isDiagram = themeKey === "diagram";
+      document.documentElement.style.setProperty("--cleared-square", isDiagram ? "#1a1a1a" : "#111");
+      document.documentElement.style.setProperty("--cleared-outline", isDiagram ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.55)");
+      document.documentElement.style.setProperty("--missed-square", isDiagram ? "#260707" : "#1b0505");
+
+      if (themeKey !== "rainbow") {
+        localStorage.setItem(themeStorageKey, themeKey);
+
+        if (rainbowUnlocked && showMessage) {
+          rainbowUnlocked = false;
+          localStorage.removeItem(rainbowUnlockedStorageKey);
+          buildThemeButtons();
+        }
+      }
+
+      document.querySelectorAll(".theme-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.theme === themeKey);
+      });
+
+      if (showMessage) {
+        messageEl.textContent = `${theme.name} board selected.`;
+      }
+    }
+
+    async function toggleFullscreen() {
+      try {
+        if (!document.fullscreenElement) {
+          await app.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch {
+        messageEl.textContent = "Fullscreen was blocked by the browser.";
+      }
+    }
+
+    function updateFullscreenButton() {
+      fullscreenBtn.textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
+      window.setTimeout(sizeBoardToWindow, 80);
+    }
+
+    function ensureAudioContext() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return null;
+
+      if (!audioContext) {
+        audioContext = new AudioCtx();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      return audioContext;
+    }
+
+    function playTone(frequency, startOffset, duration, volume = 0.055, type = "sine") {
+      const ctx = ensureAudioContext();
+      if (!ctx) return;
+
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, ctx.currentTime + startOffset);
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + startOffset);
+      gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + startOffset + 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + startOffset + duration);
+
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+
+      oscillator.start(ctx.currentTime + startOffset);
+      oscillator.stop(ctx.currentTime + startOffset + duration + 0.025);
+    }
+
+    function playCorrectSound(baseFrequency) {
+      // Softer bell/chime instead of a harsh square beep.
+      playTone(baseFrequency, 0.00, 0.15, 0.30, "triangle");
+      playTone(baseFrequency * 2.01, 0.012, 0.11, 0.09, "sine");
+    }
+
+    function playWrongSound() {
+      playTone(78, 0.00, 0.18, 0.28, "sawtooth");
+      playTone(55, 0.05, 0.18, 0.16, "triangle");
+    }
+
+    function playStartSound() {
+      playTone(130, 0.00, 0.12, 0.24, "triangle");
+      playTone(190, 0.12, 0.12, 0.24, "triangle");
+      playTone(260, 0.24, 0.20, 0.22, "triangle");
+    }
+
+    function playEndSound() {
+      playEndJingle();
+    }
+
+    function playEndJingle() {
+      // Clearer round-end jingle.
+      playTone(523, 0.00, 0.11, 0.32, "triangle");
+      playTone(659, 0.12, 0.11, 0.32, "triangle");
+      playTone(784, 0.24, 0.13, 0.34, "triangle");
+      playTone(1047, 0.40, 0.24, 0.32, "triangle");
+
+      // Finishing chord.
+      playTone(523, 0.68, 0.35, 0.18, "sine");
+      playTone(659, 0.68, 0.35, 0.16, "sine");
+      playTone(784, 0.68, 0.35, 0.14, "sine");
+      playTone(1047, 0.86, 0.20, 0.18, "triangle");
+    }
+
+    function playBonusCorrectSound(baseFrequency) {
+      playCorrectSound(baseFrequency);
+    }
+
+
+    function resetModalPosition() {
+      modalBox.style.left = "";
+      modalBox.style.top = "";
+      modalBox.style.transform = "";
+      modalBox.style.position = "";
+    }
+
+    function makeModalDraggable() {
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+
+      const beginDrag = (event) => {
+        if (event.target.closest("button")) return;
+
+        const rect = modalBox.getBoundingClientRect();
+        dragging = true;
+        modalBox.classList.add("dragging");
+        modalBox.style.position = "fixed";
+        modalBox.style.left = `${rect.left}px`;
+        modalBox.style.top = `${rect.top}px`;
+        modalBox.style.transform = "none";
+
+        startX = event.clientX;
+        startY = event.clientY;
+        startLeft = rect.left;
+        startTop = rect.top;
+
+        modalBox.setPointerCapture?.(event.pointerId);
+      };
+
+      const moveDrag = (event) => {
+        if (!dragging) return;
+
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        const width = modalBox.offsetWidth;
+        const height = modalBox.offsetHeight;
+        const maxLeft = Math.max(0, window.innerWidth - width);
+        const maxTop = Math.max(0, window.innerHeight - height);
+
+        const nextLeft = Math.min(maxLeft, Math.max(0, startLeft + dx));
+        const nextTop = Math.min(maxTop, Math.max(0, startTop + dy));
+
+        modalBox.style.left = `${nextLeft}px`;
+        modalBox.style.top = `${nextTop}px`;
+      };
+
+      const endDrag = (event) => {
+        if (!dragging) return;
+        dragging = false;
+        modalBox.classList.remove("dragging");
+        modalBox.releasePointerCapture?.(event.pointerId);
+      };
+
+      modalBox.addEventListener("pointerdown", beginDrag);
+      modalBox.addEventListener("pointermove", moveDrag);
+      modalBox.addEventListener("pointerup", endDrag);
+      modalBox.addEventListener("pointercancel", endDrag);
+    }
+
+    makeModalDraggable();
+
+
+
+
+    function showInstructions() {
+      instructionsModal.classList.add("show");
+    }
+
+    function hideInstructions() {
+      instructionsModal.classList.remove("show");
+    }
+
+    instructionsBtn.addEventListener("click", showInstructions);
+    instructionsClose.addEventListener("click", hideInstructions);
+    instructionsModal.addEventListener("click", event => {
+      if (event.target === instructionsModal) hideInstructions();
+    });
+
+    function showRainbowToast() {
+      clearTimeout(rainbowToastTimer);
+      rainbowToast.classList.add("show");
+      rainbowToastTimer = window.setTimeout(() => {
+        rainbowToast.classList.remove("show");
+      }, 2200);
+    }
+
+    function activateRainbowEgg() {
+      regenerateRainbowBoardColours();
+
+      if (!rainbowUnlocked) {
+        rainbowUnlocked = true;
+        localStorage.removeItem(rainbowUnlockedStorageKey);
+        buildThemeButtons();
+      }
+
+      playEndJingle();
+      setTheme("rainbow", false);
+      showRainbowToast();
+    }
+
+    rainbowEgg.addEventListener("click", event => {
+      event.stopPropagation();
+      activateRainbowEgg();
+    });
+
+    rainbowEgg.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        activateRainbowEgg();
+      }
+    });
+
+    function showEasterEgg() {
+      easterEggModal.classList.add("show");
+    }
+
+    function hideEasterEgg() {
+      easterEggModal.classList.remove("show");
+    }
+
+    logoKing.addEventListener("click", showEasterEgg);
+    logoKing.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showEasterEgg();
+      }
+    });
+    easterEggClose.addEventListener("click", hideEasterEgg);
+    easterEggModal.addEventListener("click", event => {
+      if (event.target === easterEggModal) hideEasterEgg();
+    });
+
+    newRoundBtn.addEventListener("click", resetRound);
+    resetScoresBtn.addEventListener("click", clearScores);
+    applyCustomBoardBtn.addEventListener("click", saveAndApplyCustomTheme);
+    kingXtremeToggle.addEventListener("change", () => setKingXtremeMode(kingXtremeToggle.checked));
+    fullscreenBtn.addEventListener("click", toggleFullscreen);
+    modalCloseBtn.addEventListener("click", () => {
+      hideResultModal();
+      resetRound();
+    });
+    modalAgainBtn.addEventListener("click", resetRound);
+    resultModal.addEventListener("click", event => {
+      if (event.target === resultModal) hideResultModal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        hideResultModal();
+        hideEasterEgg();
+        hideInstructions();
+        rainbowToast.classList.remove("show");
+      }
+    });
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+    window.addEventListener("resize", () => window.setTimeout(sizeBoardToWindow, 50));
+    window.addEventListener("orientationchange", () => window.setTimeout(sizeBoardToWindow, 250));
+
+    buildBoard();
+    loadKingXtremeMode();
+    rainbowUnlocked = false;
+    localStorage.removeItem(rainbowUnlockedStorageKey);
+    loadCustomTheme();
+    buildThemeButtons();
+    buildModeButtons();
+    loadTheme();
+    loadMode();
+    renderScores();
+    updateLeaderboardVisibility();
+    window.setTimeout(sizeBoardToWindow, 50);
+  </script>
+</body>
+</html>
