@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Chess Sprint v0.77</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>KWIK CHESS v0.78 BETA</title>
+<style>
     :root {
       --light-square: #f0d9b5;
       --dark-square: #b58863;
@@ -1523,7 +1524,7 @@
     }
 
 
-    /* v0.50: CHESS SPRINT branding */
+    /* v0.50: KWIK CHESS branding */
     .brand,
     .app-title,
     header h1,
@@ -1651,7 +1652,7 @@
     }
 
 
-    /* v0.52: CHESS ♚ SPRINT logo */
+    /* v0.52: KWIK ♚ CHESS logo */
     .wordmark {
       display: inline-flex !important;
       align-items: baseline !important;
@@ -3486,6 +3487,24 @@
       -webkit-text-stroke: 0.9px rgba(12,12,14,0.94) !important;
     }
 
+
+    /* v0.78 BETA: keep release version centred above logo */
+    .app-header .title-wrap .version {
+      text-align: center !important;
+      width: 100% !important;
+    }
+
+
+    .easter-version {
+      margin-top: 14px !important;
+      font-size: 0.72rem !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      color: var(--muted) !important;
+      text-align: center !important;
+      font-weight: 800 !important;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -3682,209 +3701,183 @@
   </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <header class="app-header">
-      <div class="title-wrap">
-        <div class="version">Version 0.77</div>
-        <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
-      </div>
-      <div class="header-actions">
-        <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
-      </div>
-    </header>
-
-    <main class="main-panel">
-      <section class="top-strip" aria-label="Game stats">
-        <div class="stat">
-          <div class="stat-label">Time</div>
-          <div class="stat-value" id="timeLeft">30</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label" id="scoreLabel">Score</div>
-          <div class="stat-value" id="score">0</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Round</div>
-          <div class="stat-value" id="roundState">Ready</div>
-        </div>
-      </section>
-
-      <section class="target-box" id="targetBox" aria-live="polite">
-        <div class="target-label" id="targetLabel">Click this square</div>
-        <div class="target" id="targetSquare">A1</div>
-      </section>
-
-      <div class="board-wrap" id="boardWrap">
-        <div class="board-frame" aria-label="Chess board with outside coordinates">
-          <div class="outside-ranks" aria-hidden="true">
-            <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
-          </div>
-          <div class="board" id="board" aria-label="Chess board"></div>
-          <div class="outside-files" aria-hidden="true">
-            <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span>
-          </div>
-        </div>
-        <div class="pickup-layer hidden" id="pickupLayer" aria-label="Pick up pieces"></div>
-      </div>
-    </main>
-
-    <aside class="side-panel" id="sidePanel">
-      <div class="mobile-menu-header" aria-hidden="true">
-        <button class="mobile-back-button" id="mobileBackBtn" type="button">← Board</button>
-        <div class="mobile-menu-title" id="mobileMenuTitle">Menu</div>
-      </div>
-      <section class="controls settings">
-        <button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
-        <div class="message" id="message">Click the target square to start the timer.</div>
-
-        <div class="section-heading-row">
-          <h2>Game mode</h2>
-          <button class="tiny-info-button" id="instructionsBtn" type="button" aria-label="Game instructions">i</button>
-        </div>
-        <div class="mode-grid" id="modeGrid"></div>
-
-        <div class="king-xtreme-toggle hidden" id="kingXtremePanel">
-          <span>XTREME MODE</span>
-          <label class="switch">
-            <input type="checkbox" id="kingXtremeToggle">
-            <span class="slider"></span>
-          </label>
-          <small>All 64 squares filled</small>
-        </div>
-
-        <h2 class="board-type-heading">Board type</h2>
-        <div class="theme-grid" id="themeGrid"></div>
-
-        <div class="custom-board" aria-label="Custom board colours">
-          <div class="custom-board-title">Custom colours</div>
-          <div class="custom-colour-row">
-            <label>
-              <span>Light</span>
-              <input type="color" id="customLight" value="#eeeed2">
-            </label>
-            <label>
-              <span>Dark</span>
-              <input type="color" id="customDark" value="#769656">
-            </label>
-          </div>
-          <button class="custom-board-apply" type="button" id="applyCustomBoard">Apply custom board</button>
-        </div>
-
-        <section class="scoreboard" id="sprintLeaderboard" aria-live="polite">
-          <h2>30s sprint leaderboard</h2>
-          <div class="high-score">
-            <div class="stat-label">Best score</div>
-            <div class="big" id="highScore">0</div>
-          </div>
-          <ul class="scores-list" id="scoresList"></ul>
-        </section>
-
-        <section class="scoreboard" id="sixtyFourLeaderboard" aria-live="polite">
-          <h2>64 squares leaderboard</h2>
-          <div class="high-score">
-            <div class="stat-label">Best time</div>
-            <div class="big" id="bestTime">—</div>
-          </div>
-          <ul class="scores-list" id="timeScoresList"></ul>
-        </section>
-
-        <section class="scoreboard hidden" id="pickupLeaderboard" aria-live="polite">
-          <h2>PICK UP leaderboard</h2>
-          <div class="high-score">
-            <div class="stat-label">Best time</div>
-            <div class="big" id="bestPickup">—</div>
-          </div>
-          <ul class="scores-list" id="pickupScoresList"></ul>
-        </section>
-
-        <section class="scoreboard hidden" id="kingFinderLeaderboard" aria-live="polite">
-          <h2>King finder leaderboard</h2>
-          <div class="high-score">
-            <div class="stat-label">Best time</div>
-            <div class="big" id="bestKingFinder">—</div>
-          </div>
-          <ul class="scores-list" id="kingFinderScoresList"></ul>
-        </section>
-
-        <section class="scoreboard hidden" id="kingFinderXtremeLeaderboard" aria-live="polite">
-          <h2>King finder XTREME leaderboard</h2>
-          <div class="high-score">
-            <div class="stat-label">Best time</div>
-            <div class="big" id="bestKingFinderXtreme">—</div>
-          </div>
-          <ul class="scores-list" id="kingFinderXtremeScoresList"></ul>
-        </section>
-
-        <button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
-      </section>
-    </aside>
-
-    <button class="mobile-return-button" id="mobileReturnBtn" type="button">Return to board</button>
-
-    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile menu">
-      <button class="mobile-nav-button" type="button" data-mobile-page="game">
-        <span class="mobile-nav-title">Game mode</span>
-        <span class="mobile-nav-value" id="mobileNavGameValue">30s sprint</span>
-      </button>
-      <button class="mobile-nav-button" type="button" data-mobile-page="board">
-        <span class="mobile-nav-title">Style</span>
-        <span class="mobile-nav-value" id="mobileNavStyleValue">Classic</span>
-      </button>
-      <button class="mobile-nav-button" type="button" data-mobile-page="scores">
-        <span class="mobile-nav-title">Leaderboard</span>
-        <span class="mobile-nav-value" id="mobileNavScoreValue">1st: —</span>
-      </button>
-    </nav>
-
-    <div class="modal-backdrop" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
-    <div class="modal">
-      <h2 id="resultTitle">Time up</h2>
-      <div class="modal-score" id="modalScore">0</div>
-      <div class="modal-rank" id="modalRank">Tortoise</div>
-      <p class="modal-note" id="modalNote">Click below for another go.</p>
-      <div class="modal-actions">
-        <button class="action" id="modalAgainBtn">Another round</button>
-        <button class="action secondary" id="modalCloseBtn">Close</button>
-      </div>
-    </div>
-    </div>
-
-    <div class="easter-modal-backdrop" id="easterEggModal" role="dialog" aria-modal="true" aria-labelledby="easterEggTitle">
-      <div class="easter-modal">
-        <button class="easter-close" id="easterEggClose" type="button" aria-label="Close">×</button>
-        <h2 id="easterEggTitle" class="easter-logo"><span>CHESS</span><span class="easter-logo-king">♚</span><span>SPRINT</span></h2>
-        <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
-        <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
-        <p>CHESS SPRINT is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="rainbowToast" class="rainbow-toast" role="status" aria-live="polite">Rainbow mode activated</div>
-
-  <div class="instructions-modal-backdrop" id="instructionsModal" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
-    <div class="instructions-modal">
-      <button class="instructions-close" id="instructionsClose" type="button" aria-label="Close">×</button>
-      <h2 id="instructionsTitle">How to play</h2>
-
-      <h3>30s sprint</h3>
-      <p>You have 30 seconds to click the square shown at the top of the screen. Correct clicks score points, wrong clicks lose points, and bonus piece rounds may appear to keep you awake. This mode is about speed, board vision, and getting your mouse moving fast without freezing.</p>
-
-      <h3>64 squares</h3>
-      <p>Every square on the board appears once. Click the requested square as quickly as you can until all 64 are cleared. Wrong clicks add time, so this is less frantic than Sprint but more exacting: learn the board properly and your time will fall.</p>
-
-      <h3>King finder</h3>
-      <p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
-
-      <h3>PICK UP</h3>
-      <p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square.</p>
-
-      <p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
-    </div>
-  </div>
-
-  <script>
-    const VERSION = "0.77";
+<div class="app" id="app">
+<header class="app-header">
+<div class="title-wrap">
+<h1 class="wordmark"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0">♚</span><span class="wordmark-text">CHESS</span></h1>
+</div>
+<div class="header-actions">
+<button class="action secondary" id="fullscreenBtn">Fullscreen</button>
+</div>
+</header>
+<main class="main-panel">
+<section aria-label="Game stats" class="top-strip">
+<div class="stat">
+<div class="stat-label">Time</div>
+<div class="stat-value" id="timeLeft">30</div>
+</div>
+<div class="stat">
+<div class="stat-label" id="scoreLabel">Score</div>
+<div class="stat-value" id="score">0</div>
+</div>
+<div class="stat">
+<div class="stat-label">Round</div>
+<div class="stat-value" id="roundState">Ready</div>
+</div>
+</section>
+<section aria-live="polite" class="target-box" id="targetBox">
+<div class="target-label" id="targetLabel">Click this square</div>
+<div class="target" id="targetSquare">A1</div>
+</section>
+<div class="board-wrap" id="boardWrap">
+<div aria-label="Chess board with outside coordinates" class="board-frame">
+<div aria-hidden="true" class="outside-ranks">
+<span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+</div>
+<div aria-label="Chess board" class="board" id="board"></div>
+<div aria-hidden="true" class="outside-files">
+<span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span>
+</div>
+</div>
+<div aria-label="Pick up pieces" class="pickup-layer hidden" id="pickupLayer"></div>
+</div>
+</main>
+<aside class="side-panel" id="sidePanel">
+<div aria-hidden="true" class="mobile-menu-header">
+<button class="mobile-back-button" id="mobileBackBtn" type="button">← Board</button>
+<div class="mobile-menu-title" id="mobileMenuTitle">Menu</div>
+</div>
+<section class="controls settings">
+<button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
+<div class="message" id="message">Click the target square to start the timer.</div>
+<div class="section-heading-row">
+<h2>Game mode</h2>
+<button aria-label="Game instructions" class="tiny-info-button" id="instructionsBtn" type="button">i</button>
+</div>
+<div class="mode-grid" id="modeGrid"></div>
+<div class="king-xtreme-toggle hidden" id="kingXtremePanel">
+<span>XTREME MODE</span>
+<label class="switch">
+<input id="kingXtremeToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<small>All 64 squares filled</small>
+</div>
+<h2 class="board-type-heading">Board type</h2>
+<div class="theme-grid" id="themeGrid"></div>
+<div aria-label="Custom board colours" class="custom-board">
+<div class="custom-board-title">Custom colours</div>
+<div class="custom-colour-row">
+<label>
+<span>Light</span>
+<input id="customLight" type="color" value="#eeeed2"/>
+</label>
+<label>
+<span>Dark</span>
+<input id="customDark" type="color" value="#769656"/>
+</label>
+</div>
+<button class="custom-board-apply" id="applyCustomBoard" type="button">Apply custom board</button>
+</div>
+<section aria-live="polite" class="scoreboard" id="sprintLeaderboard">
+<h2>30s sprint leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">Best score</div>
+<div class="big" id="highScore">0</div>
+</div>
+<ul class="scores-list" id="scoresList"></ul>
+</section>
+<section aria-live="polite" class="scoreboard" id="sixtyFourLeaderboard">
+<h2>64 squares leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">Best time</div>
+<div class="big" id="bestTime">—</div>
+</div>
+<ul class="scores-list" id="timeScoresList"></ul>
+</section>
+<section aria-live="polite" class="scoreboard hidden" id="pickupLeaderboard">
+<h2>PICK UP leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">Best time</div>
+<div class="big" id="bestPickup">—</div>
+</div>
+<ul class="scores-list" id="pickupScoresList"></ul>
+</section>
+<section aria-live="polite" class="scoreboard hidden" id="kingFinderLeaderboard">
+<h2>King finder leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">Best time</div>
+<div class="big" id="bestKingFinder">—</div>
+</div>
+<ul class="scores-list" id="kingFinderScoresList"></ul>
+</section>
+<section aria-live="polite" class="scoreboard hidden" id="kingFinderXtremeLeaderboard">
+<h2>King finder XTREME leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">Best time</div>
+<div class="big" id="bestKingFinderXtreme">—</div>
+</div>
+<ul class="scores-list" id="kingFinderXtremeScoresList"></ul>
+</section>
+<button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
+</section>
+</aside>
+<button class="mobile-return-button" id="mobileReturnBtn" type="button">Return to board</button>
+<nav aria-label="Mobile menu" class="mobile-bottom-nav" id="mobileBottomNav">
+<button class="mobile-nav-button" data-mobile-page="game" type="button">
+<span class="mobile-nav-title">Game mode</span>
+<span class="mobile-nav-value" id="mobileNavGameValue">30s sprint</span>
+</button>
+<button class="mobile-nav-button" data-mobile-page="board" type="button">
+<span class="mobile-nav-title">Style</span>
+<span class="mobile-nav-value" id="mobileNavStyleValue">Classic</span>
+</button>
+<button class="mobile-nav-button" data-mobile-page="scores" type="button">
+<span class="mobile-nav-title">Leaderboard</span>
+<span class="mobile-nav-value" id="mobileNavScoreValue">1st: —</span>
+</button>
+</nav>
+<div aria-labelledby="resultTitle" aria-modal="true" class="modal-backdrop" id="resultModal" role="dialog">
+<div class="modal">
+<h2 id="resultTitle">Time up</h2>
+<div class="modal-score" id="modalScore">0</div>
+<div class="modal-rank" id="modalRank">Tortoise</div>
+<p class="modal-note" id="modalNote">Click below for another go.</p>
+<div class="modal-actions">
+<button class="action" id="modalAgainBtn">Another round</button>
+<button class="action secondary" id="modalCloseBtn">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="easterEggTitle" aria-modal="true" class="easter-modal-backdrop" id="easterEggModal" role="dialog">
+<div class="easter-modal">
+<button aria-label="Close" class="easter-close" id="easterEggClose" type="button">×</button>
+<h2 class="easter-logo" id="easterEggTitle"><span>KWIK</span><span class="easter-logo-king">♚</span><span>CHESS</span></h2>
+<p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
+<p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
+<p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
+<p class="easter-version">Version 0.78 BETA</p>
+</div>
+</div>
+</div>
+<div aria-live="polite" class="rainbow-toast" id="rainbowToast" role="status">Rainbow mode activated</div>
+<div aria-labelledby="instructionsTitle" aria-modal="true" class="instructions-modal-backdrop" id="instructionsModal" role="dialog">
+<div class="instructions-modal">
+<button aria-label="Close" class="instructions-close" id="instructionsClose" type="button">×</button>
+<h2 id="instructionsTitle">How to play</h2>
+<h3>30s sprint</h3>
+<p>You have 30 seconds to click the square shown at the top of the screen. Correct clicks score points, wrong clicks lose points, and bonus piece rounds may appear to keep you awake. This mode is about speed, board vision, and getting your mouse moving fast without freezing.</p>
+<h3>64 squares</h3>
+<p>Every square on the board appears once. Click the requested square as quickly as you can until all 64 are cleared. Wrong clicks add time, so this is less frantic than Sprint but more exacting: learn the board properly and your time will fall.</p>
+<h3>King finder</h3>
+<p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
+<h3>PICK UP</h3>
+<p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square.</p>
+<p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
+</div>
+</div>
+<script>
+    const VERSION = "0.78 BETA";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
