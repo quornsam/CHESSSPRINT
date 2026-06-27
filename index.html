@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Chess Sprint v0.74</title>
+  <title>Chess Sprint v0.75</title>
   <style>
     :root {
       --light-square: #f0d9b5;
@@ -3341,97 +3341,36 @@
     }
 
 
-    /* v0.74: consistent SVG chess pieces; stops iPhone mixed glyph rendering */
-    svg.vector-piece {
-      overflow: visible;
-      transform: none !important;
-      text-rendering: auto;
-      pointer-events: none;
-      -webkit-font-smoothing: auto;
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.24));
+    /* v0.75: standard Unicode chess pieces, forced text rendering */
+    .unicode-piece,
+    .piece-holder .unicode-piece,
+    .target-piece-symbol.unicode-piece,
+    .pickup-drag-ghost .unicode-piece {
+      font-family:
+        "Arial Unicode MS",
+        "DejaVu Sans",
+        "DejaVu Serif",
+        "Noto Sans Symbols 2",
+        "Noto Sans Symbols",
+        "Segoe UI Symbol",
+        "Apple Symbols",
+        "Symbola",
+        serif !important;
+      font-variant-emoji: text;
+      text-rendering: geometricPrecision;
     }
 
-    .piece-holder svg.vector-piece.piece {
-      width: 86% !important;
-      height: 86% !important;
-      max-width: 86% !important;
-      max-height: 86% !important;
-      font-size: initial !important;
+    .piece-holder .unicode-piece {
+      transform: none !important;
       line-height: 1 !important;
     }
 
-    .board.bonus-mode .piece-holder svg.vector-piece.piece,
-    .board.king-finder-mode .piece-holder svg.vector-piece.piece,
-    .board.pickup-mode .piece-holder svg.vector-piece.piece {
-      display: block !important;
+    body.device-phone .piece-holder .unicode-piece {
+      font-size: calc(var(--board-size) / 8 * 0.66) !important;
     }
 
-    .vector-piece .piece-main {
-      stroke-linejoin: round;
-      stroke-linecap: round;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .vector-piece.unicode-white .piece-main {
-      fill: #f7f7f2;
-      stroke: rgba(12,13,16,0.92);
-      stroke-width: 4.4;
-    }
-
-    .vector-piece.unicode-white .piece-detail {
-      fill: none;
-      stroke: rgba(12,13,16,0.82);
-      stroke-width: 3.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .vector-piece.unicode-black .piece-main {
-      fill: #141519;
-      stroke: rgba(255,255,255,0.14);
-      stroke-width: 3.2;
-    }
-
-    .vector-piece.unicode-black .piece-detail {
-      fill: none;
-      stroke: rgba(255,255,255,0.18);
-      stroke-width: 3;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .target-piece-card svg.vector-piece {
-      width: 74px !important;
-      height: 74px !important;
-      max-width: 74px !important;
-      max-height: 74px !important;
-      display: block !important;
-      margin: auto;
-      filter: drop-shadow(0 4px 5px rgba(0,0,0,0.25));
-    }
-
-    body.device-phone .target-piece-card svg.vector-piece,
-    body.device-phone .target.piece-target svg.vector-piece,
-    body.device-phone .pickup-drag-ghost svg.vector-piece {
-      width: 36px !important;
-      height: 36px !important;
-      max-width: 36px !important;
-      max-height: 36px !important;
-    }
-
-    .pickup-drag-ghost svg.vector-piece {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      display: block !important;
-    }
-
-    body.device-phone .board.pickup-mode .piece-holder svg.vector-piece.piece {
-      width: 84% !important;
-      height: 84% !important;
+    body.device-phone .board.pickup-mode .piece-holder .unicode-piece {
+      font-size: calc(var(--board-size) / 8 * 0.64) !important;
     }
 
     :fullscreen {
@@ -3633,7 +3572,7 @@
   <div class="app" id="app">
     <header class="app-header">
       <div class="title-wrap">
-        <div class="version">Version 0.74</div>
+        <div class="version">Version 0.75</div>
         <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
       </div>
       <div class="header-actions">
@@ -3832,7 +3771,7 @@
   </div>
 
   <script>
-    const VERSION = "0.74";
+    const VERSION = "0.75";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -4085,67 +4024,19 @@
     let audioContext = null;
     let pitchStep = 0;
 
-    function vectorPieceMarkup(pieceKey) {
-      const pieces = {
-        pawn: `
-          <circle class="piece-main" cx="50" cy="24" r="13"></circle>
-          <path class="piece-main" d="M38 45 Q50 35 62 45 L59 65 L41 65 Z"></path>
-          <path class="piece-main" d="M31 78 L69 78 L74 90 L26 90 Z"></path>
-          <path class="piece-detail" d="M39 66 H61"></path>
-        `,
-        rook: `
-          <path class="piece-main" d="M28 18 H38 V28 H45 V18 H55 V28 H62 V18 H72 V39 H66 L62 70 H38 L34 39 H28 Z"></path>
-          <path class="piece-main" d="M31 78 H69 L75 90 H25 Z"></path>
-          <path class="piece-detail" d="M36 40 H64 M39 70 H61"></path>
-        `,
-        knight: `
-          <path class="piece-main" d="M32 87 H72 L66 74 H43 C41 63 45 54 56 48 C64 44 68 36 64 27 C60 18 48 13 38 17 C34 24 31 30 25 35 C31 36 36 34 41 29 C45 36 43 43 36 50 C27 59 25 72 32 87 Z"></path>
-          <circle class="piece-detail" cx="49" cy="27" r="1.8"></circle>
-          <path class="piece-detail" d="M39 19 C43 28 41 37 34 45"></path>
-        `,
-        bishop: `
-          <path class="piece-main" d="M50 12 C67 27 69 43 55 56 L63 73 H37 L45 56 C31 43 33 27 50 12 Z"></path>
-          <path class="piece-main" d="M31 82 H69 L75 92 H25 Z"></path>
-          <path class="piece-detail" d="M57 26 L43 45 M39 73 H61"></path>
-        `,
-        queen: `
-          <circle class="piece-main" cx="26" cy="24" r="7"></circle>
-          <circle class="piece-main" cx="50" cy="17" r="8"></circle>
-          <circle class="piece-main" cx="74" cy="24" r="7"></circle>
-          <path class="piece-main" d="M23 33 L38 67 H62 L77 33 L59 57 L50 29 L41 57 Z"></path>
-          <path class="piece-main" d="M31 79 H69 L75 91 H25 Z"></path>
-          <path class="piece-detail" d="M36 67 H64"></path>
-        `,
-        king: `
-          <path class="piece-main" d="M45 11 H55 V24 H67 V34 H55 V48 H45 V34 H33 V24 H45 Z"></path>
-          <path class="piece-main" d="M35 48 C28 57 31 69 43 72 H57 C69 69 72 57 65 48 C59 53 41 53 35 48 Z"></path>
-          <path class="piece-main" d="M31 81 H69 L75 92 H25 Z"></path>
-          <path class="piece-detail" d="M38 72 H62"></path>
-        `
-      };
-
-      return pieces[pieceKey] || pieces.pawn;
-    }
-
     function svgForPiece(pieceKey, pieceColour = "black", className = "piece") {
+      const glyph = unicodePieces[pieceColour]?.[pieceKey] || "♟";
       const colourClass = pieceColour === "white" ? "unicode-white" : "unicode-black";
-      const title = `${pieceColour} ${pieceKey}`;
 
       if (className === "target-piece-card") {
         return `
           <span class="target-piece-card" aria-hidden="true">
-            <svg class="target-piece-symbol unicode-piece vector-piece ${colourClass}" viewBox="0 0 100 100" role="img" aria-label="${title}">
-              ${vectorPieceMarkup(pieceKey)}
-            </svg>
+            <span class="target-piece-symbol unicode-piece ${colourClass}">${glyph}</span>
           </span>
         `;
       }
 
-      return `
-        <svg class="${className} unicode-piece vector-piece ${colourClass}" viewBox="0 0 100 100" role="img" aria-label="${title}">
-          ${vectorPieceMarkup(pieceKey)}
-        </svg>
-      `;
+      return `<span class="${className} unicode-piece ${colourClass}" aria-hidden="true">${glyph}</span>`;
     }
 
     function buildBoard() {
