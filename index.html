@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Chess Sprint v0.76</title>
+  <title>Chess Sprint v0.77</title>
   <style>
     :root {
       --light-square: #f0d9b5;
@@ -3452,6 +3452,40 @@
       transform: translateY(0.01em) !important;
     }
 
+
+    /* v0.77: cleaner white piece outlines by piece type */
+    .unicode-white.piece-king,
+    .unicode-white.piece-queen,
+    .unicode-white.piece-rook,
+    .unicode-white.piece-bishop,
+    .unicode-white.piece-knight {
+      -webkit-text-stroke: 0.7px rgba(12,12,14,0.92) !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    .unicode-white.piece-rook {
+      -webkit-text-stroke: 0.55px rgba(12,12,14,0.88) !important;
+    }
+
+    .unicode-white.piece-pawn {
+      -webkit-text-stroke: 1.05px rgba(12,12,14,0.96) !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    body.device-phone .piece-holder .unicode-white.piece-king,
+    body.device-phone .piece-holder .unicode-white.piece-queen,
+    body.device-phone .piece-holder .unicode-white.piece-rook,
+    body.device-phone .piece-holder .unicode-white.piece-bishop,
+    body.device-phone .piece-holder .unicode-white.piece-knight {
+      -webkit-text-stroke: 0.55px rgba(12,12,14,0.88) !important;
+    }
+
+    body.device-phone .piece-holder .unicode-white.piece-pawn {
+      -webkit-text-stroke: 0.9px rgba(12,12,14,0.94) !important;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -3651,7 +3685,7 @@
   <div class="app" id="app">
     <header class="app-header">
       <div class="title-wrap">
-        <div class="version">Version 0.76</div>
+        <div class="version">Version 0.77</div>
         <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
       </div>
       <div class="header-actions">
@@ -3850,7 +3884,7 @@
   </div>
 
   <script>
-    const VERSION = "0.76";
+    const VERSION = "0.77";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -3912,7 +3946,7 @@
         diagramSwatch: true
       },
       randomised: {
-        name: "Randomised",
+        name: "Random",
         light: "#eeeed2",
         dark: "#769656",
         border: "#111",
@@ -4106,16 +4140,17 @@
     function svgForPiece(pieceKey, pieceColour = "black", className = "piece") {
       const glyph = unicodePieces[pieceColour]?.[pieceKey] || "♟";
       const colourClass = pieceColour === "white" ? "unicode-white" : "unicode-black";
+      const pieceClass = `piece-${pieceKey}`;
 
       if (className === "target-piece-card") {
         return `
           <span class="target-piece-card" aria-hidden="true">
-            <span class="target-piece-symbol unicode-piece ${colourClass}">${glyph}</span>
+            <span class="target-piece-symbol unicode-piece ${colourClass} ${pieceClass}">${glyph}</span>
           </span>
         `;
       }
 
-      return `<span class="${className} unicode-piece ${colourClass}" aria-hidden="true">${glyph}</span>`;
+      return `<span class="${className} unicode-piece ${colourClass} ${pieceClass}" aria-hidden="true">${glyph}</span>`;
     }
 
     function buildBoard() {
@@ -4150,6 +4185,15 @@
           board.appendChild(square);
         });
       });
+    }
+
+    function updateThemeButtonSwatch(themeKey, theme) {
+      const button = document.querySelector(`.theme-button[data-theme="${themeKey}"]`);
+      const swatch = button?.querySelector(".theme-swatch");
+      if (!swatch || !theme) return;
+
+      swatch.style.setProperty("--swatch-light", theme.lightBackground);
+      swatch.style.setProperty("--swatch-dark", theme.diagramSwatch ? "#efefef" : theme.darkBackground);
     }
 
     function buildThemeButtons() {
@@ -5047,6 +5091,12 @@
     }
 
     function handlePickupSquareClick(squareName, squareEl) {
+      if (roundOver && pickupPhase === "ended") {
+        resetRound();
+        startPickupGame();
+        return;
+      }
+
       if (!active && !roundOver) {
         startPickupGame();
         return;
@@ -6170,6 +6220,7 @@
       document.documentElement.style.setProperty("--board-border", theme.border);
       document.documentElement.style.setProperty("--board-piece-colour", theme.pieceColour);
       document.documentElement.style.setProperty("--label-colour", theme.labelColour);
+      updateThemeButtonSwatch(resolvedThemeKey, theme);
 
       const isDiagram = resolvedThemeKey === "diagram";
       document.documentElement.style.setProperty("--cleared-square", isDiagram ? "#1a1a1a" : "#111");
@@ -6466,11 +6517,22 @@
     fullscreenBtn.addEventListener("click", toggleFullscreen);
     modalCloseBtn.addEventListener("click", () => {
       hideResultModal();
+
+      if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
+        messageEl.textContent = "Solved board left in place. Click the board to start a new PICK UP game.";
+        return;
+      }
+
       resetRound();
     });
     modalAgainBtn.addEventListener("click", resetRound);
     resultModal.addEventListener("click", event => {
-      if (event.target === resultModal) hideResultModal();
+      if (event.target === resultModal) {
+        hideResultModal();
+        if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
+          messageEl.textContent = "Solved board left in place. Click the board to start a new PICK UP game.";
+        }
+      }
     });
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
