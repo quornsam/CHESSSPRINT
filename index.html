@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Chess Sprint v0.64</title>
+  <title>Chess Sprint v0.73</title>
   <style>
     :root {
       --light-square: #f0d9b5;
@@ -2502,6 +2502,844 @@
       max-height: calc(var(--device-vh, 100svh) - 48px);
     }
 
+
+    /* v0.65: mobile bottom-bar pages only */
+    .mobile-bottom-nav,
+    .mobile-menu-header {
+      display: none;
+    }
+
+    body.device-mobile #fullscreenBtn,
+    body.device-mobile .header-actions {
+      display: none !important;
+    }
+
+    body.device-phone {
+      overflow-x: hidden !important;
+      padding-bottom: calc(68px + env(safe-area-inset-bottom)) !important;
+    }
+
+    body.device-phone .app {
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: auto auto !important;
+      height: auto !important;
+      min-height: calc(var(--device-vh, 100svh) - 72px);
+      overflow-x: hidden !important;
+      gap: 5px;
+    }
+
+    body.device-phone .app-header {
+      min-height: 28px !important;
+      gap: 0 !important;
+      margin: 0 !important;
+    }
+
+    body.device-phone .app-header .title-wrap {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    body.device-phone .app-header .version {
+      font-size: 0.48rem !important;
+      margin-bottom: 0 !important;
+      letter-spacing: 0.05em !important;
+      opacity: 0.72;
+    }
+
+    body.device-phone .wordmark {
+      font-size: clamp(1.28rem, 7.2vw, 2rem) !important;
+      letter-spacing: 0.02em !important;
+      gap: 0.12em !important;
+      line-height: 0.86 !important;
+    }
+
+    body.device-phone .wordmark-king {
+      font-size: 0.9em !important;
+      transform: translateY(-0.01em) !important;
+    }
+
+    body.device-phone .main-panel {
+      width: 100% !important;
+      padding: 6px !important;
+      overflow: visible !important;
+      min-height: auto !important;
+      justify-content: flex-start;
+    }
+
+    body.device-phone .board-wrap {
+      width: 100% !important;
+      justify-content: center !important;
+      align-items: center !important;
+      overflow: visible !important;
+      padding: 0 !important;
+      margin: 0 auto !important;
+    }
+
+    body.device-phone .board-frame {
+      grid-template-columns: var(--coord-gutter, 12px) var(--board-size) !important;
+      grid-template-rows: var(--board-size) var(--coord-gutter, 12px) !important;
+      gap: 2px !important;
+      margin: 0 auto !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+
+    body.device-phone .outside-ranks,
+    body.device-phone .outside-files {
+      font-size: clamp(0.46rem, 2.2vw, 0.62rem) !important;
+      font-weight: 850 !important;
+      opacity: 0.76 !important;
+      line-height: 1 !important;
+    }
+
+    body.device-phone .board {
+      border-width: clamp(3px, 1vw, 5px) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.42) !important;
+    }
+
+    body.device-phone .top-strip {
+      gap: 4px !important;
+    }
+
+    body.device-phone .stat {
+      min-height: 36px !important;
+      padding: 4px 5px !important;
+    }
+
+    body.device-phone .stat-label {
+      font-size: 0.52rem !important;
+    }
+
+    body.device-phone .stat-value {
+      font-size: clamp(0.92rem, 4.6vw, 1.25rem) !important;
+    }
+
+    body.device-phone .target-box {
+      height: 68px !important;
+      min-height: 68px !important;
+      padding: 4px 6px !important;
+    }
+
+    body.device-phone .target {
+      height: 40px !important;
+      font-size: clamp(1.55rem, 9vw, 2.55rem) !important;
+    }
+
+    body.device-phone .target.instruction-target {
+      height: 40px !important;
+      min-height: 40px !important;
+      font-size: clamp(0.74rem, 3.5vw, 0.98rem) !important;
+    }
+
+    body.device-phone .side-panel {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 92 !important;
+      display: none !important;
+      width: 100vw !important;
+      height: var(--device-vh, 100svh) !important;
+      max-width: 100vw !important;
+      max-height: var(--device-vh, 100svh) !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      padding:
+        max(12px, env(safe-area-inset-top))
+        14px
+        calc(86px + env(safe-area-inset-bottom))
+        14px !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+      background:
+        radial-gradient(circle at top, rgba(46,50,64,0.98) 0%, rgba(16,17,20,0.99) 58%);
+      box-shadow: none !important;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.device-phone.mobile-menu-open .side-panel {
+      display: block !important;
+    }
+
+    body.device-phone .mobile-menu-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 0 0 12px;
+      margin-bottom: 8px;
+      background: linear-gradient(to bottom, rgba(16,17,20,0.99) 70%, rgba(16,17,20,0));
+    }
+
+    body.device-phone .mobile-back-button {
+      position: absolute;
+      left: 0;
+      min-height: 36px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font-weight: 950;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    body.device-phone .mobile-menu-title {
+      font-weight: 1000;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f6c85b;
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    body.device-phone .side-panel .controls.settings {
+      display: grid !important;
+      width: min(420px, 100%);
+      margin: 0 auto;
+      gap: 10px;
+      grid-template-columns: minmax(0, 1fr) !important;
+      justify-items: stretch;
+    }
+
+    body.device-phone .side-panel .controls.settings > * {
+      display: none !important;
+    }
+
+    body.device-phone.mobile-page-game .side-panel .message,
+    body.device-phone.mobile-page-game .side-panel .section-heading-row,
+    body.device-phone.mobile-page-game .side-panel #modeGrid {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-game .side-panel .section-heading-row {
+      display: flex !important;
+    }
+
+    body.device-phone.mobile-page-game .side-panel #kingXtremePanel:not(.hidden) {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-board .side-panel .board-type-heading,
+    body.device-phone.mobile-page-board .side-panel #themeGrid,
+    body.device-phone.mobile-page-board .side-panel .custom-board {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-board .side-panel .board-type-heading {
+      display: block !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel .scoreboard:not(.hidden),
+    body.device-phone.mobile-page-scores .side-panel #resetScoresBtn {
+      display: block !important;
+    }
+
+    body.device-phone .side-panel .section-heading-row,
+    body.device-phone .side-panel .board-type-heading,
+    body.device-phone .side-panel .scoreboard h2 {
+      text-align: center !important;
+      justify-content: center !important;
+      margin-top: 4px !important;
+    }
+
+    body.device-phone .side-panel .mode-grid,
+    body.device-phone .side-panel .theme-grid {
+      width: 100% !important;
+      max-width: 390px;
+      margin-inline: auto !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 8px !important;
+    }
+
+    body.device-phone .side-panel .mode-button,
+    body.device-phone .side-panel .theme-button {
+      min-height: 46px !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    body.device-phone .side-panel .custom-board,
+    body.device-phone .side-panel .scoreboard,
+    body.device-phone .side-panel .message,
+    body.device-phone .side-panel #resetScoresBtn,
+    body.device-phone .side-panel .king-xtreme-toggle {
+      width: 100% !important;
+      max-width: 390px !important;
+      margin-inline: auto !important;
+    }
+
+    body.device-phone .mobile-bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 90;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding:
+        8px
+        max(10px, env(safe-area-inset-right))
+        calc(8px + env(safe-area-inset-bottom))
+        max(10px, env(safe-area-inset-left));
+      background: rgba(16,17,20,0.94);
+      border-top: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+    }
+
+    body.device-phone .mobile-nav-button {
+      min-height: 42px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      font-weight: 1000;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+
+    body.device-phone .mobile-nav-button.active {
+      border-color: rgba(246,200,91,0.65);
+      background: rgba(246,200,91,0.16);
+      color: #f6c85b;
+    }
+
+    body.device-phone.mobile-menu-open .mobile-bottom-nav {
+      z-index: 94;
+    }
+
+    body.device-phone.device-landscape .app {
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: auto auto !important;
+    }
+
+    body.device-phone.device-landscape .side-panel {
+      max-height: var(--device-vh, 100svh) !important;
+    }
+
+
+    /* v0.66: mobile nav/status + coordinate repair */
+    .mobile-return-button {
+      display: none;
+    }
+
+    body.device-phone .mobile-back-button {
+      display: none !important;
+    }
+
+    body.device-phone .board-frame {
+      grid-template-columns: var(--coord-gutter, 18px) var(--board-size) !important;
+      grid-template-rows: var(--board-size) var(--coord-gutter, 18px) !important;
+      gap: 3px !important;
+      place-content: center !important;
+    }
+
+    body.device-phone .outside-ranks {
+      height: var(--board-size) !important;
+      padding-block: 4px !important;
+      align-self: center !important;
+      grid-template-rows: repeat(8, minmax(0, 1fr)) !important;
+    }
+
+    body.device-phone .outside-files {
+      width: var(--board-size) !important;
+      padding-inline: 4px !important;
+      justify-self: center !important;
+      grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    }
+
+    body.device-phone .outside-ranks span,
+    body.device-phone .outside-files span {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    body.device-phone .outside-ranks,
+    body.device-phone .outside-files {
+      font-size: clamp(0.48rem, 2vw, 0.6rem) !important;
+      letter-spacing: 0 !important;
+      opacity: 0.82 !important;
+    }
+
+    body.device-phone .target-box {
+      display: grid !important;
+      grid-template-rows: minmax(0, 1fr) auto !important;
+      align-items: stretch !important;
+      height: 76px !important;
+      min-height: 76px !important;
+      padding: 5px 7px 7px !important;
+    }
+
+    body.device-phone .target-label {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: clamp(1.05rem, 5vw, 1.55rem) !important;
+      line-height: 1 !important;
+      font-weight: 1000 !important;
+      letter-spacing: 0.035em !important;
+      text-transform: uppercase;
+      color: var(--text) !important;
+      min-height: 0 !important;
+    }
+
+    body.device-phone .target.instruction-target {
+      align-self: end !important;
+      height: 24px !important;
+      min-height: 24px !important;
+      font-size: clamp(0.72rem, 3.25vw, 0.92rem) !important;
+      line-height: 1 !important;
+      padding: 0 6px 1px !important;
+      display: flex !important;
+      align-items: flex-end !important;
+      justify-content: center !important;
+    }
+
+    body.device-phone .target:not(.instruction-target) {
+      align-self: center !important;
+    }
+
+    body.device-phone .mobile-bottom-nav {
+      gap: 6px !important;
+      padding:
+        7px
+        max(8px, env(safe-area-inset-right))
+        calc(7px + env(safe-area-inset-bottom))
+        max(8px, env(safe-area-inset-left)) !important;
+    }
+
+    body.device-phone .mobile-nav-button {
+      min-height: 54px !important;
+      padding: 6px 4px !important;
+      display: grid !important;
+      grid-template-rows: auto auto;
+      align-content: center;
+      justify-items: center;
+      gap: 2px;
+      line-height: 1.05;
+    }
+
+    body.device-phone .mobile-nav-title {
+      display: block;
+      font-size: clamp(0.62rem, 2.8vw, 0.78rem);
+      font-weight: 1000;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+    }
+
+    body.device-phone .mobile-nav-value {
+      display: block;
+      max-width: 100%;
+      font-size: clamp(0.54rem, 2.45vw, 0.68rem);
+      font-weight: 850;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.device-phone .mobile-nav-button.active .mobile-nav-value {
+      color: rgba(246,200,91,0.92);
+    }
+
+    body.device-phone .mobile-return-button {
+      position: fixed;
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      z-index: 95;
+      min-height: 44px;
+      border: 1px solid rgba(246,200,91,0.5);
+      border-radius: 16px;
+      background: rgba(246,200,91,0.16);
+      color: #f6c85b;
+      font-weight: 1000;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.42);
+    }
+
+    body.device-phone:not(.mobile-menu-open) .mobile-return-button {
+      display: none !important;
+    }
+
+    body.device-phone.mobile-menu-open .mobile-return-button {
+      display: block !important;
+    }
+
+    body.device-phone.mobile-menu-open .side-panel {
+      padding-bottom: calc(136px + env(safe-area-inset-bottom)) !important;
+    }
+
+
+    /* v0.67: mobile board size + panel standardisation */
+    body.device-phone .main-panel {
+      padding-inline: 2px !important;
+    }
+
+    body.device-phone .board-wrap {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-inline: calc(50% - 50vw) !important;
+      padding-inline: 1px !important;
+      box-sizing: border-box !important;
+      justify-content: center !important;
+    }
+
+    body.device-phone .board-frame {
+      grid-template-columns: var(--coord-gutter, 14px) var(--board-size) !important;
+      grid-template-rows: var(--board-size) var(--coord-gutter, 14px) !important;
+      gap: 1px !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin-inline: auto !important;
+    }
+
+    body.device-phone .outside-ranks,
+    body.device-phone .outside-files {
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: clamp(0.46rem, 1.85vw, 0.58rem) !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+      opacity: 0.84 !important;
+      color: var(--muted) !important;
+    }
+
+    body.device-phone .outside-ranks {
+      height: var(--board-size) !important;
+      grid-template-rows: repeat(8, 1fr) !important;
+      align-self: stretch !important;
+    }
+
+    body.device-phone .outside-files {
+      width: var(--board-size) !important;
+      grid-template-columns: repeat(8, 1fr) !important;
+      justify-self: stretch !important;
+    }
+
+    body.device-phone .outside-ranks span,
+    body.device-phone .outside-files span {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    body.device-phone .board {
+      border-width: 3px !important;
+    }
+
+    body.device-phone .target-box {
+      height: auto !important;
+      min-height: 92px !important;
+      display: grid !important;
+      grid-template-rows: minmax(36px, auto) minmax(30px, auto) !important;
+      align-items: stretch !important;
+      padding: 8px 8px 9px !important;
+      overflow: visible !important;
+    }
+
+    body.device-phone .target-label {
+      min-height: 36px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-wrap: balance;
+      font-size: clamp(1.12rem, 5.45vw, 1.72rem) !important;
+      line-height: 1.05 !important;
+      font-weight: 1000 !important;
+      letter-spacing: 0.025em !important;
+      text-transform: uppercase;
+      color: var(--text) !important;
+      overflow: visible !important;
+    }
+
+    body.device-phone .target {
+      min-height: 34px !important;
+      height: auto !important;
+      line-height: 1.02 !important;
+      overflow: visible !important;
+      text-wrap: balance;
+    }
+
+    body.device-phone .target.instruction-target {
+      min-height: 30px !important;
+      height: auto !important;
+      align-self: end !important;
+      display: flex !important;
+      align-items: flex-end !important;
+      justify-content: center !important;
+      padding: 2px 8px 0 !important;
+      font-size: clamp(0.76rem, 3.25vw, 0.98rem) !important;
+      line-height: 1.12 !important;
+      letter-spacing: 0 !important;
+      font-weight: 900 !important;
+    }
+
+    body.device-phone .target.piece-target {
+      min-height: 46px !important;
+    }
+
+
+    /* v0.68: mobile fixed target panel so bonus never shifts board */
+    body.device-phone .target-box {
+      height: 96px !important;
+      min-height: 96px !important;
+      max-height: 96px !important;
+      grid-template-rows: 40px 44px !important;
+      align-items: center !important;
+      padding: 7px 8px !important;
+      overflow: hidden !important;
+    }
+
+    body.device-phone .target-box.bonus {
+      height: 96px !important;
+      min-height: 96px !important;
+      max-height: 96px !important;
+    }
+
+    body.device-phone .target-label {
+      height: 40px !important;
+      min-height: 40px !important;
+      max-height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+      text-align: center !important;
+      text-wrap: balance;
+      text-transform: none !important;
+      font-size: clamp(1.05rem, 5vw, 1.5rem) !important;
+      line-height: 1.02 !important;
+      letter-spacing: 0.01em !important;
+    }
+
+    body.device-phone .target-box.bonus .target-label {
+      font-size: clamp(0.78rem, 3.35vw, 0.96rem) !important;
+      line-height: 1.08 !important;
+      letter-spacing: 0 !important;
+      padding-inline: 2px !important;
+    }
+
+    body.device-phone .target {
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+      overflow: hidden !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1 !important;
+      font-size: clamp(1.7rem, 9vw, 2.7rem) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body.device-phone .target.instruction-target {
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+      align-items: flex-end !important;
+      padding: 0 8px 3px !important;
+      font-size: clamp(0.74rem, 3.15vw, 0.92rem) !important;
+      line-height: 1.12 !important;
+      text-transform: none !important;
+    }
+
+    body.device-phone .target.piece-target {
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+    }
+
+    body.device-phone .target-piece-card.unicode-piece,
+    body.device-phone .target.piece-target .unicode-piece,
+    body.device-phone .target.piece-target svg {
+      width: 42px !important;
+      height: 42px !important;
+      font-size: 36px !important;
+      max-width: 42px !important;
+      max-height: 42px !important;
+    }
+
+
+    /* v0.69: mode-coloured panels + smaller fixed mobile panel */
+    .target-label {
+      text-transform: none !important;
+    }
+
+    .target-box.mode-sprint {
+      background: linear-gradient(135deg, rgba(246,154,55,0.26), rgba(246,154,55,0.075));
+      border-color: rgba(246,154,55,0.52);
+    }
+
+    .target-box.mode-sixtyFour {
+      background: linear-gradient(135deg, rgba(60,166,255,0.25), rgba(60,166,255,0.075));
+      border-color: rgba(60,166,255,0.52);
+    }
+
+    .target-box.mode-kingFinder {
+      background: linear-gradient(135deg, rgba(157,93,255,0.26), rgba(157,93,255,0.075));
+      border-color: rgba(157,93,255,0.54);
+    }
+
+    .target-box.mode-pickup {
+      background: linear-gradient(135deg, rgba(38,196,107,0.24), rgba(38,196,107,0.075));
+      border-color: rgba(38,196,107,0.52);
+    }
+
+    .target-box.mode-sprint.bonus {
+      background: linear-gradient(135deg, rgba(246,154,55,0.34), rgba(246,154,55,0.10));
+      border-color: rgba(246,154,55,0.65);
+    }
+
+    body.device-phone .target-box,
+    body.device-phone .target-box.bonus {
+      height: 86px !important;
+      min-height: 86px !important;
+      max-height: 86px !important;
+      grid-template-rows: 36px 38px !important;
+      padding: 6px 8px !important;
+      overflow: hidden !important;
+    }
+
+    body.device-phone .target-label {
+      height: 36px !important;
+      min-height: 36px !important;
+      max-height: 36px !important;
+      font-size: clamp(1rem, 4.65vw, 1.34rem) !important;
+      line-height: 1.02 !important;
+      letter-spacing: 0.012em !important;
+      text-transform: none !important;
+      overflow: hidden !important;
+    }
+
+    body.device-phone .target-box.bonus .target-label {
+      font-size: clamp(0.72rem, 3.05vw, 0.88rem) !important;
+      line-height: 1.08 !important;
+      max-height: 36px !important;
+    }
+
+    body.device-phone .target,
+    body.device-phone .target.instruction-target,
+    body.device-phone .target.piece-target {
+      height: 38px !important;
+      min-height: 38px !important;
+      max-height: 38px !important;
+      overflow: hidden !important;
+    }
+
+    body.device-phone .target.instruction-target {
+      align-items: flex-end !important;
+      padding: 0 8px 2px !important;
+      font-size: clamp(0.72rem, 3vw, 0.88rem) !important;
+      line-height: 1.1 !important;
+    }
+
+    body.device-phone .target-piece-card.unicode-piece,
+    body.device-phone .target.piece-target .unicode-piece,
+    body.device-phone .target.piece-target svg {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 31px !important;
+      max-width: 36px !important;
+      max-height: 36px !important;
+    }
+
+
+    /* v0.70: Rainbow clear repair + mobile leaderboard spacing */
+    .board.rainbow-board-active .square.cleared {
+      background: var(--cleared-square) !important;
+    }
+
+    .board.rainbow-board-active .square.missed {
+      background: var(--missed-square) !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel .scoreboard:not(.hidden) {
+      margin-top: 14px !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel .scoreboard h2 {
+      margin-bottom: 12px !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel .scoreboard .score-list,
+    body.device-phone.mobile-page-scores .side-panel .scoreboard ol,
+    body.device-phone.mobile-page-scores .side-panel .scoreboard ul,
+    body.device-phone.mobile-page-scores .side-panel .scoreboard .scores-list {
+      margin-top: 10px !important;
+    }
+
+
+    /* v0.72: touch dragging for PICK UP */
+    body.device-touch .board.pickup-mode .piece-holder .unicode-piece {
+      touch-action: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+    }
+
+    .pickup-drag-ghost {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      width: min(13vw, 58px);
+      height: min(13vw, 58px);
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      transform: translate3d(-9999px, -9999px, 0);
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.50));
+      opacity: 0.96;
+    }
+
+    .pickup-drag-ghost .unicode-piece {
+      font-size: min(11vw, 50px) !important;
+      line-height: 1 !important;
+    }
+
+    body.device-phone .pickup-drag-ghost {
+      width: min(16vw, 62px);
+      height: min(16vw, 62px);
+    }
+
+    body.device-phone .pickup-drag-ghost .unicode-piece {
+      font-size: min(13vw, 54px) !important;
+    }
+
+    .board.pickup-mode .square.pickup-drop-hover {
+      box-shadow:
+        inset 0 0 0 4px rgba(246,200,91,0.92),
+        inset 0 0 0 999px rgba(246,200,91,0.13) !important;
+      z-index: 4;
+    }
+
+
+    /* v0.73: PICK UP drag/drop works in mobile emulator and touch */
+    body.device-mobile .board.pickup-mode .piece-holder .unicode-piece,
+    body.device-phone .board.pickup-mode .piece-holder .unicode-piece {
+      touch-action: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      cursor: grab;
+    }
+
+    body.device-mobile .board.pickup-mode.dragging-pickup-piece {
+      touch-action: none !important;
+      cursor: grabbing;
+    }
+
+    body.device-mobile .board.pickup-mode.dragging-pickup-piece .square {
+      cursor: grabbing !important;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -2701,7 +3539,7 @@
   <div class="app" id="app">
     <header class="app-header">
       <div class="title-wrap">
-        <div class="version">Version 0.64</div>
+        <div class="version">Version 0.73</div>
         <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
       </div>
       <div class="header-actions">
@@ -2744,7 +3582,11 @@
       </div>
     </main>
 
-    <aside class="side-panel">
+    <aside class="side-panel" id="sidePanel">
+      <div class="mobile-menu-header" aria-hidden="true">
+        <button class="mobile-back-button" id="mobileBackBtn" type="button">← Board</button>
+        <div class="mobile-menu-title" id="mobileMenuTitle">Menu</div>
+      </div>
       <section class="controls settings">
         <button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
         <div class="message" id="message">Click the target square to start the timer.</div>
@@ -2764,7 +3606,7 @@
           <small>All 64 squares filled</small>
         </div>
 
-        <h2>Board type</h2>
+        <h2 class="board-type-heading">Board type</h2>
         <div class="theme-grid" id="themeGrid"></div>
 
         <div class="custom-board" aria-label="Custom board colours">
@@ -2831,6 +3673,23 @@
       </section>
     </aside>
 
+    <button class="mobile-return-button" id="mobileReturnBtn" type="button">Return to board</button>
+
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile menu">
+      <button class="mobile-nav-button" type="button" data-mobile-page="game">
+        <span class="mobile-nav-title">Game mode</span>
+        <span class="mobile-nav-value" id="mobileNavGameValue">30s sprint</span>
+      </button>
+      <button class="mobile-nav-button" type="button" data-mobile-page="board">
+        <span class="mobile-nav-title">Style</span>
+        <span class="mobile-nav-value" id="mobileNavStyleValue">Classic</span>
+      </button>
+      <button class="mobile-nav-button" type="button" data-mobile-page="scores">
+        <span class="mobile-nav-title">Leaderboard</span>
+        <span class="mobile-nav-value" id="mobileNavScoreValue">1st: —</span>
+      </button>
+    </nav>
+
     <div class="modal-backdrop" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
     <div class="modal">
       <h2 id="resultTitle">Time up</h2>
@@ -2879,7 +3738,7 @@
   </div>
 
   <script>
-    const VERSION = "0.64";
+    const VERSION = "0.73";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -2939,6 +3798,18 @@
         lightBackground: "#f5f5f5",
         darkBackground: "repeating-linear-gradient(135deg, #efefef 0px, #efefef 5px, #666 5px, #666 6.5px)",
         diagramSwatch: true
+      },
+      randomised: {
+        name: "Randomised",
+        light: "#eeeed2",
+        dark: "#769656",
+        border: "#111",
+        pieceColour: "#111",
+        labelColour: "rgba(0,0,0,0.70)",
+        lightBackground: "#eeeed2",
+        darkBackground: "#769656",
+        diagramSwatch: false,
+        randomised: true
       },
       rainbow: {
         name: "Rainbow",
@@ -3053,6 +3924,13 @@
     const instructionsBtn = document.getElementById("instructionsBtn");
     const instructionsModal = document.getElementById("instructionsModal");
     const instructionsClose = document.getElementById("instructionsClose");
+    const mobileMenuTitle = document.getElementById("mobileMenuTitle");
+    const mobileBackBtn = document.getElementById("mobileBackBtn");
+    const mobileReturnBtn = document.getElementById("mobileReturnBtn");
+    const mobileNavButtons = document.querySelectorAll(".mobile-nav-button");
+    const mobileNavGameValue = document.getElementById("mobileNavGameValue");
+    const mobileNavStyleValue = document.getElementById("mobileNavStyleValue");
+    const mobileNavScoreValue = document.getElementById("mobileNavScoreValue");
 
     const scoreStorageKey = "chess-square-sprint-scores";
     const oldScoreStorageKey = "chess-square-sprint-v0-1-scores";
@@ -3069,6 +3947,7 @@
     let score = 0;
     let currentMode = "sprint";
     let currentPieceStyle = "woodcut";
+    let currentThemeKey = "classic";
     let rainbowUnlocked = false;
     let rainbowToastTimer = null;
     let sixtyFourRemaining = [];
@@ -3101,6 +3980,8 @@
     let pickupPlacedCount = 0;
     let pickupStartTime = 0;
     let pickupElapsedSeconds = 0;
+    let pickupPointerDrag = null;
+    let pickupSuppressClickUntil = 0;
     let pickupTimer = null;
     let pickupCountdownTimers = [];
     let pickupPhase = "idle";
@@ -3233,6 +4114,10 @@
       document.body.classList.toggle("device-desktop", !isMobileOptimised);
       document.body.classList.toggle("device-landscape", isLandscape);
       document.body.classList.toggle("device-portrait", !isLandscape);
+
+      if (!looksPhone && document.body.classList.contains("mobile-menu-open")) {
+        closeMobileMenuPage();
+      }
     }
 
     function handleViewportChange(delay = 50) {
@@ -3248,16 +4133,18 @@
       const isPhoneLayout = document.body.classList.contains("device-phone");
       const isMobileLayout = document.body.classList.contains("device-mobile");
       const isLandscapeMobile = isMobileLayout && document.body.classList.contains("device-landscape");
-      const safePadding = isMobileLayout ? 4 : 12;
+      const viewportWidth = Math.round(window.visualViewport?.width || window.innerWidth || rect.width);
+      const usableWidth = isPhoneLayout ? Math.min(viewportWidth, rect.width || viewportWidth) : rect.width;
+      const safePadding = isPhoneLayout ? 1 : (isMobileLayout ? 4 : 12);
       const coordinateGutter = Math.max(
-        isMobileLayout ? 16 : 22,
-        Math.min(isMobileLayout ? 24 : 34, Math.floor(Math.min(rect.width, rect.height || rect.width) * 0.05))
+        isPhoneLayout ? 13 : (isMobileLayout ? 16 : 22),
+        Math.min(isPhoneLayout ? 15 : (isMobileLayout ? 24 : 34), Math.floor(Math.min(usableWidth, rect.height || usableWidth) * (isPhoneLayout ? 0.035 : 0.05)))
       );
       const pickupHorizontalReserve = 0;
       const pickupVerticalReserve = 0;
 
       const minimumBoard = isMobileLayout ? 138 : 160;
-      const availableWidth = Math.max(minimumBoard, rect.width - safePadding - coordinateGutter - 4 - pickupHorizontalReserve);
+      const availableWidth = Math.max(minimumBoard, usableWidth - safePadding - coordinateGutter - (isPhoneLayout ? 3 : 4) - pickupHorizontalReserve);
       const availableHeight = Math.max(minimumBoard, rect.height - safePadding - coordinateGutter - pickupVerticalReserve);
       const phonePortrait = isPhoneLayout && !isLandscapeMobile;
       const size = Math.floor(phonePortrait ? availableWidth : Math.min(availableWidth, availableHeight));
@@ -3280,11 +4167,40 @@
       return items[Math.floor(Math.random() * items.length)];
     }
 
+    function formatHundredths(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+    }
+
+    function roundedHundredths(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? Math.round(number * 100) / 100 : 0;
+    }
+
     function randomRainbowSquareColour() {
       const hue = Math.floor(Math.random() * 360);
       const saturation = 68 + Math.floor(Math.random() * 24);
       const lightness = 54 + Math.floor(Math.random() * 18);
       return `hsl(${hue} ${saturation}% ${lightness}%)`;
+    }
+
+    function randomBoardThemeColour() {
+      const hue = Math.floor(Math.random() * 360);
+      const saturation = 42 + Math.floor(Math.random() * 38);
+      const lightness = 42 + Math.floor(Math.random() * 32);
+      return `hsl(${hue} ${saturation}% ${lightness}%)`;
+    }
+
+    function applyRandomisedThemeColours() {
+      const lightHue = Math.floor(Math.random() * 360);
+      const darkHue = (lightHue + 80 + Math.floor(Math.random() * 200)) % 360;
+      const light = `hsl(${lightHue} ${46 + Math.floor(Math.random() * 24)}% ${68 + Math.floor(Math.random() * 12)}%)`;
+      const dark = `hsl(${darkHue} ${48 + Math.floor(Math.random() * 30)}% ${34 + Math.floor(Math.random() * 18)}%)`;
+      boardThemes.randomised.light = light;
+      boardThemes.randomised.dark = dark;
+      boardThemes.randomised.lightBackground = light;
+      boardThemes.randomised.darkBackground = dark;
+      return boardThemes.randomised;
     }
 
     function regenerateRainbowBoardColours() {
@@ -3300,6 +4216,19 @@
         [copy[i], copy[j]] = [copy[j], copy[i]];
       }
       return copy;
+    }
+
+    function currentPanelTitle() {
+      if (currentMode === "sprint") return "30s SPRINT";
+      if (currentMode === "sixtyFour") return "64 SQUARES";
+      if (currentMode === "kingFinder") return kingFinderXtreme ? "KING FINDER XTREME" : "KING FINDER";
+      if (currentMode === "pickup") return "PICK UP";
+      return "30s SPRINT";
+    }
+
+    function updateTargetBoxModeClass() {
+      targetBox.classList.remove("mode-sprint", "mode-sixtyFour", "mode-kingFinder", "mode-pickup");
+      targetBox.classList.add(`mode-${currentMode}`);
     }
 
     function setInstructionTarget(text = "Click anywhere on the board to start") {
@@ -3320,7 +4249,7 @@
       targetBox.classList.remove("bonus");
       targetSquareEl.classList.remove("piece-target");
       clearInstructionTarget();
-      targetLabelEl.textContent = currentMode === "sixtyFour" ? "64 squares: click this square" : "Click this square";
+      targetLabelEl.textContent = currentPanelTitle();
       clearBoardPieces();
 
       const squares = currentMode === "sixtyFour" ? sixtyFourRemaining : allSquares();
@@ -3417,6 +4346,7 @@
     }
 
     function resetRound() {
+      updateTargetBoxModeClass();
       active = false;
       roundOver = false;
       hideResultModal();
@@ -3459,19 +4389,14 @@
 
       if (currentMode === "kingFinder") {
         targetMode = "kingFinder";
-        targetLabelEl.textContent = kingFinderXtreme ? "King finder XTREME" : "King finder";
-        renderKingProgress();
-        setInstructionTarget(kingFinderXtreme
-          ? "Click anywhere on the board to start XTREME MODE"
-          : "Click anywhere on the board to start");
-        messageEl.textContent = kingFinderXtreme
-          ? "Click anywhere on the board to start XTREME MODE."
-          : "Click anywhere on the board to start the game.";
+        targetLabelEl.textContent = currentPanelTitle();
+        setInstructionTarget("Click anywhere on the board to start");
+        messageEl.textContent = "Click anywhere on the board to start.";
       } else if (currentMode === "pickup") {
         preparePickupMode();
       } else {
         setNormalTarget(false);
-        targetLabelEl.textContent = gameModes[currentMode].name;
+        targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
         messageEl.textContent = "Click anywhere on the board to start.";
       }
@@ -3502,13 +4427,8 @@
       guaranteedBonusDeadlineMs = 10000;
       roundStateEl.textContent = "Go";
       clearInstructionTarget();
-      if (currentMode === "sixtyFour") {
-        targetLabelEl.textContent = "64 squares: click this square";
-        targetSquareEl.textContent = currentTarget;
-      } else {
-        targetLabelEl.textContent = "Click this square";
-        targetSquareEl.textContent = currentTarget;
-      }
+      targetLabelEl.textContent = currentPanelTitle();
+      targetSquareEl.textContent = currentTarget;
       messageEl.textContent = "Go.";
       playStartSound();
 
@@ -3545,6 +4465,7 @@
 
     function clearPickupMode() {
       clearPickupTimers();
+      cleanupPickupPointerDrag();
       pickupLayer.innerHTML = "";
       pickupLayer.classList.add("hidden");
       board.classList.remove("pickup-mode");
@@ -3736,7 +4657,7 @@
       scoreEl.textContent = "0/32";
       timeLeftEl.textContent = "0.00";
       roundStateEl.textContent = "Ready";
-      targetLabelEl.textContent = "PICK UP";
+      targetLabelEl.textContent = currentPanelTitle();
       setInstructionTarget("Click anywhere on the board to start");
       messageEl.textContent = "Click anywhere on the board to start PICK UP.";
       sizeBoardToWindow();
@@ -3794,7 +4715,7 @@
       scoreEl.textContent = "0/32";
       renderPickupBoardPieces();
       updatePickupProgress(false);
-      messageEl.textContent = "Move pieces onto their correct starting squares. Occupied squares must be cleared first.";
+      messageEl.textContent = "Drag and drop pieces, or tap a piece then tap an empty square. Occupied squares must be cleared first.";
       playStartSound();
 
       clearInterval(pickupTimer);
@@ -3805,7 +4726,7 @@
     function updatePickupTimer() {
       if (currentMode !== "pickup" || pickupPhase !== "playing") return;
       pickupElapsedSeconds = (Date.now() - pickupStartTime) / 1000;
-      timeLeftEl.textContent = pickupElapsedSeconds.toFixed(2);
+      timeLeftEl.textContent = formatHundredths(pickupElapsedSeconds);
     }
 
     function findPickupPiece(pieceId) {
@@ -3833,6 +4754,140 @@
         const piece = pickupPieceAtSquare(square.dataset.square);
         square.classList.toggle("pickup-board-selected", Boolean(piece && piece.id === pickupSelectedId));
       });
+    }
+
+    function cleanupPickupPointerDrag() {
+      document.querySelectorAll(".square.pickup-drop-hover").forEach(square => {
+        square.classList.remove("pickup-drop-hover");
+      });
+
+      board.classList.remove("dragging-pickup-piece");
+
+      if (pickupPointerDrag?.ghost) {
+        pickupPointerDrag.ghost.remove();
+      }
+
+      pickupPointerDrag = null;
+    }
+
+    function pickupSquareFromPoint(clientX, clientY) {
+      const element = document.elementFromPoint(clientX, clientY);
+      return element?.closest?.(".square") || null;
+    }
+
+    function movePickupGhost(clientX, clientY) {
+      if (!pickupPointerDrag?.ghost) return;
+      pickupPointerDrag.ghost.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`;
+    }
+
+    function updatePickupDropHover(clientX, clientY) {
+      document.querySelectorAll(".square.pickup-drop-hover").forEach(square => {
+        square.classList.remove("pickup-drop-hover");
+      });
+
+      const square = pickupSquareFromPoint(clientX, clientY);
+      if (square && currentMode === "pickup" && pickupPhase === "playing") {
+        square.classList.add("pickup-drop-hover");
+      }
+    }
+
+    function startPickupPointerDrag(event, pieceId) {
+      if (currentMode !== "pickup" || pickupPhase !== "playing") return;
+
+      const isMobileLayout = document.body.classList.contains("device-mobile") || document.body.classList.contains("device-phone");
+      const isRealTouchOrPen = event.pointerType === "touch" || event.pointerType === "pen";
+      const isMobileEmulatedMouse = isMobileLayout && event.pointerType === "mouse";
+
+      if (!isRealTouchOrPen && !isMobileEmulatedMouse) return;
+
+      const piece = findPickupPiece(pieceId);
+      if (!piece) return;
+
+      // Do not move the piece on a plain tap. The existing tap-select method handles that.
+      // This handler only takes over once the pointer has actually moved.
+      event.preventDefault();
+      event.stopPropagation();
+
+      pickupSelectedId = piece.id;
+      updatePickupBoardSelection();
+
+      const ghost = document.createElement("div");
+      ghost.className = "pickup-drag-ghost";
+      ghost.innerHTML = svgForPiece(piece.key, piece.colour);
+      document.body.appendChild(ghost);
+
+      pickupPointerDrag = {
+        pieceId: piece.id,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        hasMoved: false,
+        suppressNextClick: false,
+        ghost
+      };
+
+      board.classList.add("dragging-pickup-piece");
+      movePickupGhost(event.clientX, event.clientY);
+      updatePickupDropHover(event.clientX, event.clientY);
+
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {
+        // Window listeners still handle the drag.
+      }
+    }
+
+    function handlePickupPointerMove(event) {
+      if (!pickupPointerDrag || event.pointerId !== pickupPointerDrag.pointerId) return;
+
+      const dx = event.clientX - pickupPointerDrag.startX;
+      const dy = event.clientY - pickupPointerDrag.startY;
+
+      if (Math.hypot(dx, dy) > 7) {
+        pickupPointerDrag.hasMoved = true;
+        pickupPointerDrag.suppressNextClick = true;
+      }
+
+      if (!pickupPointerDrag.hasMoved) return;
+
+      event.preventDefault();
+      movePickupGhost(event.clientX, event.clientY);
+      updatePickupDropHover(event.clientX, event.clientY);
+    }
+
+    function handlePickupPointerEnd(event) {
+      if (!pickupPointerDrag || event.pointerId !== pickupPointerDrag.pointerId) return;
+
+      const drag = pickupPointerDrag;
+      const square = pickupSquareFromPoint(event.clientX, event.clientY);
+
+      if (!drag.hasMoved) {
+        cleanupPickupPointerDrag();
+        // Plain tap: let the existing click/tap-to-move system handle it.
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      pickupSuppressClickUntil = Date.now() + 450;
+      cleanupPickupPointerDrag();
+
+      if (!square) {
+        pickupSelectedId = null;
+        renderPickupBoardPieces();
+        return;
+      }
+
+      handlePickupPlacement(drag.pieceId, square.dataset.square, square);
+    }
+
+    function suppressPickupClickAfterDrag(event) {
+      if (!document.body.classList.contains("device-mobile") && !document.body.classList.contains("device-phone")) return;
+      if (Date.now() < pickupSuppressClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
     }
 
     function renderPickupBoardPieces() {
@@ -3863,6 +4918,8 @@
             event.dataTransfer.setData("text/pickup-piece", piece.id);
             event.dataTransfer.effectAllowed = "move";
           });
+
+          pieceEl.addEventListener("pointerdown", event => startPickupPointerDrag(event, piece.id));
         }
       });
     }
@@ -3965,13 +5022,13 @@
       roundOver = true;
       pickupPhase = "ended";
       pickupLayer.classList.add("hidden");
-      pickupElapsedSeconds = (Date.now() - pickupStartTime) / 1000;
-      timeLeftEl.textContent = pickupElapsedSeconds.toFixed(2);
+      pickupElapsedSeconds = roundedHundredths((Date.now() - pickupStartTime) / 1000);
+      timeLeftEl.textContent = formatHundredths(pickupElapsedSeconds);
       scoreLabelEl.textContent = "Pieces";
       scoreEl.textContent = "32/32";
       roundStateEl.textContent = "Done";
       targetLabelEl.textContent = "PICK UP complete";
-      targetSquareEl.textContent = `${pickupElapsedSeconds.toFixed(2)}s`;
+      targetSquareEl.textContent = `${formatHundredths(pickupElapsedSeconds)}s`;
       playEndJingle();
       saveScore(0, pickupElapsedSeconds);
       renderScores();
@@ -4406,7 +5463,7 @@
         flashSquare(squareEl, "wrong");
         playWrongSound();
         markSquareDone(currentTarget, true);
-        timeLeftEl.textContent = Math.floor((Date.now() - startTime) / 1000) + penaltySeconds;
+        timeLeftEl.textContent = formatHundredths(((Date.now() - startTime) / 1000) + penaltySeconds);
         messageEl.textContent = `Wrong: ${squareName}. Needed ${currentTarget}. +5s penalty. ${nextCompleted}/64`;
       }
 
@@ -4471,8 +5528,8 @@
       }
 
       if (currentMode === "sixtyFour") {
-        const elapsedSeconds = active ? Math.floor((now - startTime) / 1000) + penaltySeconds : 0;
-        timeLeftEl.textContent = elapsedSeconds;
+        const elapsedSeconds = active ? ((now - startTime) / 1000) + penaltySeconds : 0;
+        timeLeftEl.textContent = formatHundredths(elapsedSeconds);
         scoreLabelEl.textContent = "Done";
         scoreEl.textContent = `${sixtyFourCompleted}/64`;
         roundStateEl.textContent = active ? "64" : "Ready";
@@ -4493,14 +5550,14 @@
 
       const finalScore = score;
       const elapsedSeconds = startTime
-        ? Math.max(0, Math.round((Date.now() - startTime) / 1000) + (currentMode === "sixtyFour" ? penaltySeconds : 0))
+        ? roundedHundredths(Math.max(0, ((Date.now() - startTime) / 1000) + (currentMode === "sixtyFour" ? penaltySeconds : 0)))
         : 0;
 
       active = false;
       roundOver = true;
       clearInterval(timer);
       timer = null;
-      timeLeftEl.textContent = currentMode === "sixtyFour" ? elapsedSeconds : "0";
+      timeLeftEl.textContent = currentMode === "sixtyFour" ? formatHundredths(elapsedSeconds) : "0";
       roundStateEl.textContent = "Done";
       playEndSound();
       saveScore(currentMode === "sixtyFour" ? 0 : score, elapsedSeconds);
@@ -4521,7 +5578,7 @@
         roundStateEl.textContent = "Ready";
         roundOver = false;
         setNormalTarget(false);
-        messageEl.textContent = `64 squares complete. Time: ${elapsedSeconds}s. Close this box or press New round to start again.`;
+        messageEl.textContent = `64 squares complete. Time: ${formatHundredths(elapsedSeconds)}s. Close this box or press New round to start again.`;
       }
 
       newRoundBtn.textContent = "Reset round";
@@ -4543,11 +5600,11 @@
 
     function showResultModal(finalScore, elapsedSeconds = 0) {
       if (currentMode === "sixtyFour") {
-        modalScore.textContent = `${elapsedSeconds}s`;
+        modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = timeRankForSeconds(elapsedSeconds);
         modalNote.textContent = `You cleared all 64 squares.`;
       } else if (currentMode === "pickup") {
-        modalScore.textContent = `${Number(elapsedSeconds).toFixed(2)}s`;
+        modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = "PICK UP complete";
         modalNote.textContent = "Board set up correctly.";
       } else if (currentMode === "kingFinder") {
@@ -4609,7 +5666,7 @@
 
       scores.push({
         score: finalScore,
-        timeSeconds: elapsedSeconds,
+        timeSeconds: Number.isFinite(Number(elapsedSeconds)) ? roundedHundredths(elapsedSeconds) : elapsedSeconds,
         mode: storedMode,
         scoreType: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? "kingFinderTime" : "standard",
         completed: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? true : undefined,
@@ -4683,6 +5740,45 @@
         .slice(0, 10);
     }
 
+
+    function formatMobileTopScore() {
+      if (currentMode === "sprint") {
+        const scores = topSprintScores();
+        return scores.length ? `1st: ${scores[0].score}` : "1st: —";
+      }
+
+      if (currentMode === "sixtyFour") {
+        const times = topSixtyFourTimes();
+        return times.length ? `1st: ${formatHundredths(times[0].timeSeconds)}s` : "1st: —";
+      }
+
+      if (currentMode === "pickup") {
+        const times = topPickupTimes();
+        return times.length ? `1st: ${formatHundredths(times[0].timeSeconds)}s` : "1st: —";
+      }
+
+      if (currentMode === "kingFinder") {
+        const scores = topKingFinderScores(kingFinderXtreme ? "kingFinderXtreme" : "kingFinder");
+        return scores.length ? `1st: ${Number(scores[0].score).toFixed(2)}/30` : "1st: —";
+      }
+
+      return "1st: —";
+    }
+
+    function updateMobileBottomNavStatus() {
+      if (!mobileNavGameValue || !mobileNavStyleValue || !mobileNavScoreValue) return;
+
+      const modeName = currentMode === "kingFinder" && kingFinderXtreme
+        ? "King finder XTREME"
+        : gameModes[currentMode]?.name || "30s sprint";
+
+      const themeName = boardThemes[currentThemeKey]?.name || "Classic";
+
+      mobileNavGameValue.textContent = modeName;
+      mobileNavStyleValue.textContent = themeName;
+      mobileNavScoreValue.textContent = formatMobileTopScore();
+    }
+
     function renderScores() {
       const sprintScores = topSprintScores();
       const high = sprintScores.length ? Number(sprintScores[0].score) : 0;
@@ -4704,7 +5800,7 @@
       }
 
       const times = topSixtyFourTimes();
-      bestTimeEl.textContent = times.length ? `${times[0].timeSeconds}s` : "—";
+      bestTimeEl.textContent = times.length ? `${formatHundredths(times[0].timeSeconds)}s` : "—";
 
       timeScoresListEl.innerHTML = "";
       if (!times.length) {
@@ -4716,13 +5812,13 @@
         times.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${item.timeSeconds}s</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           timeScoresListEl.appendChild(li);
         });
       }
 
       const pickupTimes = topPickupTimes();
-      bestPickupEl.textContent = pickupTimes.length ? `${Number(pickupTimes[0].timeSeconds).toFixed(2)}s` : "—";
+      bestPickupEl.textContent = pickupTimes.length ? `${formatHundredths(pickupTimes[0].timeSeconds)}s` : "—";
       pickupScoresListEl.innerHTML = "";
       if (!pickupTimes.length) {
         const empty = document.createElement("li");
@@ -4733,7 +5829,7 @@
         pickupTimes.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.timeSeconds).toFixed(2)}s</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           pickupScoresListEl.appendChild(li);
         });
       }
@@ -4771,6 +5867,8 @@
           kingFinderXtremeScoresListEl.appendChild(li);
         });
       }
+
+      updateMobileBottomNavStatus();
     }
 
     function updateLeaderboardVisibility() {
@@ -4817,17 +5915,17 @@
 
       if (currentMode === "kingFinder") {
         resetRound();
-        targetLabelEl.textContent = kingFinderXtreme
-          ? "Click anywhere on the board to start XTREME MODE"
-          : "Click anywhere on the board to start the game";
-        renderKingProgress();
+        targetLabelEl.textContent = currentPanelTitle();
+        setInstructionTarget("Click anywhere on the board to start");
         updateLeaderboardVisibility();
         renderScores();
+        updateMobileBottomNavStatus();
       }
     }
 
     function setMode(modeKey, showMessage = true) {
       currentMode = gameModes[modeKey] ? modeKey : "sprint";
+      updateTargetBoxModeClass();
       localStorage.setItem(modeStorageKey, currentMode);
 
       document.querySelectorAll(".mode-button").forEach(button => {
@@ -4842,8 +5940,7 @@
         timeLeftEl.textContent = "5";
         roundStateEl.textContent = "Ready";
         targetMode = "kingFinder";
-        targetLabelEl.textContent = "King finder";
-        renderKingProgress();
+        targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
       } else if (currentMode === "pickup") {
         preparePickupMode();
@@ -4852,6 +5949,7 @@
       updateKingXtremeVisibility();
       updateLeaderboardVisibility();
       renderScores();
+      updateMobileBottomNavStatus();
 
       if (showMessage) {
         messageEl.textContent = currentMode === "kingFinder"
@@ -4947,8 +6045,12 @@
     }
 
     function setTheme(themeKey, showMessage = true) {
-      const theme = boardThemes[themeKey] || boardThemes.classic;
-      board.classList.toggle("rainbow-board-active", themeKey === "rainbow");
+      const resolvedThemeKey = boardThemes[themeKey] ? themeKey : "classic";
+      const theme = resolvedThemeKey === "randomised"
+        ? applyRandomisedThemeColours()
+        : (boardThemes[resolvedThemeKey] || boardThemes.classic);
+      currentThemeKey = resolvedThemeKey;
+      board.classList.toggle("rainbow-board-active", resolvedThemeKey === "rainbow");
       document.documentElement.style.setProperty("--light-square", theme.light);
       document.documentElement.style.setProperty("--dark-square", theme.dark);
       document.documentElement.style.setProperty("--light-square-bg", theme.lightBackground);
@@ -4957,13 +6059,13 @@
       document.documentElement.style.setProperty("--board-piece-colour", theme.pieceColour);
       document.documentElement.style.setProperty("--label-colour", theme.labelColour);
 
-      const isDiagram = themeKey === "diagram";
+      const isDiagram = resolvedThemeKey === "diagram";
       document.documentElement.style.setProperty("--cleared-square", isDiagram ? "#1a1a1a" : "#111");
       document.documentElement.style.setProperty("--cleared-outline", isDiagram ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.55)");
       document.documentElement.style.setProperty("--missed-square", isDiagram ? "#260707" : "#1b0505");
 
-      if (themeKey !== "rainbow") {
-        localStorage.setItem(themeStorageKey, themeKey);
+      if (resolvedThemeKey !== "rainbow") {
+        localStorage.setItem(themeStorageKey, resolvedThemeKey);
 
         if (rainbowUnlocked && showMessage) {
           rainbowUnlocked = false;
@@ -4973,8 +6075,10 @@
       }
 
       document.querySelectorAll(".theme-button").forEach(button => {
-        button.classList.toggle("active", button.dataset.theme === themeKey);
+        button.classList.toggle("active", button.dataset.theme === resolvedThemeKey);
       });
+
+      updateMobileBottomNavStatus();
 
       if (showMessage) {
         messageEl.textContent = `${theme.name} board selected.`;
@@ -5141,6 +6245,40 @@
 
 
 
+
+    function openMobileMenuPage(page) {
+      const titles = {
+        game: "Game mode",
+        board: "Style",
+        scores: "Leaderboard"
+      };
+      const resolvedPage = titles[page] ? page : "game";
+
+      document.body.classList.add("mobile-menu-open");
+      document.body.classList.remove("mobile-page-game", "mobile-page-board", "mobile-page-scores");
+      document.body.classList.add(`mobile-page-${resolvedPage}`);
+      mobileMenuTitle.textContent = titles[resolvedPage];
+
+      mobileNavButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.mobilePage === resolvedPage);
+      });
+
+      window.setTimeout(sizeBoardToWindow, 60);
+    }
+
+    function closeMobileMenuPage() {
+      document.body.classList.remove("mobile-menu-open", "mobile-page-game", "mobile-page-board", "mobile-page-scores");
+      mobileNavButtons.forEach(button => button.classList.remove("active"));
+      window.setTimeout(sizeBoardToWindow, 60);
+    }
+
+    mobileNavButtons.forEach(button => {
+      button.addEventListener("click", () => openMobileMenuPage(button.dataset.mobilePage));
+    });
+
+    mobileBackBtn.addEventListener("click", closeMobileMenuPage);
+    mobileReturnBtn.addEventListener("click", closeMobileMenuPage);
+
     function showInstructions() {
       instructionsModal.classList.add("show");
     }
@@ -5227,10 +6365,63 @@
         hideResultModal();
         hideEasterEgg();
         hideInstructions();
+        closeMobileMenuPage();
         rainbowToast.classList.remove("show");
       }
     });
     document.addEventListener("fullscreenchange", updateFullscreenButton);
+
+    function pickupPieceFromTouchTarget(target) {
+      const pieceElement = target?.closest?.(".unicode-piece");
+      const square = target?.closest?.(".square");
+      return pieceElement?.dataset?.pickupPieceId || square?.dataset?.pickupPieceId || null;
+    }
+
+    board.addEventListener("touchstart", event => {
+      if (window.PointerEvent) return;
+      const touch = event.changedTouches[0];
+      const pieceId = pickupPieceFromTouchTarget(event.target);
+      if (!touch || !pieceId) return;
+      startPickupPointerDrag({
+        pointerType: "touch",
+        pointerId: touch.identifier,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        currentTarget: event.target,
+        preventDefault: () => event.preventDefault(),
+        stopPropagation: () => event.stopPropagation()
+      }, pieceId);
+    }, { passive: false });
+
+    window.addEventListener("touchmove", event => {
+      if (window.PointerEvent || !pickupPointerDrag) return;
+      const touch = Array.from(event.changedTouches).find(item => item.identifier === pickupPointerDrag.pointerId);
+      if (!touch) return;
+      handlePickupPointerMove({
+        pointerId: touch.identifier,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => event.preventDefault()
+      });
+    }, { passive: false });
+
+    window.addEventListener("touchend", event => {
+      if (window.PointerEvent || !pickupPointerDrag) return;
+      const touch = Array.from(event.changedTouches).find(item => item.identifier === pickupPointerDrag.pointerId);
+      if (!touch) return;
+      handlePickupPointerEnd({
+        pointerId: touch.identifier,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => event.preventDefault(),
+        stopPropagation: () => event.stopPropagation()
+      });
+    }, { passive: false });
+
+    board.addEventListener("click", suppressPickupClickAfterDrag, true);
+    window.addEventListener("pointermove", handlePickupPointerMove, { passive: false });
+    window.addEventListener("pointerup", handlePickupPointerEnd, { passive: false });
+    window.addEventListener("pointercancel", handlePickupPointerEnd, { passive: false });
     window.addEventListener("resize", () => handleViewportChange(50));
     window.addEventListener("orientationchange", () => handleViewportChange(250));
     if (window.visualViewport) {
@@ -5239,6 +6430,7 @@
     }
 
     detectDeviceAndOptimise();
+    updateTargetBoxModeClass();
     buildBoard();
     loadKingXtremeMode();
     rainbowUnlocked = false;
