@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Chess Sprint v0.63</title>
+  <title>Chess Sprint v0.64</title>
   <style>
     :root {
       --light-square: #f0d9b5;
@@ -2323,6 +2323,185 @@
       cursor: grabbing;
     }
 
+
+    /* v0.64: phone layout polish only */
+    body.device-mobile {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    body.device-mobile .app,
+    body.device-mobile .main-panel,
+    body.device-mobile .side-panel,
+    body.device-mobile .controls,
+    body.device-mobile .board-wrap,
+    body.device-mobile .board-frame {
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    body.device-phone .app {
+      width: 100%;
+      height: auto !important;
+      min-height: var(--device-vh, 100svh);
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: auto auto auto !important;
+      align-content: start;
+      overflow-x: hidden;
+    }
+
+    body.device-phone .main-panel {
+      width: 100%;
+      min-height: auto;
+      overflow: visible;
+    }
+
+    body.device-phone .side-panel {
+      width: 100%;
+      min-height: auto;
+      overflow-x: hidden;
+      overflow-y: visible;
+    }
+
+    body.device-phone .board-wrap {
+      flex: 0 0 auto;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      overflow: visible;
+      padding: 0;
+    }
+
+    body.device-phone .board-frame {
+      margin-inline: auto;
+    }
+
+    body.device-phone .controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) !important;
+      justify-items: stretch;
+      gap: 8px;
+    }
+
+    body.device-phone .section-heading-row {
+      width: min(100%, 360px);
+      margin-inline: auto;
+      justify-content: center;
+      position: relative;
+    }
+
+    body.device-phone .section-heading-row .tiny-info-button {
+      position: absolute;
+      right: 0;
+    }
+
+    body.device-phone .settings h2 {
+      display: block;
+      text-align: center;
+      margin: 4px 0 0;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+    }
+
+    body.device-phone .mode-grid {
+      width: min(100%, 350px);
+      margin-inline: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      justify-content: center;
+      justify-items: stretch;
+    }
+
+    body.device-phone .mode-button {
+      text-align: center;
+      justify-items: center;
+      padding-inline: 6px;
+      min-width: 0;
+    }
+
+    body.device-phone .theme-grid {
+      width: min(100%, 350px);
+      margin-inline: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      justify-content: center;
+      justify-items: stretch;
+      gap: 6px;
+    }
+
+    body.device-phone .theme-button {
+      min-width: 0;
+      grid-template-columns: 23px minmax(0, 1fr);
+      gap: 5px;
+      padding: 5px 6px;
+      font-size: 0.68rem;
+      overflow: hidden;
+    }
+
+    body.device-phone .theme-button span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.device-phone .theme-swatch {
+      width: 23px;
+      height: 18px;
+      border-radius: 7px;
+    }
+
+    body.device-phone .custom-board {
+      width: min(100%, 350px);
+      margin-inline: auto;
+      padding: 9px;
+      box-sizing: border-box;
+    }
+
+    body.device-phone .custom-colour-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    body.device-phone .custom-colour-row label {
+      min-width: 0;
+      grid-template-columns: minmax(0, 1fr) 34px;
+      gap: 5px;
+      padding: 7px 6px;
+      font-size: 0.78rem;
+    }
+
+    body.device-phone .custom-colour-row input[type="color"] {
+      width: 34px;
+      height: 28px;
+    }
+
+    body.device-phone .message,
+    body.device-phone .scoreboard,
+    body.device-phone #resetScoresBtn,
+    body.device-phone .king-xtreme-toggle {
+      width: min(100%, 350px);
+      margin-inline: auto;
+      box-sizing: border-box;
+    }
+
+    body.device-phone .scores-list {
+      grid-template-columns: 1fr;
+    }
+
+    body.device-phone.device-landscape .app {
+      height: auto !important;
+      min-height: var(--device-vh, 100svh);
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 32vw) !important;
+      grid-template-rows: auto auto !important;
+      overflow-x: hidden;
+    }
+
+    body.device-phone.device-landscape .side-panel {
+      overflow-y: auto;
+      max-height: calc(var(--device-vh, 100svh) - 48px);
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -2522,7 +2701,7 @@
   <div class="app" id="app">
     <header class="app-header">
       <div class="title-wrap">
-        <div class="version">Version 0.63</div>
+        <div class="version">Version 0.64</div>
         <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
       </div>
       <div class="header-actions">
@@ -2700,7 +2879,7 @@
   </div>
 
   <script>
-    const VERSION = "0.63";
+    const VERSION = "0.64";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -3069,18 +3248,19 @@
       const isPhoneLayout = document.body.classList.contains("device-phone");
       const isMobileLayout = document.body.classList.contains("device-mobile");
       const isLandscapeMobile = isMobileLayout && document.body.classList.contains("device-landscape");
-      const safePadding = isMobileLayout ? 8 : 12;
+      const safePadding = isMobileLayout ? 4 : 12;
       const coordinateGutter = Math.max(
-        isMobileLayout ? 18 : 22,
-        Math.min(isMobileLayout ? 28 : 34, Math.floor(Math.min(rect.width, rect.height) * 0.055))
+        isMobileLayout ? 16 : 22,
+        Math.min(isMobileLayout ? 24 : 34, Math.floor(Math.min(rect.width, rect.height || rect.width) * 0.05))
       );
       const pickupHorizontalReserve = 0;
       const pickupVerticalReserve = 0;
 
       const minimumBoard = isMobileLayout ? 138 : 160;
-      const availableWidth = Math.max(minimumBoard, rect.width - safePadding - coordinateGutter - pickupHorizontalReserve);
+      const availableWidth = Math.max(minimumBoard, rect.width - safePadding - coordinateGutter - 4 - pickupHorizontalReserve);
       const availableHeight = Math.max(minimumBoard, rect.height - safePadding - coordinateGutter - pickupVerticalReserve);
-      const size = Math.floor(Math.min(availableWidth, availableHeight));
+      const phonePortrait = isPhoneLayout && !isLandscapeMobile;
+      const size = Math.floor(phonePortrait ? availableWidth : Math.min(availableWidth, availableHeight));
       document.documentElement.style.setProperty("--board-size", `${size}px`);
       document.documentElement.style.setProperty("--coord-gutter", `${coordinateGutter}px`);
       window.setTimeout(positionPickupPieces, 0);
