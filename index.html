@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.80</title>
+<title>KWIK CHESS v0.81</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -3910,7 +3910,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.80</p>
+<p class="easter-version">Version 0.81</p>
 </div>
 </div>
 </div>
@@ -3931,7 +3931,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.80";
+    const VERSION = "0.81";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -4175,6 +4175,7 @@
     let pickupPieces = [];
     let pickupSelectedId = null;
     let pickupPlacedCount = 0;
+    let pickupMoveCount = 0;
     let pickupStartTime = 0;
     let pickupElapsedSeconds = 0;
     let pickupPointerDrag = null;
@@ -4697,6 +4698,7 @@
       pickupPieces = [];
       pickupSelectedId = null;
       pickupPlacedCount = 0;
+      pickupMoveCount = 0;
       pickupStartTime = 0;
       pickupElapsedSeconds = 0;
       pickupPhase = "idle";
@@ -4943,6 +4945,7 @@
       pickupPieces = buildPickupPieces();
       pickupSelectedId = null;
       pickupPlacedCount = 0;
+      pickupMoveCount = 0;
       pickupStartTime = Date.now();
       pickupElapsedSeconds = 0;
       targetLabelEl.textContent = pickupXtreme ? "PICK UP XTREME" : "Set up the board";
@@ -5341,6 +5344,9 @@
       }
 
       const previousCorrectCount = pickupPlacedCount;
+      if (pickupXtreme && piece.currentSquare !== squareName) {
+        pickupMoveCount += 1;
+      }
       piece.currentSquare = squareName;
       piece.placedSquare = squareName;
       piece.placed = isPickupPieceCorrect(piece);
@@ -5355,9 +5361,13 @@
       if (nowCorrect && pickupPlacedCount > previousCorrectCount) {
         flashSquare(squareEl, "correct");
         playCorrectSound(nextGameplayPitch());
-        messageEl.textContent = `Correct: ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32`;
+        messageEl.textContent = pickupXtreme
+          ? `Correct: ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32 · ${pickupMoveCount} moves`
+          : `Correct: ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32`;
       } else {
-        messageEl.textContent = `Moved ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32 correct.`;
+        messageEl.textContent = pickupXtreme
+          ? `Moved ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32 correct · ${pickupMoveCount} moves`
+          : `Moved ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32 correct.`;
       }
     }
 
@@ -5373,8 +5383,10 @@
       scoreLabelEl.textContent = "Pieces";
       scoreEl.textContent = "32/32";
       roundStateEl.textContent = "Done";
-      targetLabelEl.textContent = "PICK UP complete";
-      targetSquareEl.textContent = `${formatHundredths(pickupElapsedSeconds)}s`;
+      targetLabelEl.textContent = pickupXtreme ? "PICK UP XTREME complete" : "PICK UP complete";
+      targetSquareEl.textContent = pickupXtreme
+        ? `${formatHundredths(pickupElapsedSeconds)}s · ${pickupMoveCount} moves`
+        : `${formatHundredths(pickupElapsedSeconds)}s`;
       playEndJingle();
       saveScore(0, pickupElapsedSeconds);
       renderScores();
@@ -5950,7 +5962,9 @@
         modalRank.textContent = timeRankForSeconds(elapsedSeconds);
         modalNote.textContent = `You cleared all 64 squares.`;
       } else if (currentMode === "pickup") {
-        modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
+        modalScore.textContent = pickupXtreme
+          ? `${formatHundredths(elapsedSeconds)}s · ${pickupMoveCount} moves`
+          : `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = pickupXtreme ? "PICK UP XTREME complete" : "PICK UP complete";
         modalNote.textContent = pickupXtreme ? "Board set up correctly with legal moves." : "Board set up correctly.";
       } else if (currentMode === "kingFinder") {
@@ -6017,6 +6031,7 @@
       scores.push({
         score: finalScore,
         timeSeconds: Number.isFinite(Number(elapsedSeconds)) ? roundedHundredths(elapsedSeconds) : elapsedSeconds,
+        moves: storedMode === "pickupXtreme" ? pickupMoveCount : undefined,
         mode: storedMode,
         scoreType: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? "kingFinderTime" : "standard",
         completed: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? true : undefined,
@@ -6055,6 +6070,9 @@
         .sort((a, b) => {
           const byTime = Number(a.timeSeconds) - Number(b.timeSeconds);
           if (byTime !== 0) return byTime;
+          const aMoves = Number.isFinite(Number(a.moves)) ? Number(a.moves) : Infinity;
+          const bMoves = Number.isFinite(Number(b.moves)) ? Number(b.moves) : Infinity;
+          if (aMoves !== bMoves) return aMoves - bMoves;
           return String(b.date).localeCompare(String(a.date));
         })
         .slice(0, 10);
@@ -6104,7 +6122,12 @@
 
       if (currentMode === "pickup") {
         const times = topPickupTimes(pickupXtreme ? "pickupXtreme" : "pickup");
-        return times.length ? `1st: ${formatHundredths(times[0].timeSeconds)}s` : "1st: —";
+        if (!times.length) return "1st: —";
+        if (pickupXtreme) {
+          const moves = Number.isFinite(Number(times[0].moves)) ? Number(times[0].moves) : "—";
+          return `1st: ${formatHundredths(times[0].timeSeconds)}s · ${moves}m`;
+        }
+        return `1st: ${formatHundredths(times[0].timeSeconds)}s`;
       }
 
       if (currentMode === "kingFinder") {
@@ -6187,7 +6210,9 @@
       }
 
       const pickupXtremeTimes = topPickupTimes("pickupXtreme");
-      bestPickupXtremeEl.textContent = pickupXtremeTimes.length ? `${formatHundredths(pickupXtremeTimes[0].timeSeconds)}s` : "—";
+      bestPickupXtremeEl.textContent = pickupXtremeTimes.length
+        ? `${formatHundredths(pickupXtremeTimes[0].timeSeconds)}s · ${Number.isFinite(Number(pickupXtremeTimes[0].moves)) ? Number(pickupXtremeTimes[0].moves) : "—"} moves`
+        : "—";
       pickupXtremeScoresListEl.innerHTML = "";
       if (!pickupXtremeTimes.length) {
         const empty = document.createElement("li");
@@ -6198,7 +6223,8 @@
         pickupXtremeTimes.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item xtreme-score";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
           pickupXtremeScoresListEl.appendChild(li);
         });
       }
@@ -6485,7 +6511,7 @@
     async function toggleFullscreen() {
       try {
         if (!document.fullscreenElement) {
-          await app.requestFullscreen();
+          await document.documentElement.requestFullscreen();
         } else {
           await document.exitFullscreen();
         }
