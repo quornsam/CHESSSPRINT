@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chess Sprint v0.61</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Chess Sprint v0.63</title>
   <style>
     :root {
       --light-square: #f0d9b5;
@@ -2147,6 +2147,182 @@
       }
     }
 
+
+    /* v0.62: device detection optimisation */
+    body.device-touch {
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    body.device-touch button,
+    body.device-touch .square,
+    body.device-touch .pickup-piece,
+    body.device-touch .rainbow-egg,
+    body.device-touch .logo-king {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body.device-mobile {
+      min-height: var(--device-vh, 100svh);
+      padding:
+        max(4px, env(safe-area-inset-top))
+        max(4px, env(safe-area-inset-right))
+        max(4px, env(safe-area-inset-bottom))
+        max(4px, env(safe-area-inset-left));
+    }
+
+    body.device-mobile .app {
+      height: calc(var(--device-vh, 100svh) - 8px);
+      gap: 5px;
+    }
+
+    body.device-mobile .main-panel,
+    body.device-mobile .side-panel {
+      padding: 6px;
+      border-radius: 13px;
+    }
+
+    body.device-mobile .side-panel {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    body.device-phone .app {
+      grid-template-rows: auto minmax(0, 1fr) minmax(120px, 24svh);
+    }
+
+    body.device-mobile header {
+      min-height: 34px;
+    }
+
+    body.device-mobile .target-box {
+      height: 78px;
+      min-height: 78px;
+      padding: 5px 7px;
+      border-radius: 13px;
+    }
+
+    body.device-mobile .target {
+      height: 48px;
+      min-height: 0 !important;
+      font-size: clamp(1.75rem, 10vw, 3rem);
+    }
+
+    body.device-mobile .target.piece-target {
+      height: 52px;
+      min-height: 0 !important;
+    }
+
+    body.device-mobile .target.instruction-target {
+      height: 48px !important;
+      min-height: 48px !important;
+      font-size: clamp(0.78rem, 3.6vw, 1.05rem) !important;
+      line-height: 1.08 !important;
+      padding: 0 6px !important;
+    }
+
+    body.device-mobile .top-strip {
+      gap: 4px;
+    }
+
+    body.device-mobile .stat {
+      min-height: 40px;
+      padding: 5px 6px;
+      border-radius: 11px;
+    }
+
+    body.device-mobile .stat-value {
+      font-size: clamp(1rem, 4.6vw, 1.45rem);
+    }
+
+    body.device-mobile .theme-button,
+    body.device-mobile .mode-button,
+    body.device-mobile .piece-button,
+    body.device-mobile button.action {
+      min-height: 39px;
+    }
+
+    body.device-mobile .message {
+      min-height: 32px;
+      font-size: 0.76rem;
+      padding: 6px 7px;
+    }
+
+    body.device-mobile.device-landscape .app {
+      grid-template-columns: minmax(0, 1fr) minmax(230px, 34vw);
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    body.device-mobile.device-landscape header {
+      grid-column: 1 / -1;
+    }
+
+    body.device-mobile.device-landscape .main-panel {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    body.device-mobile.device-landscape .side-panel {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 0;
+    }
+
+    body.device-mobile.device-landscape .target-box {
+      height: 68px;
+      min-height: 68px;
+    }
+
+    body.device-mobile.device-landscape .target {
+      height: 40px;
+      font-size: clamp(1.45rem, 6vh, 2.35rem);
+    }
+
+    body.device-mobile.device-landscape .target.instruction-target {
+      height: 40px !important;
+      min-height: 40px !important;
+      font-size: clamp(0.72rem, 3vh, 0.95rem) !important;
+    }
+
+    body.device-tablet.device-landscape .app {
+      grid-template-columns: minmax(0, 1fr) minmax(270px, 320px);
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+
+    /* v0.63: PICK UP pieces now live on the board */
+    .board.pickup-mode .square {
+      cursor: pointer;
+    }
+
+    .board.pickup-mode .square.pickup-board-selected {
+      box-shadow:
+        inset 0 0 0 4px #f6c85b,
+        inset 0 0 0 999px rgba(246,200,91,0.16) !important;
+      z-index: 3;
+    }
+
+    .board.pickup-mode .square.pickup-board-correct:not(.pickup-board-selected) {
+      box-shadow:
+        inset 0 0 0 3px rgba(37,196,107,0.62),
+        inset 0 0 0 999px rgba(37,196,107,0.08);
+    }
+
+    .board.pickup-mode .square.pickup-board-occupied .piece-holder {
+      pointer-events: auto;
+    }
+
+    .board.pickup-mode .piece-holder .unicode-piece {
+      cursor: grab;
+      pointer-events: auto;
+    }
+
+    .board.pickup-mode .piece-holder .unicode-piece:active {
+      cursor: grabbing;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -2346,7 +2522,7 @@
   <div class="app" id="app">
     <header class="app-header">
       <div class="title-wrap">
-        <div class="version">Version 0.61</div>
+        <div class="version">Version 0.63</div>
         <h1 class="wordmark"><span class="wordmark-text">CHESS</span><span class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0" aria-label="About CHESS SPRINT">♚</span><span class="wordmark-text">SPR<span id="rainbowEgg" class="rainbow-egg" role="button" tabindex="0" aria-label="Activate Rainbow mode">I</span>NT</span></h1>
       </div>
       <div class="header-actions">
@@ -2517,14 +2693,14 @@
       <p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
 
       <h3>PICK UP</h3>
-      <p>Put all 32 pieces back on their correct starting squares as fast as possible. Pawns can go on any pawn square of their colour, and paired pieces such as rooks, knights, and bishops can go on either matching square. It is a practical setup drill disguised as a game.</p>
+      <p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square.</p>
 
       <p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
     </div>
   </div>
 
   <script>
-    const VERSION = "0.61";
+    const VERSION = "0.63";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -2797,7 +2973,7 @@
             if (currentMode !== "pickup" || pickupPhase !== "playing") return;
             event.preventDefault();
             const tokenId = event.dataTransfer.getData("text/pickup-piece");
-            handlePickupPlacement(tokenId, squareName, square);
+            if (tokenId) handlePickupPlacement(tokenId, squareName, square);
           });
           board.appendChild(square);
         });
@@ -2852,20 +3028,58 @@
       });
     }
 
+
+    function detectDeviceAndOptimise() {
+      const viewport = window.visualViewport;
+      const viewportWidth = Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 0);
+      const viewportHeight = Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+      const shortestSide = Math.min(viewportWidth, viewportHeight);
+      const longestSide = Math.max(viewportWidth, viewportHeight);
+      const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches || false;
+      const touchCapable = coarsePointer || navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+      const mobileUserAgent = /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent);
+      const tabletUserAgent = /iPad|Tablet/i.test(navigator.userAgent);
+      const looksPhone = mobileUserAgent || (touchCapable && shortestSide <= 520);
+      const looksTablet = tabletUserAgent || (touchCapable && !looksPhone && shortestSide <= 900 && longestSide <= 1400);
+      const isMobileOptimised = looksPhone || (touchCapable && viewportWidth <= 850);
+      const isLandscape = viewportWidth > viewportHeight;
+
+      document.documentElement.style.setProperty("--device-vh", `${viewportHeight}px`);
+      document.documentElement.style.setProperty("--device-vw", `${viewportWidth}px`);
+
+      document.body.classList.toggle("device-touch", touchCapable);
+      document.body.classList.toggle("device-mobile", isMobileOptimised);
+      document.body.classList.toggle("device-phone", looksPhone);
+      document.body.classList.toggle("device-tablet", looksTablet);
+      document.body.classList.toggle("device-desktop", !isMobileOptimised);
+      document.body.classList.toggle("device-landscape", isLandscape);
+      document.body.classList.toggle("device-portrait", !isLandscape);
+    }
+
+    function handleViewportChange(delay = 50) {
+      detectDeviceAndOptimise();
+      window.setTimeout(() => {
+        detectDeviceAndOptimise();
+        sizeBoardToWindow();
+      }, delay);
+    }
+
     function sizeBoardToWindow() {
       const rect = boardWrap.getBoundingClientRect();
-      const safePadding = 12;
-      const coordinateGutter = Math.max(22, Math.min(34, Math.floor(Math.min(rect.width, rect.height) * 0.055)));
-      const pickupSideLayout = currentMode === "pickup" && rect.width >= 740;
-      const pickupHorizontalReserve = pickupSideLayout
-        ? Math.min(360, Math.max(230, rect.width * 0.34))
-        : 0;
-      const pickupVerticalReserve = currentMode === "pickup" && !pickupSideLayout
-        ? Math.min(190, Math.max(124, rect.height * 0.26))
-        : 0;
+      const isPhoneLayout = document.body.classList.contains("device-phone");
+      const isMobileLayout = document.body.classList.contains("device-mobile");
+      const isLandscapeMobile = isMobileLayout && document.body.classList.contains("device-landscape");
+      const safePadding = isMobileLayout ? 8 : 12;
+      const coordinateGutter = Math.max(
+        isMobileLayout ? 18 : 22,
+        Math.min(isMobileLayout ? 28 : 34, Math.floor(Math.min(rect.width, rect.height) * 0.055))
+      );
+      const pickupHorizontalReserve = 0;
+      const pickupVerticalReserve = 0;
 
-      const availableWidth = Math.max(160, rect.width - safePadding - coordinateGutter - pickupHorizontalReserve);
-      const availableHeight = Math.max(160, rect.height - safePadding - coordinateGutter - pickupVerticalReserve);
+      const minimumBoard = isMobileLayout ? 138 : 160;
+      const availableWidth = Math.max(minimumBoard, rect.width - safePadding - coordinateGutter - pickupHorizontalReserve);
+      const availableHeight = Math.max(minimumBoard, rect.height - safePadding - coordinateGutter - pickupVerticalReserve);
       const size = Math.floor(Math.min(availableWidth, availableHeight));
       document.documentElement.style.setProperty("--board-size", `${size}px`);
       document.documentElement.style.setProperty("--coord-gutter", `${coordinateGutter}px`);
@@ -3141,11 +3355,20 @@
       pickupCountdownTimers = [];
     }
 
+    function clearPickupBoardMarks() {
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.remove("pickup-board-selected", "pickup-board-correct", "pickup-board-occupied");
+        delete square.dataset.pickupPieceId;
+        square.setAttribute("aria-label", square.dataset.square);
+      });
+    }
+
     function clearPickupMode() {
       clearPickupTimers();
       pickupLayer.innerHTML = "";
       pickupLayer.classList.add("hidden");
       board.classList.remove("pickup-mode");
+      clearPickupBoardMarks();
       targetBox.classList.remove("pickup-ready");
       pickupPieces = [];
       pickupSelectedId = null;
@@ -3163,6 +3386,7 @@
         allowedTargets,
         placed: false,
         placedSquare: null,
+        currentSquare: null,
         layoutSide: "left",
         layoutSlot: 0,
         jitterX: Math.random(),
@@ -3204,7 +3428,11 @@
         pieces.push(makePickupPiece(`white-back-${index}`, "white", key, allowedStartSquares("white", key)));
       });
 
+      const startingSquares = shuffle(allSquares()).slice(0, pieces.length);
       shuffle(pieces).forEach((piece, index) => {
+        piece.currentSquare = startingSquares[index];
+        piece.placed = false;
+        piece.placedSquare = null;
         piece.layoutSide = index % 2 === 0 ? "left" : "right";
         piece.layoutSlot = Math.floor(index / 2);
         piece.jitterX = Math.random();
@@ -3373,6 +3601,7 @@
     function beginPickupPlay() {
       pickupPhase = "playing";
       board.classList.add("pickup-mode");
+      pickupLayer.classList.add("hidden");
       pickupPieces = buildPickupPieces();
       pickupSelectedId = null;
       pickupPlacedCount = 0;
@@ -3380,10 +3609,12 @@
       pickupElapsedSeconds = 0;
       targetLabelEl.textContent = "Set up the board";
       clearInstructionTarget();
-      targetSquareEl.textContent = "32 pieces";
+      targetSquareEl.textContent = "0 correct";
       roundStateEl.textContent = "Go";
       scoreEl.textContent = "0/32";
-      renderPickupPieces();
+      renderPickupBoardPieces();
+      updatePickupProgress(false);
+      messageEl.textContent = "Move pieces onto their correct starting squares. Occupied squares must be cleared first.";
       playStartSound();
 
       clearInterval(pickupTimer);
@@ -3398,7 +3629,72 @@
     }
 
     function findPickupPiece(pieceId) {
-      return pickupPieces.find(piece => piece.id === pieceId && !piece.placed);
+      return pickupPieces.find(piece => piece.id === pieceId);
+    }
+
+    function pickupPieceLabel(piece) {
+      return `${piece.colour} ${piece.key}`;
+    }
+
+    function pickupPieceAtSquare(squareName) {
+      return pickupPieces.find(piece => piece.currentSquare === squareName);
+    }
+
+    function isPickupPieceCorrect(piece) {
+      return Boolean(piece?.currentSquare && piece.allowedTargets.includes(piece.currentSquare));
+    }
+
+    function countCorrectPickupPieces() {
+      return pickupPieces.filter(isPickupPieceCorrect).length;
+    }
+
+    function updatePickupBoardSelection() {
+      document.querySelectorAll(".square").forEach(square => {
+        const piece = pickupPieceAtSquare(square.dataset.square);
+        square.classList.toggle("pickup-board-selected", Boolean(piece && piece.id === pickupSelectedId));
+      });
+    }
+
+    function renderPickupBoardPieces() {
+      clearBoardPieces();
+      clearPickupBoardMarks();
+
+      pickupPieces.forEach(piece => {
+        const square = document.querySelector(`[data-square="${piece.currentSquare}"]`);
+        if (!square) return;
+
+        const holder = square.querySelector(".piece-holder");
+        if (!holder) return;
+
+        holder.innerHTML = svgForPiece(piece.key, piece.colour);
+        square.dataset.pickupPieceId = piece.id;
+        square.classList.add("pickup-board-occupied");
+        square.classList.toggle("pickup-board-correct", isPickupPieceCorrect(piece));
+        square.classList.toggle("pickup-board-selected", piece.id === pickupSelectedId);
+        square.setAttribute("aria-label", `${square.dataset.square}, ${pickupPieceLabel(piece)}`);
+
+        const pieceEl = holder.querySelector(".unicode-piece");
+        if (pieceEl) {
+          pieceEl.draggable = true;
+          pieceEl.dataset.pickupPieceId = piece.id;
+          pieceEl.addEventListener("dragstart", event => {
+            pickupSelectedId = piece.id;
+            updatePickupBoardSelection();
+            event.dataTransfer.setData("text/pickup-piece", piece.id);
+            event.dataTransfer.effectAllowed = "move";
+          });
+        }
+      });
+    }
+
+    function updatePickupProgress(finishIfComplete = true) {
+      pickupPlacedCount = countCorrectPickupPieces();
+      scoreEl.textContent = `${pickupPlacedCount}/32`;
+      targetSquareEl.textContent = pickupPlacedCount >= 32 ? "Complete" : `${32 - pickupPlacedCount} left`;
+
+      if (finishIfComplete && pickupPlacedCount >= 32) {
+        endPickupGame();
+      }
     }
 
     function handlePickupSquareClick(squareName, squareEl) {
@@ -3407,20 +3703,37 @@
         return;
       }
 
-      if (pickupPhase !== "playing" || !pickupSelectedId) return;
-      handlePickupPlacement(pickupSelectedId, squareName, squareEl);
-    }
+      if (pickupPhase !== "playing") return;
 
+      const clickedPiece = pickupPieceAtSquare(squareName);
 
-    function pickupOccupiedSquares() {
-      return pickupPieces
-        .filter(piece => piece.placed && piece.placedSquare)
-        .map(piece => piece.placedSquare);
-    }
+      if (!pickupSelectedId) {
+        if (!clickedPiece) {
+          messageEl.textContent = "Select a piece to move.";
+          return;
+        }
 
-    function isValidPickupSquare(piece, squareName) {
-      if (!piece.allowedTargets.includes(squareName)) return false;
-      return !pickupOccupiedSquares().includes(squareName);
+        pickupSelectedId = clickedPiece.id;
+        renderPickupBoardPieces();
+        messageEl.textContent = `Selected ${pickupPieceLabel(clickedPiece)}. Move it to an empty square.`;
+        return;
+      }
+
+      const selectedPiece = findPickupPiece(pickupSelectedId);
+      if (!selectedPiece) {
+        pickupSelectedId = null;
+        renderPickupBoardPieces();
+        return;
+      }
+
+      if (clickedPiece && clickedPiece.id === selectedPiece.id) {
+        pickupSelectedId = null;
+        renderPickupBoardPieces();
+        messageEl.textContent = "Piece deselected.";
+        return;
+      }
+
+      handlePickupPlacement(selectedPiece.id, squareName, squareEl);
     }
 
     function handlePickupPlacement(pieceId, squareName, squareEl) {
@@ -3429,29 +3742,39 @@
       const piece = findPickupPiece(pieceId);
       if (!piece) return;
 
-      if (!isValidPickupSquare(piece, squareName)) {
+      const occupyingPiece = pickupPieceAtSquare(squareName);
+      if (occupyingPiece && occupyingPiece.id !== piece.id) {
         flashSquare(squareEl, "wrong");
         playWrongSound();
+        messageEl.textContent = "That square is occupied. Move that piece first.";
         return;
       }
 
-      const holder = squareEl.querySelector(".piece-holder");
-      if (!holder) return;
+      if (occupyingPiece && occupyingPiece.id === piece.id) {
+        pickupSelectedId = null;
+        renderPickupBoardPieces();
+        messageEl.textContent = "Piece deselected.";
+        return;
+      }
 
-      piece.placed = true;
+      const previousCorrectCount = pickupPlacedCount;
+      piece.currentSquare = squareName;
       piece.placedSquare = squareName;
+      piece.placed = isPickupPieceCorrect(piece);
       pickupSelectedId = null;
-      pickupPlacedCount += 1;
-      holder.innerHTML = svgForPiece(piece.key, piece.colour);
-      squareEl.setAttribute("aria-label", `${squareEl.dataset.square}, ${piece.colour} ${piece.key}`);
-      flashSquare(squareEl, "correct");
-      playCorrectSound(nextGameplayPitch());
-      scoreEl.textContent = `${pickupPlacedCount}/32`;
-      targetSquareEl.textContent = `${32 - pickupPlacedCount} left`;
-      renderPickupPieces();
 
-      if (pickupPlacedCount >= 32) {
-        endPickupGame();
+      renderPickupBoardPieces();
+      updatePickupProgress(true);
+
+      const nowCorrect = isPickupPieceCorrect(piece);
+      if (pickupPhase === "ended") return;
+
+      if (nowCorrect && pickupPlacedCount > previousCorrectCount) {
+        flashSquare(squareEl, "correct");
+        playCorrectSound(nextGameplayPitch());
+        messageEl.textContent = `Correct: ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32`;
+      } else {
+        messageEl.textContent = `Moved ${pickupPieceLabel(piece)}. ${pickupPlacedCount}/32 correct.`;
       }
     }
 
@@ -4728,9 +5051,14 @@
       }
     });
     document.addEventListener("fullscreenchange", updateFullscreenButton);
-    window.addEventListener("resize", () => window.setTimeout(sizeBoardToWindow, 50));
-    window.addEventListener("orientationchange", () => window.setTimeout(sizeBoardToWindow, 250));
+    window.addEventListener("resize", () => handleViewportChange(50));
+    window.addEventListener("orientationchange", () => handleViewportChange(250));
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => handleViewportChange(60));
+      window.visualViewport.addEventListener("scroll", () => handleViewportChange(60));
+    }
 
+    detectDeviceAndOptimise();
     buildBoard();
     loadKingXtremeMode();
     rainbowUnlocked = false;
@@ -4742,7 +5070,7 @@
     loadMode();
     renderScores();
     updateLeaderboardVisibility();
-    window.setTimeout(sizeBoardToWindow, 50);
+    handleViewportChange(50);
   </script>
 </body>
 </html>
