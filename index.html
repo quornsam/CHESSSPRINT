@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.78 BETA</title>
+<title>KWIK CHESS v0.80</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -3505,6 +3505,53 @@
       font-weight: 800 !important;
     }
 
+
+    /* v0.79: PICK UP XTREME legal move highlights */
+    .board.pickup-mode .square.pickup-legal-move {
+      box-shadow:
+        inset 0 0 0 4px rgba(80, 220, 130, 0.96),
+        inset 0 0 0 999px rgba(80, 220, 130, 0.18) !important;
+      z-index: 5;
+    }
+
+    .board.pickup-mode .square.pickup-legal-move::after {
+      content: "";
+      position: absolute;
+      width: 28%;
+      height: 28%;
+      border-radius: 999px;
+      background: rgba(80, 220, 130, 0.78);
+      box-shadow: 0 0 12px rgba(80, 220, 130, 0.50);
+      pointer-events: none;
+    }
+
+    .board.pickup-mode .square.pickup-illegal-move {
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 85, 85, 0.92),
+        inset 0 0 0 999px rgba(255, 85, 85, 0.12) !important;
+    }
+
+
+    /* v0.80: split and highlight XTREME leaderboards */
+    .leaderboard-subtitle {
+      margin: 14px 0 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .score-item.xtreme-score {
+      border-color: rgba(246, 200, 91, 0.46) !important;
+      background: linear-gradient(135deg, rgba(246,200,91,0.16), rgba(246,200,91,0.045)) !important;
+    }
+
+    .score-item.xtreme-score .place,
+    .score-item.xtreme-score strong {
+      color: var(--accent) !important;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -3797,11 +3844,18 @@
 </section>
 <section aria-live="polite" class="scoreboard hidden" id="pickupLeaderboard">
 <h2>PICK UP leaderboard</h2>
+<div class="leaderboard-subtitle">Normal mode</div>
 <div class="high-score">
-<div class="stat-label">Best time</div>
+<div class="stat-label">Best normal time</div>
 <div class="big" id="bestPickup">—</div>
 </div>
 <ul class="scores-list" id="pickupScoresList"></ul>
+<div class="leaderboard-subtitle">XTREME mode</div>
+<div class="high-score">
+<div class="stat-label">Best XTREME time</div>
+<div class="big" id="bestPickupXtreme">—</div>
+</div>
+<ul class="scores-list" id="pickupXtremeScoresList"></ul>
 </section>
 <section aria-live="polite" class="scoreboard hidden" id="kingFinderLeaderboard">
 <h2>King finder leaderboard</h2>
@@ -3856,7 +3910,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.78 BETA</p>
+<p class="easter-version">Version 0.80</p>
 </div>
 </div>
 </div>
@@ -3872,12 +3926,12 @@
 <h3>King finder</h3>
 <p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
 <h3>PICK UP</h3>
-<p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square.</p>
+<p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square. XTREME mode keeps the same goal, but pieces can only move legally: knights jump, sliding pieces need clear paths, kings move one square, and pawns move one square up, down, left, or right.</p>
 <p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
 </div>
 </div>
 <script>
-    const VERSION = "0.78 BETA";
+    const VERSION = "0.80";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -4034,6 +4088,8 @@
     const pickupLeaderboard = document.getElementById("pickupLeaderboard");
     const pickupScoresListEl = document.getElementById("pickupScoresList");
     const bestPickupEl = document.getElementById("bestPickup");
+    const pickupXtremeScoresListEl = document.getElementById("pickupXtremeScoresList");
+    const bestPickupXtremeEl = document.getElementById("bestPickupXtreme");
     const kingFinderLeaderboard = document.getElementById("kingFinderLeaderboard");
     const kingFinderScoresListEl = document.getElementById("kingFinderScoresList");
     const bestKingFinderEl = document.getElementById("bestKingFinder");
@@ -4077,6 +4133,7 @@
     const customThemeStorageKey = "chess-square-sprint-custom-theme";
     const modeStorageKey = "chess-square-sprint-mode";
     const kingXtremeStorageKey = "chess-square-sprint-king-xtreme";
+    const pickupXtremeStorageKey = "kwik-chess-pickup-xtreme";
     const rainbowUnlockedStorageKey = "chess-sprint-rainbow-unlocked";
     const pieceStyleStorageKey = "chess-square-sprint-piece-style";
     const oldColourStorageKey = "chess-square-sprint-colours";
@@ -4111,6 +4168,7 @@
     let kingFinderStarted = false;
     let kingFinderPhase = "idle";
     let kingFinderXtreme = false;
+    let pickupXtreme = false;
     let kingFinderGuessStartedAt = 0;
     let kingFinderTotalGuessMs = 0;
     let kingFinderFinalTimeScore = 0;
@@ -4312,6 +4370,22 @@
       return squares;
     }
 
+    function squareCoords(squareName) {
+      const file = files.indexOf(squareName[0]);
+      const rank = Number(squareName.slice(1));
+      return { file, rank };
+    }
+
+    function coordsToSquare(file, rank) {
+      if (file < 0 || file > 7 || rank < 1 || rank > 8) return null;
+      return `${files[file]}${rank}`;
+    }
+
+    function squareColourIndex(squareName) {
+      const { file, rank } = squareCoords(squareName);
+      return (file + rank) % 2;
+    }
+
     function randomItem(items) {
       return items[Math.floor(Math.random() * items.length)];
     }
@@ -4371,7 +4445,7 @@
       if (currentMode === "sprint") return "30s SPRINT";
       if (currentMode === "sixtyFour") return "64 SQUARES";
       if (currentMode === "kingFinder") return kingFinderXtreme ? "KING FINDER XTREME" : "KING FINDER";
-      if (currentMode === "pickup") return "PICK UP";
+      if (currentMode === "pickup") return pickupXtreme ? "PICK UP XTREME" : "PICK UP";
       return "30s SPRINT";
     }
 
@@ -4606,7 +4680,7 @@
 
     function clearPickupBoardMarks() {
       document.querySelectorAll(".square").forEach(square => {
-        square.classList.remove("pickup-board-selected", "pickup-board-correct", "pickup-board-occupied");
+        square.classList.remove("pickup-board-selected", "pickup-board-correct", "pickup-board-occupied", "pickup-legal-move", "pickup-illegal-move");
         delete square.dataset.pickupPieceId;
         square.setAttribute("aria-label", square.dataset.square);
       });
@@ -4678,8 +4752,22 @@
         pieces.push(makePickupPiece(`white-back-${index}`, "white", key, allowedStartSquares("white", key)));
       });
 
-      const startingSquares = shuffle(allSquares()).slice(0, pieces.length);
-      shuffle(pieces).forEach((piece, index) => {
+      const shuffledPieces = shuffle(pieces);
+      let startingSquares = shuffle(allSquares()).slice(0, pieces.length);
+
+      if (pickupXtreme) {
+        for (let attempt = 0; attempt < 500; attempt += 1) {
+          startingSquares = shuffle(allSquares()).slice(0, pieces.length);
+          const trial = shuffledPieces.map((piece, index) => ({ ...piece, currentSquare: startingSquares[index] }));
+          const blackBishops = trial.filter(piece => piece.colour === "black" && piece.key === "bishop");
+          const whiteBishops = trial.filter(piece => piece.colour === "white" && piece.key === "bishop");
+          const blackOk = blackBishops.length === 2 && squareColourIndex(blackBishops[0].currentSquare) !== squareColourIndex(blackBishops[1].currentSquare);
+          const whiteOk = whiteBishops.length === 2 && squareColourIndex(whiteBishops[0].currentSquare) !== squareColourIndex(whiteBishops[1].currentSquare);
+          if (blackOk && whiteOk) break;
+        }
+      }
+
+      shuffledPieces.forEach((piece, index) => {
         piece.currentSquare = startingSquares[index];
         piece.placed = false;
         piece.placedSquare = null;
@@ -4857,14 +4945,14 @@
       pickupPlacedCount = 0;
       pickupStartTime = Date.now();
       pickupElapsedSeconds = 0;
-      targetLabelEl.textContent = "Set up the board";
+      targetLabelEl.textContent = pickupXtreme ? "PICK UP XTREME" : "Set up the board";
       clearInstructionTarget();
       targetSquareEl.textContent = "0 correct";
       roundStateEl.textContent = "Go";
       scoreEl.textContent = "0/32";
       renderPickupBoardPieces();
       updatePickupProgress(false);
-      messageEl.textContent = "Drag and drop pieces, or tap a piece then tap an empty square. Occupied squares must be cleared first.";
+      messageEl.textContent = pickupXtreme ? "PICK UP XTREME: pieces can only move legally. Select a piece to show its legal moves." : "Drag and drop pieces, or tap a piece then tap an empty square. Occupied squares must be cleared first.";
       playStartSound();
 
       clearInterval(pickupTimer);
@@ -5039,6 +5127,87 @@
       }
     }
 
+    function isPickupPathClear(fromSquare, toSquare) {
+      const from = squareCoords(fromSquare);
+      const to = squareCoords(toSquare);
+      const fileStep = Math.sign(to.file - from.file);
+      const rankStep = Math.sign(to.rank - from.rank);
+      let file = from.file + fileStep;
+      let rank = from.rank + rankStep;
+
+      while (file !== to.file || rank !== to.rank) {
+        const squareName = coordsToSquare(file, rank);
+        if (!squareName) return false;
+        if (pickupPieceAtSquare(squareName)) return false;
+        file += fileStep;
+        rank += rankStep;
+      }
+
+      return true;
+    }
+
+    function isLegalPickupXtremeMove(piece, toSquare) {
+      if (!pickupXtreme) return true;
+      if (!piece || !piece.currentSquare || !toSquare || toSquare === piece.currentSquare) return false;
+
+      const occupyingPiece = pickupPieceAtSquare(toSquare);
+      if (occupyingPiece && occupyingPiece.id !== piece.id) return false;
+
+      const from = squareCoords(piece.currentSquare);
+      const to = squareCoords(toSquare);
+      const df = to.file - from.file;
+      const dr = to.rank - from.rank;
+      const absF = Math.abs(df);
+      const absR = Math.abs(dr);
+
+      if (piece.key === "pawn") {
+        return (absF === 1 && absR === 0) || (absF === 0 && absR === 1);
+      }
+
+      if (piece.key === "knight") {
+        return (absF === 1 && absR === 2) || (absF === 2 && absR === 1);
+      }
+
+      if (piece.key === "king") {
+        return Math.max(absF, absR) === 1;
+      }
+
+      if (piece.key === "rook") {
+        return (absF === 0 || absR === 0) && isPickupPathClear(piece.currentSquare, toSquare);
+      }
+
+      if (piece.key === "bishop") {
+        return absF === absR && isPickupPathClear(piece.currentSquare, toSquare);
+      }
+
+      if (piece.key === "queen") {
+        const straight = absF === 0 || absR === 0;
+        const diagonal = absF === absR;
+        return (straight || diagonal) && isPickupPathClear(piece.currentSquare, toSquare);
+      }
+
+      return false;
+    }
+
+    function legalPickupXtremeMoves(piece) {
+      if (!pickupXtreme || !piece) return [];
+      return allSquares().filter(squareName => isLegalPickupXtremeMove(piece, squareName));
+    }
+
+    function updatePickupLegalMoveHighlights() {
+      document.querySelectorAll(".square.pickup-legal-move, .square.pickup-illegal-move").forEach(square => {
+        square.classList.remove("pickup-legal-move", "pickup-illegal-move");
+      });
+
+      if (!pickupXtreme || pickupPhase !== "playing" || !pickupSelectedId) return;
+
+      const piece = findPickupPiece(pickupSelectedId);
+      legalPickupXtremeMoves(piece).forEach(squareName => {
+        const square = document.querySelector(`[data-square="${squareName}"]`);
+        if (square) square.classList.add("pickup-legal-move");
+      });
+    }
+
     function renderPickupBoardPieces() {
       clearBoardPieces();
       clearPickupBoardMarks();
@@ -5071,6 +5240,8 @@
           pieceEl.addEventListener("pointerdown", event => startPickupPointerDrag(event, piece.id));
         }
       });
+
+      updatePickupLegalMoveHighlights();
     }
 
     function updatePickupProgress(finishIfComplete = true) {
@@ -5107,7 +5278,7 @@
 
         pickupSelectedId = clickedPiece.id;
         renderPickupBoardPieces();
-        messageEl.textContent = `Selected ${pickupPieceLabel(clickedPiece)}. Move it to an empty square.`;
+        messageEl.textContent = pickupXtreme ? `Selected ${pickupPieceLabel(clickedPiece)}. Legal moves are highlighted.` : `Selected ${pickupPieceLabel(clickedPiece)}. Move it to an empty square.`;
         return;
       }
 
@@ -5125,6 +5296,13 @@
         return;
       }
 
+      if (pickupXtreme && clickedPiece && clickedPiece.id !== selectedPiece.id) {
+        pickupSelectedId = clickedPiece.id;
+        renderPickupBoardPieces();
+        messageEl.textContent = `Selected ${pickupPieceLabel(clickedPiece)}. Legal moves are highlighted.`;
+        return;
+      }
+
       handlePickupPlacement(selectedPiece.id, squareName, squareEl);
     }
 
@@ -5133,6 +5311,19 @@
 
       const piece = findPickupPiece(pieceId);
       if (!piece) return;
+
+      if (pickupXtreme && !isLegalPickupXtremeMove(piece, squareName)) {
+        const target = squareEl || document.querySelector(`[data-square="${squareName}"]`);
+        if (target) {
+          target.classList.add("pickup-illegal-move");
+          window.setTimeout(() => target.classList.remove("pickup-illegal-move"), 280);
+          flashSquare(target, "wrong");
+        }
+        playWrongSound();
+        messageEl.textContent = `Illegal move for ${pickupPieceLabel(piece)}. Use the highlighted squares.`;
+        renderPickupBoardPieces();
+        return;
+      }
 
       const occupyingPiece = pickupPieceAtSquare(squareName);
       if (occupyingPiece && occupyingPiece.id !== piece.id) {
@@ -5760,8 +5951,8 @@
         modalNote.textContent = `You cleared all 64 squares.`;
       } else if (currentMode === "pickup") {
         modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
-        modalRank.textContent = "PICK UP complete";
-        modalNote.textContent = "Board set up correctly.";
+        modalRank.textContent = pickupXtreme ? "PICK UP XTREME complete" : "PICK UP complete";
+        modalNote.textContent = pickupXtreme ? "Board set up correctly with legal moves." : "Board set up correctly.";
       } else if (currentMode === "kingFinder") {
         if (kingFinderRound >= 10) {
           modalScore.textContent = `${kingFinderFinalTimeScore.toFixed(2)}/30`;
@@ -5817,7 +6008,11 @@
 
     function saveScore(finalScore, elapsedSeconds = null) {
       const scores = getScores();
-      const storedMode = currentMode === "kingFinder" && kingFinderXtreme ? "kingFinderXtreme" : currentMode;
+      const storedMode = currentMode === "kingFinder" && kingFinderXtreme
+        ? "kingFinderXtreme"
+        : currentMode === "pickup" && pickupXtreme
+          ? "pickupXtreme"
+          : currentMode;
 
       scores.push({
         score: finalScore,
@@ -5865,9 +6060,9 @@
         .slice(0, 10);
     }
 
-    function topPickupTimes() {
+    function topPickupTimes(modeKey = "pickup") {
       return getScores()
-        .filter(item => item.mode === "pickup" && Number.isFinite(Number(item.timeSeconds)))
+        .filter(item => item.mode === modeKey && Number.isFinite(Number(item.timeSeconds)))
         .slice()
         .sort((a, b) => {
           const byTime = Number(a.timeSeconds) - Number(b.timeSeconds);
@@ -5908,7 +6103,7 @@
       }
 
       if (currentMode === "pickup") {
-        const times = topPickupTimes();
+        const times = topPickupTimes(pickupXtreme ? "pickupXtreme" : "pickup");
         return times.length ? `1st: ${formatHundredths(times[0].timeSeconds)}s` : "1st: —";
       }
 
@@ -5925,7 +6120,9 @@
 
       const modeName = currentMode === "kingFinder" && kingFinderXtreme
         ? "King finder XTREME"
-        : gameModes[currentMode]?.name || "30s sprint";
+        : currentMode === "pickup" && pickupXtreme
+          ? "PICK UP XTREME"
+          : gameModes[currentMode]?.name || "30s sprint";
 
       const themeName = boardThemes[currentThemeKey]?.name || "Classic";
 
@@ -5972,13 +6169,13 @@
         });
       }
 
-      const pickupTimes = topPickupTimes();
+      const pickupTimes = topPickupTimes("pickup");
       bestPickupEl.textContent = pickupTimes.length ? `${formatHundredths(pickupTimes[0].timeSeconds)}s` : "—";
       pickupScoresListEl.innerHTML = "";
       if (!pickupTimes.length) {
         const empty = document.createElement("li");
         empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No PICK UP times yet</span><strong>—</strong>`;
+        empty.innerHTML = `<span class="place">—</span><span>No normal PICK UP times yet</span><strong>—</strong>`;
         pickupScoresListEl.appendChild(empty);
       } else {
         pickupTimes.forEach((item, index) => {
@@ -5986,6 +6183,23 @@
           li.className = "score-item";
           li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           pickupScoresListEl.appendChild(li);
+        });
+      }
+
+      const pickupXtremeTimes = topPickupTimes("pickupXtreme");
+      bestPickupXtremeEl.textContent = pickupXtremeTimes.length ? `${formatHundredths(pickupXtremeTimes[0].timeSeconds)}s` : "—";
+      pickupXtremeScoresListEl.innerHTML = "";
+      if (!pickupXtremeTimes.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item xtreme-score";
+        empty.innerHTML = `<span class="place">—</span><span>No PICK UP XTREME times yet</span><strong>—</strong>`;
+        pickupXtremeScoresListEl.appendChild(empty);
+      } else {
+        pickupXtremeTimes.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item xtreme-score";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          pickupXtremeScoresListEl.appendChild(li);
         });
       }
 
@@ -6011,13 +6225,13 @@
       kingFinderXtremeScoresListEl.innerHTML = "";
       if (!kingXtremeScores.length) {
         const empty = document.createElement("li");
-        empty.className = "score-item";
+        empty.className = "score-item xtreme-score";
         empty.innerHTML = `<span class="place">—</span><span>No XTREME wins yet</span><strong>—</strong>`;
         kingFinderXtremeScoresListEl.appendChild(empty);
       } else {
         kingXtremeScores.forEach((item, index) => {
           const li = document.createElement("li");
-          li.className = "score-item";
+          li.className = "score-item xtreme-score";
           li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.score).toFixed(2)}/30</strong>`;
           kingFinderXtremeScoresListEl.appendChild(li);
         });
@@ -6054,16 +6268,43 @@
 
 
     function updateKingXtremeVisibility() {
-      const isKingFinder = currentMode === "kingFinder";
-      kingXtremePanel.classList.toggle("hidden", !isKingFinder);
+      const showXtreme = currentMode === "kingFinder" || currentMode === "pickup";
+      kingXtremePanel.classList.toggle("hidden", !showXtreme);
+
+      const label = kingXtremePanel.querySelector("span");
+      const note = kingXtremePanel.querySelector("small");
+
+      if (currentMode === "pickup") {
+        if (label) label.textContent = "PICK UP XTREME";
+        if (note) note.textContent = "Legal moves only";
+        kingXtremeToggle.checked = pickupXtreme;
+      } else {
+        if (label) label.textContent = "XTREME MODE";
+        if (note) note.textContent = "All 64 squares filled";
+        kingXtremeToggle.checked = kingFinderXtreme;
+      }
     }
 
     function loadKingXtremeMode() {
       kingFinderXtreme = localStorage.getItem(kingXtremeStorageKey) === "true";
-      kingXtremeToggle.checked = kingFinderXtreme;
+      pickupXtreme = localStorage.getItem(pickupXtremeStorageKey) === "true";
+      updateKingXtremeVisibility();
     }
 
     function setKingXtremeMode(enabled) {
+      if (currentMode === "pickup") {
+        pickupXtreme = Boolean(enabled);
+        kingXtremeToggle.checked = pickupXtreme;
+        localStorage.setItem(pickupXtremeStorageKey, pickupXtreme ? "true" : "false");
+        resetRound();
+        targetLabelEl.textContent = currentPanelTitle();
+        setInstructionTarget("Click anywhere on the board to start");
+        updateLeaderboardVisibility();
+        renderScores();
+        updateMobileBottomNavStatus();
+        return;
+      }
+
       kingFinderXtreme = Boolean(enabled);
       kingXtremeToggle.checked = kingFinderXtreme;
       localStorage.setItem(kingXtremeStorageKey, kingFinderXtreme ? "true" : "false");
@@ -6110,7 +6351,7 @@
         messageEl.textContent = currentMode === "kingFinder"
           ? "King finder selected. Click anywhere on the board to start the game."
           : currentMode === "pickup"
-            ? "PICK UP selected. Click anywhere on the board to start."
+            ? (pickupXtreme ? "PICK UP XTREME selected. Click anywhere on the board to start." : "PICK UP selected. Click anywhere on the board to start.")
             : `${gameModes[currentMode].name} mode selected.`;
       }
     }
