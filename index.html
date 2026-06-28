@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.94</title>
+<title>KWIK CHESS PWA v0.95</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4222,6 +4222,15 @@
     }
 
 </style>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KWIK CHESS">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
 </head>
 <body>
 <div class="app" id="app">
@@ -4407,7 +4416,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.94</p>
+<p class="easter-version">Version 0.95 PWA</p>
 </div>
 </div>
 </div>
@@ -4436,7 +4445,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.94";
+    const VERSION = "0.95";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -8255,5 +8264,16 @@
     updateLeaderboardVisibility();
     handleViewportChange(50);
   </script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(error => {
+        console.warn("Service worker registration failed:", error);
+      });
+    });
+  }
+</script>
+
 </body>
 </html>
