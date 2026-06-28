@@ -1,10 +1,11 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-101";
+const CACHE_NAME = "kwik-chess-pwa-v0-102";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./assets/logo-king.png"
 ];
 
 self.addEventListener("install", event => {

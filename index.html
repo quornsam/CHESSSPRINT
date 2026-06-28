@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS PWA v0.101</title>
+<title>KWIK CHESS PWA v0.102</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4239,39 +4239,33 @@
 
 
 
-    /* v0.100: keep original king; make it large on mobile */
-    @media (max-width: 850px) {
-      .wordmark {
-        align-items: center !important;
-        gap: 0.24em !important;
-      }
-
-      .wordmark-king.logo-king {
-        font-size: 2.25em !important;
-        line-height: 0.5 !important;
-        transform: translateY(-0.015em) !important;
-        transform-origin: center center !important;
-        margin-left: 0.10em !important;
-        margin-right: 0.10em !important;
-        padding: 0 !important;
-        display: inline-block !important;
-        vertical-align: middle !important;
-      }
+    /* v0.102: exact logo king from gameplay, scaled to text height */
+    .wordmark {
+      align-items: center !important;
     }
 
-
-
-    /* v0.101: force original king as scalable text, not iPhone emoji */
     .wordmark-king.logo-king {
-      font-family: Georgia, "Times New Roman", "DejaVu Serif", serif !important;
-      font-variant-emoji: text !important;
-      color: #f6c85b !important;
-      -webkit-text-fill-color: #f6c85b !important;
-      -webkit-text-stroke: 0.8px rgba(0,0,0,0.6) !important;
-      text-shadow:
-        0 2px 0 rgba(0,0,0,0.45),
-        0 8px 18px rgba(0,0,0,0.30),
-        0 0 18px rgba(246,200,91,0.75) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 1.18em !important;
+      height: 1.05em !important;
+      line-height: 1 !important;
+      transform: none !important;
+      margin: 0 0.06em !important;
+      padding: 0 !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+    }
+
+    .wordmark-king-img {
+      display: block !important;
+      height: 1.30em !important;
+      width: auto !important;
+      max-width: none !important;
+      object-fit: contain !important;
+      pointer-events: none !important;
+      transform: translateY(-0.22em) !important;
     }
 
     @media (max-width: 850px) {
@@ -4281,13 +4275,14 @@
       }
 
       .wordmark-king.logo-king {
-        font-size: 1.62em !important;
-        line-height: 0.72 !important;
-        transform: translateY(-0.02em) !important;
-        margin-left: 0.04em !important;
-        margin-right: 0.04em !important;
-        padding: 0 !important;
-        vertical-align: middle !important;
+        width: 1.18em !important;
+        height: 1.05em !important;
+        margin: 0 0.04em !important;
+      }
+
+      .wordmark-king-img {
+        height: 1.30em !important;
+        transform: translateY(-0.22em) !important;
       }
     }
 
@@ -4307,7 +4302,7 @@
 <div class="app" id="app">
 <header class="app-header">
 <div class="title-wrap">
-<h1 class="wordmark"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0">&#x265A;&#xFE0E;</span><span class="wordmark-text">CHESS</span></h1>
+<h1 class="wordmark"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0"><img class="wordmark-king-img" src="./assets/logo-king.png" alt="" aria-hidden="true"></span><span class="wordmark-text">CHESS</span></h1>
 </div>
 <div class="header-actions">
 <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
@@ -4487,7 +4482,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.101 PWA</p>
+<p class="easter-version">Version 0.102 PWA</p>
 </div>
 </div>
 </div>
@@ -4516,7 +4511,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.101";
+    const VERSION = "0.102";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
