@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS PWA v0.106</title>
+<title>KWIK CHESS PWA v0.107</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4385,60 +4385,54 @@
 
 
 
-    /* v0.106: true centred logo layout */
+    /* v0.107: fix logo centring by removing trailing letter-spacing after KWIK */
+    .wordmark,
+    .wordmark * {
+      letter-spacing: 0 !important;
+    }
+
     .wordmark {
-      --logo-king-size: 0.87em;
-      --logo-word-side-width: 4.6em;
-      display: inline-grid !important;
-      grid-template-columns: var(--logo-word-side-width) var(--logo-king-size) var(--logo-word-side-width) !important;
+      display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      column-gap: 0.18em !important;
+      gap: 0.18em !important;
       white-space: nowrap !important;
     }
 
-    .wordmark-side {
+    .wordmark-word {
       display: inline-flex !important;
       align-items: center !important;
-      min-width: 0 !important;
-    }
-
-    .wordmark-left {
-      justify-content: flex-end !important;
-      text-align: right !important;
-    }
-
-    .wordmark-right {
-      justify-content: flex-start !important;
-      text-align: left !important;
-    }
-
-    .wordmark-text {
-      display: inline-block !important;
+      justify-content: center !important;
+      gap: 0.045em !important;
       width: auto !important;
       flex: 0 0 auto !important;
+      text-align: initial !important;
+    }
+
+    .wordmark-letter {
+      display: inline-block !important;
+      flex: 0 0 auto !important;
+      letter-spacing: 0 !important;
     }
 
     .wordmark-king.logo-king {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      width: var(--logo-king-size) !important;
-      height: var(--logo-king-size) !important;
-      flex: 0 0 var(--logo-king-size) !important;
+      flex: 0 0 auto !important;
+      height: 0.87em !important;
+      width: auto !important;
       margin: 0 !important;
       padding: 0 !important;
       transform: none !important;
       line-height: 1 !important;
       overflow: visible !important;
-      justify-self: center !important;
-      align-self: center !important;
       vertical-align: middle !important;
     }
 
     .wordmark-king-img {
       display: block !important;
-      height: var(--logo-king-size) !important;
+      height: 0.87em !important;
       width: auto !important;
       max-height: none !important;
       max-width: none !important;
@@ -4449,8 +4443,11 @@
 
     @media (max-width: 850px) {
       .wordmark {
-        --logo-king-size: 0.87em;
-        column-gap: 0.16em !important;
+        gap: 0.16em !important;
+      }
+
+      .wordmark-word {
+        gap: 0.04em !important;
       }
     }
 
@@ -4470,7 +4467,7 @@
 <div class="app" id="app">
 <header class="app-header">
 <div class="title-wrap">
-<h1 class="wordmark"><span class="wordmark-side wordmark-left"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span></span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0"><img class="wordmark-king-img" src="./assets/logo-king.png" alt="" aria-hidden="true"></span><span class="wordmark-side wordmark-right"><span class="wordmark-text">CHESS</span></span></h1>
+<h1 class="wordmark"><span class="wordmark-text wordmark-word wordmark-left"><span class="wordmark-letter">K</span><span class="wordmark-letter">W</span><span aria-label="Activate Rainbow mode" class="rainbow-egg wordmark-letter" id="rainbowEgg" role="button" tabindex="0">I</span><span class="wordmark-letter">K</span></span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0"><img class="wordmark-king-img" src="./assets/logo-king.png" alt="" aria-hidden="true"></span><span class="wordmark-text wordmark-word wordmark-right"><span class="wordmark-letter">C</span><span class="wordmark-letter">H</span><span class="wordmark-letter">E</span><span class="wordmark-letter">S</span><span class="wordmark-letter">S</span></span></h1>
 </div>
 <div class="header-actions">
 <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
@@ -4650,7 +4647,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.106 PWA</p>
+<p class="easter-version">Version 0.107 PWA</p>
 </div>
 </div>
 </div>
@@ -4679,7 +4676,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.106";
+    const VERSION = "0.107";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -8154,24 +8151,6 @@
 
 
 
-
-    function balanceLogoWords() {
-      const wordmark = document.querySelector(".wordmark");
-      if (!wordmark) return;
-
-      const leftText = wordmark.querySelector(".wordmark-left .wordmark-text");
-      const rightText = wordmark.querySelector(".wordmark-right .wordmark-text");
-      if (!leftText || !rightText) return;
-
-      const leftWidth = leftText.getBoundingClientRect().width;
-      const rightWidth = rightText.getBoundingClientRect().width;
-      const sideWidth = Math.ceil(Math.max(leftWidth, rightWidth));
-
-      if (sideWidth > 0) {
-        wordmark.style.setProperty("--logo-word-side-width", `${sideWidth}px`);
-      }
-    }
-
     function openMobileMenuPage(page) {
       const titles = {
         game: "Game mode",
@@ -8494,14 +8473,8 @@
     window.addEventListener("pointermove", handlePickupPointerMove, { passive: false });
     window.addEventListener("pointerup", handlePickupPointerEnd, { passive: false });
     window.addEventListener("pointercancel", handlePickupPointerEnd, { passive: false });
-    window.addEventListener("resize", () => {
-      handleViewportChange(50);
-      window.setTimeout(balanceLogoWords, 80);
-    });
-    window.addEventListener("orientationchange", () => {
-      handleViewportChange(250);
-      window.setTimeout(balanceLogoWords, 280);
-    });
+    window.addEventListener("resize", () => handleViewportChange(50));
+    window.addEventListener("orientationchange", () => handleViewportChange(250));
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", () => handleViewportChange(60));
       window.visualViewport.addEventListener("scroll", () => handleViewportChange(60));
@@ -8509,8 +8482,6 @@
 
     detectDeviceAndOptimise();
     updateTargetBoxModeClass();
-    balanceLogoWords();
-    window.setTimeout(balanceLogoWords, 100);
     buildBoard();
     loadKingXtremeMode();
     rainbowUnlocked = false;
