@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.143</title>
+<title>KWIK CHESS v0.145</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -5498,6 +5498,82 @@
     }
 
 
+
+    /* v0.144: leaderboard gold, mobile targets, mobile pieces */
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .modal-score-value,
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .modal-score-value *,
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .two-metric-score,
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .two-metric-score * {
+      color: #f6c85b !important;
+    }
+
+    body.device-phone .target:not(.instruction-target):not(.piece-target) {
+      height: 48px !important;
+      min-height: 48px !important;
+      font-size: clamp(2.08rem, 12.4vw, 3.55rem) !important;
+      line-height: 0.88 !important;
+      letter-spacing: -0.065em !important;
+    }
+
+    body.device-phone .target-box.mode-sprint .target:not(.instruction-target):not(.piece-target),
+    body.device-phone .target-box.mode-sixtyFour .target:not(.instruction-target):not(.piece-target) {
+      font-size: clamp(2.22rem, 13.2vw, 3.8rem) !important;
+    }
+
+    body.device-phone .piece-holder .piece,
+    body.device-phone .board .piece {
+      width: 82% !important;
+      height: 82% !important;
+    }
+
+    body.device-phone .piece-holder .unicode-piece.piece {
+      font-size: calc(var(--board-size) / 9.35) !important;
+    }
+
+    body.device-phone .target-piece-card.unicode-piece {
+      width: 58px !important;
+      height: 58px !important;
+      font-size: 48px !important;
+    }
+
+
+
+    /* v0.145: larger mobile pieces + properly centred target text */
+    body.device-phone .target-box.mode-sprint .target:not(.instruction-target):not(.piece-target),
+    body.device-phone .target-box.mode-sixtyFour .target:not(.instruction-target):not(.piece-target) {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-sizing: border-box !important;
+      height: 58px !important;
+      min-height: 58px !important;
+      padding: 0 0 3px !important;
+      line-height: 1 !important;
+      overflow: visible !important;
+      font-size: clamp(2.16rem, 12.6vw, 3.58rem) !important;
+      letter-spacing: -0.065em !important;
+    }
+
+    body.device-phone .piece-holder .piece,
+    body.device-phone .board .piece {
+      width: 89% !important;
+      height: 89% !important;
+      max-width: 89% !important;
+      max-height: 89% !important;
+    }
+
+    body.device-phone .piece-holder .unicode-piece.piece {
+      font-size: calc(var(--board-size) / 8.55) !important;
+      line-height: 1 !important;
+    }
+
+    body.device-phone .piece-holder {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5505,7 +5581,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="de8e2e37-e9d2-4c2c-abe7-1c3617a42505"></script>
 
-  <link rel="manifest" href="manifest.json?v=0.143">
+  <link rel="manifest" href="manifest.json?v=0.145">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5723,7 +5799,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.143</p>
+<p class="easter-version">Version 0.145</p>
 </div>
 </div>
 </div>
@@ -5754,7 +5830,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.143";
+    const VERSION = "0.145";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -7449,6 +7525,20 @@
       return "Actual optical equipment";
     }
 
+    function oddOneOutFunLineForLevel(level) {
+      const value = Number(level) || 0;
+      if (value <= 5) return "That was not spotting colours. That was guessing with confidence.";
+      if (value <= 10) return "Your cones have filed a formal complaint.";
+      if (value <= 20) return "Respectable. Not elite. Not embarrassing. Annoyingly average.";
+      if (value <= 30) return "You could survive in B&Q paint aisle without adult supervision.";
+      if (value <= 40) return "That was sharp. The beige was scared of you.";
+      if (value <= 49) return "You are now legally allowed to argue about Farrow & Ball names.";
+      if (value <= 69) return "That was fighter-pilot nonsense. The square barely existed.";
+      if (value <= 89) return "Your eyes have started doing side quests.";
+      if (value <= 119) return "You are no longer seeing colours. You are hearing them.";
+      return "That was not eyesight. That was witchcraft with a retina.";
+    }
+
     function playOddOneOutStartSound() {
       playTone(72, 0.00, 0.13, 0.24, "triangle");
       playTone(96, 0.13, 0.13, 0.22, "triangle");
@@ -8908,9 +8998,7 @@
         modalTitle.textContent = oddOneOutFailureReason === "timeout" ? "Time up" : "Wrong square";
         modalScore.textContent = finalScore;
         modalRank.textContent = oddOneOutRankForLevel(finalScore);
-        modalNote.textContent = oddOneOutFailureReason === "timeout"
-          ? "The 15-second round timer ran out."
-          : "One wrong square ended the game.";
+        modalNote.textContent = oddOneOutFunLineForLevel(finalScore);
       } else if (currentMode === "kingFinder") {
         if (kingFinderRound >= 10) {
           modalScore.textContent = `${kingFinderFinalTimeScore.toFixed(2)}/30`;
@@ -10409,7 +10497,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.143").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.145").catch(() => {});
     });
   }
 </script>
