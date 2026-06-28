@@ -1,13 +1,13 @@
 {
   "name": "KWIK CHESS",
-  "short_name": "KWIK",
-  "description": "Fast chess board training games.",
-  "start_url": "./",
+  "short_name": "KWIK CHESS",
+  "description": "KWIK CHESS board training game.",
+  "start_url": "./index.html?v=0.118",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#111111",
-  "theme_color": "#111111",
+  "background_color": "#111217",
+  "theme_color": "#111217",
   "icons": [
     {
       "src": "./icons/icon-192.png",
