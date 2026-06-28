@@ -1,4 +1,4 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-103";
+const CACHE_NAME = "kwik-chess-pwa-v0-104";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
