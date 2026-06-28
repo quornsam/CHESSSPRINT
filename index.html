@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS PWA v0.104</title>
+<title>KWIK CHESS PWA v0.105</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4335,30 +4335,51 @@
 
 
 
-    /* v0.104: desktop wordmark king centred between equal word blocks */
-    @media (min-width: 851px) {
+    /* v0.105: visual logo alignment fix */
+    .wordmark {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.18em !important;
+      white-space: nowrap !important;
+    }
+
+    .wordmark-text {
+      display: inline-block !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      text-align: initial !important;
+    }
+
+    .wordmark-king.logo-king {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex: 0 0 auto !important;
+      height: 0.87em !important;
+      width: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      transform: none !important;
+      line-height: 1 !important;
+      overflow: visible !important;
+      vertical-align: middle !important;
+    }
+
+    .wordmark-king-img {
+      display: block !important;
+      height: 0.87em !important;
+      width: auto !important;
+      max-height: none !important;
+      max-width: none !important;
+      object-fit: contain !important;
+      transform: none !important;
+      pointer-events: none !important;
+    }
+
+    @media (max-width: 850px) {
       .wordmark {
-        display: inline-grid !important;
-        grid-template-columns: var(--wordmark-side-width, auto) auto var(--wordmark-side-width, auto) !important;
-        align-items: center !important;
-        column-gap: 0.22em !important;
-        justify-content: center !important;
-      }
-
-      .wordmark .wordmark-text:first-child {
-        justify-self: end !important;
-        text-align: right !important;
-      }
-
-      .wordmark .wordmark-text:last-child {
-        justify-self: start !important;
-        text-align: left !important;
-      }
-
-      .wordmark-king.logo-king {
-        justify-self: center !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+        gap: 0.16em !important;
       }
     }
 
@@ -4558,7 +4579,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.104 PWA</p>
+<p class="easter-version">Version 0.105 PWA</p>
 </div>
 </div>
 </div>
@@ -4587,7 +4608,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.104";
+    const VERSION = "0.105";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -5031,7 +5052,6 @@
         detectDeviceAndOptimise();
         sizeBoardToWindow();
         window.setTimeout(positionDraughtsTrash, 0);
-        window.setTimeout(balanceDesktopWordmark, 0);
       }, delay);
     }
 
@@ -8063,28 +8083,6 @@
 
 
 
-
-    function balanceDesktopWordmark() {
-      const wordmark = document.querySelector(".wordmark");
-      if (!wordmark) return;
-
-      if (!window.matchMedia("(min-width: 851px)").matches) {
-        wordmark.style.removeProperty("--wordmark-side-width");
-        return;
-      }
-
-      const words = wordmark.querySelectorAll(".wordmark-text");
-      if (words.length < 2) return;
-
-      const leftWidth = words[0].getBoundingClientRect().width;
-      const rightWidth = words[1].getBoundingClientRect().width;
-      const sideWidth = Math.ceil(Math.max(leftWidth, rightWidth));
-
-      if (sideWidth > 0) {
-        wordmark.style.setProperty("--wordmark-side-width", `${sideWidth}px`);
-      }
-    }
-
     function openMobileMenuPage(page) {
       const titles = {
         game: "Game mode",
@@ -8407,14 +8405,8 @@
     window.addEventListener("pointermove", handlePickupPointerMove, { passive: false });
     window.addEventListener("pointerup", handlePickupPointerEnd, { passive: false });
     window.addEventListener("pointercancel", handlePickupPointerEnd, { passive: false });
-    window.addEventListener("resize", () => {
-      handleViewportChange(50);
-      window.setTimeout(balanceDesktopWordmark, 90);
-    });
-    window.addEventListener("orientationchange", () => {
-      handleViewportChange(250);
-      window.setTimeout(balanceDesktopWordmark, 290);
-    });
+    window.addEventListener("resize", () => handleViewportChange(50));
+    window.addEventListener("orientationchange", () => handleViewportChange(250));
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", () => handleViewportChange(60));
       window.visualViewport.addEventListener("scroll", () => handleViewportChange(60));
@@ -8422,8 +8414,6 @@
 
     detectDeviceAndOptimise();
     updateTargetBoxModeClass();
-    balanceDesktopWordmark();
-    window.setTimeout(balanceDesktopWordmark, 100);
     buildBoard();
     loadKingXtremeMode();
     rainbowUnlocked = false;
