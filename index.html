@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.145</title>
+<title>KWIK CHESS v0.146</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -5574,6 +5574,33 @@
     }
 
 
+
+    /* v0.146: standardise mobile board-piece size across King Finder and Pick Up */
+    body.device-phone .board.king-finder-mode .piece-holder .unicode-piece.piece,
+    body.device-phone .board.pickup-mode .piece-holder .unicode-piece.piece,
+    body.device-phone .board.bonus-mode .piece-holder .unicode-piece.piece {
+      display: inline-flex !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      font-size: calc(var(--board-size) / 8.55) !important;
+      line-height: 1 !important;
+      transform: translateY(0.01em) !important;
+    }
+
+    body.device-phone .board.pickup-mode .piece-holder {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    body.device-phone .pickup-piece .unicode-piece,
+    body.device-phone .pickup-piece-symbol.unicode-piece {
+      font-size: calc(var(--pickup-piece-size) * 1.08) !important;
+      line-height: 1 !important;
+    }
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5581,7 +5608,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="de8e2e37-e9d2-4c2c-abe7-1c3617a42505"></script>
 
-  <link rel="manifest" href="manifest.json?v=0.145">
+  <link rel="manifest" href="manifest.json?v=0.146">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5799,7 +5826,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.145</p>
+<p class="easter-version">Version 0.146</p>
 </div>
 </div>
 </div>
@@ -5830,7 +5857,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.145";
+    const VERSION = "0.146";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -10497,7 +10524,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.145").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.146").catch(() => {});
     });
   }
 </script>
