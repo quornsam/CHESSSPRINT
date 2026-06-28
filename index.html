@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.93</title>
+<title>KWIK CHESS v0.94</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -2071,6 +2071,7 @@
 
     .instructions-modal-backdrop.show {
       display: flex;
+      z-index: 12000 !important;
     }
 
     .instructions-modal {
@@ -4188,6 +4189,38 @@
       font-size: calc((var(--board-size) / 4) * 0.72) !important;
     }
 
+
+    /* v0.94: repair mobile Style tab board colour controls */
+    body.device-phone.mobile-page-board .side-panel #boardTypeContent,
+    body.device-phone.mobile-page-board .side-panel #boardTypeContent.collapsed {
+      display: contents !important;
+    }
+
+    body.device-phone.mobile-page-board .side-panel #themeGrid {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-board .side-panel .theme-button {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-board .side-panel #boardTypeToggle {
+      display: none !important;
+    }
+
+    /* v0.94: larger logo king */
+    .wordmark-king.logo-king {
+      font-size: 1.08em !important;
+      transform: translateY(-0.08em) !important;
+    }
+
+    @media (max-width: 850px) {
+      .wordmark-king.logo-king {
+        font-size: 1.12em !important;
+        transform: translateY(-0.06em) !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -4374,7 +4407,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.93</p>
+<p class="easter-version">Version 0.94</p>
 </div>
 </div>
 </div>
@@ -4403,7 +4436,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.93";
+    const VERSION = "0.94";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -7921,6 +7954,9 @@
     }
 
     function showInstructions() {
+      if (document.body.classList.contains("mobile-menu-open")) {
+        closeMobileMenuPage();
+      }
       instructionsModal.classList.add("show");
     }
 
