@@ -2,7 +2,7 @@
   "name": "KWIK CHESS",
   "short_name": "KWIK CHESS",
   "description": "KWIK CHESS board training game.",
-  "start_url": "./index.html?v=0.118",
+  "start_url": "./index.html?v=0.119",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
