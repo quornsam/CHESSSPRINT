@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.81</title>
+<title>KWIK CHESS v0.93</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -204,6 +204,7 @@
     }
 
     .board-frame {
+      position: relative;
       display: grid;
       grid-template-columns: clamp(18px, 3vmin, 30px) var(--board-size);
       grid-template-rows: var(--board-size) clamp(18px, 3vmin, 30px);
@@ -631,9 +632,13 @@
     }
 
     .high-score .big {
-      font-size: 2.2rem;
+      font-size: clamp(1.05rem, 4vw, 1.65rem);
       font-weight: 1000;
       line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.045em;
     }
 
     .scores-list {
@@ -3552,6 +3557,368 @@
       color: var(--accent) !important;
     }
 
+
+    /* v0.82: Knight hop */
+    .board.knight-hop-mode .square.knight-hop-current {
+      box-shadow:
+        inset 0 0 0 4px rgba(255,255,255,0.92),
+        inset 0 0 0 7px rgba(20,20,20,0.92) !important;
+      z-index: 7;
+    }
+
+    .board.knight-hop-mode .square.knight-hop-legal {
+      box-shadow:
+        inset 0 0 0 4px rgba(80, 180, 255, 0.96),
+        inset 0 0 0 999px rgba(80, 180, 255, 0.16) !important;
+      z-index: 5;
+    }
+
+    .board.knight-hop-mode .square.knight-hop-illegal {
+      box-shadow:
+        inset 0 0 0 4px rgba(255, 85, 85, 0.92),
+        inset 0 0 0 999px rgba(255, 85, 85, 0.12) !important;
+    }
+
+
+    /* v0.83: collapsible Board type section on browser */
+    .collapsible-section-toggle {
+      width: 100%;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.055);
+      color: var(--text);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-align: left;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .collapsible-section-toggle:hover {
+      border-color: rgba(246,200,91,0.55);
+      background: rgba(246,200,91,0.08);
+    }
+
+    .collapse-chevron {
+      font-size: 0.95rem;
+      transition: transform 160ms ease;
+    }
+
+    .collapsible-section-toggle[aria-expanded="false"] .collapse-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .board-type-content.collapsed {
+      display: none !important;
+    }
+
+    body.device-phone .collapsible-section-toggle.board-type-toggle {
+      display: none !important;
+    }
+
+    body.device-phone .board-type-content,
+    body.device-phone .board-type-content.collapsed {
+      display: contents !important;
+    }
+
+
+    /* v0.84: hidden Draughts easter egg */
+    .instructions-fun-egg {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .board-wrap.draughts-wrap {
+      display: grid;
+      grid-template-columns: auto minmax(96px, 140px);
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .draughts-trash {
+      min-width: 92px;
+      min-height: 124px;
+      border: 3px dashed rgba(246,200,91,0.70);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+      display: none;
+      place-items: center;
+      text-align: center;
+      font-weight: 1000;
+      font-size: 2.6rem;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: inset 0 0 0 999px rgba(246,200,91,0.05);
+    }
+
+    .draughts-trash.show {
+      display: grid;
+    }
+
+    .draughts-trash.hover {
+      border-color: rgba(80, 220, 130, 0.95);
+      background: rgba(80, 220, 130, 0.13);
+    }
+
+    .draughts-trash small {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .draughts-piece {
+      width: 72%;
+      height: 72%;
+      border-radius: 999px;
+      border: 3px solid rgba(0,0,0,0.52);
+      box-shadow:
+        inset 0 7px 7px rgba(255,255,255,0.28),
+        inset 0 -8px 8px rgba(0,0,0,0.32),
+        0 4px 8px rgba(0,0,0,0.35);
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .draughts-piece:active {
+      cursor: grabbing;
+    }
+
+    .draughts-piece.white {
+      background: radial-gradient(circle at 34% 28%, #ffffff, #f0e7d2 48%, #c9b98f);
+    }
+
+    .draughts-piece.black {
+      background: radial-gradient(circle at 34% 28%, #5f6068, #202127 52%, #050608);
+    }
+
+    .square.draughts-selected {
+      box-shadow:
+        inset 0 0 0 4px rgba(246,200,91,0.94),
+        inset 0 0 0 999px rgba(246,200,91,0.10) !important;
+    }
+
+    body.device-phone .board-wrap.draughts-wrap,
+    body.device-mobile .board-wrap.draughts-wrap {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    body.device-phone .draughts-trash,
+    body.device-mobile .draughts-trash {
+      justify-self: center;
+      width: min(70vw, 260px);
+      min-height: 76px;
+      font-size: 2.1rem;
+    }
+
+
+    .draughts-drag-ghost {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate3d(-999px, -999px, 0);
+      border: 3px solid rgba(0,0,0,0.52);
+      box-shadow:
+        inset 0 7px 7px rgba(255,255,255,0.28),
+        inset 0 -8px 8px rgba(0,0,0,0.32),
+        0 8px 20px rgba(0,0,0,0.45);
+    }
+
+    .draughts-drag-ghost.white {
+      background: radial-gradient(circle at 34% 28%, #ffffff, #f0e7d2 48%, #c9b98f);
+    }
+
+    .draughts-drag-ghost.black {
+      background: radial-gradient(circle at 34% 28%, #5f6068, #202127 52%, #050608);
+    }
+
+
+    .modal.draughts-result #resultTitle,
+    .modal.draughts-result .modal-rank {
+      display: none !important;
+    }
+
+    .modal.draughts-result .modal-score {
+      font-size: clamp(1.15rem, 5vw, 1.75rem) !important;
+      line-height: 1.05 !important;
+      margin-bottom: 18px !important;
+    }
+
+    .modal.draughts-result .modal-note {
+      font-size: clamp(1.05rem, 3.4vw, 1.32rem) !important;
+      line-height: 1.35 !important;
+      font-weight: 950 !important;
+      color: var(--text) !important;
+      margin-top: 8px !important;
+    }
+
+
+    .draughts-unlock-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+    }
+
+    .draughts-unlock-backdrop.show {
+      display: flex;
+    }
+
+    .draughts-unlock-modal {
+      width: min(520px, 94vw);
+      border: 1px solid rgba(246,200,91,0.35);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.52);
+      padding: 34px 30px 28px;
+      text-align: center;
+    }
+
+    .draughts-unlock-modal h2 {
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-size: clamp(2rem, 7vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+      font-weight: 1000;
+    }
+
+    .draughts-unlock-modal p {
+      margin: 0 0 24px;
+      color: var(--text);
+      font-size: 1.08rem;
+      font-weight: 850;
+    }
+
+    .draughts-unlock-modal .action {
+      margin-top: 4px;
+    }
+
+
+    /* v0.90: centre Draughts trashcan over the board */
+    .board-wrap.draughts-wrap {
+      display: block !important;
+      position: relative !important;
+    }
+
+    .board-wrap.draughts-wrap .board-frame {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    .draughts-trash.show {
+      display: grid !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: clamp(92px, 18vw, 150px) !important;
+      height: clamp(92px, 18vw, 150px) !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      z-index: 20 !important;
+      font-size: clamp(2.7rem, 8vw, 4.4rem) !important;
+      border-radius: 24px !important;
+      background: rgba(13, 15, 24, 0.78) !important;
+      backdrop-filter: blur(5px) !important;
+    }
+
+    .draughts-trash.show small {
+      font-size: 0.62rem !important;
+    }
+
+    body.device-phone .board-wrap.draughts-wrap,
+    body.device-mobile .board-wrap.draughts-wrap {
+      display: block !important;
+    }
+
+    body.device-phone .draughts-trash.show,
+    body.device-mobile .draughts-trash.show {
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: clamp(86px, 25vw, 132px) !important;
+      height: clamp(86px, 25vw, 132px) !important;
+      min-height: 0 !important;
+      font-size: calc((var(--board-size) / 4) * 0.82) !important;
+    }
+
+
+    /* v0.91: plain centred Draughts trashcan */
+    .draughts-trash,
+    .draughts-trash.show {
+      display: none;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      padding: 0 !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      color: inherit !important;
+    }
+
+    .board-frame .draughts-trash.show {
+      display: block !important;
+      position: absolute !important;
+      left: calc(clamp(18px, 3vmin, 30px) + 4px + (var(--board-size) / 2)) !important;
+      top: calc(var(--board-size) / 2) !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 50 !important;
+      font-size: calc((var(--board-size) / 4) * 0.82) !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      text-shadow:
+        0 6px 18px rgba(0,0,0,0.62),
+        0 0 18px rgba(246,200,91,0.22);
+    }
+
+    .draughts-trash.hover {
+      filter: drop-shadow(0 0 18px rgba(80,220,130,0.95)) !important;
+      transform: translate(-50%, -50%) scale(1.08) !important;
+    }
+
+    .draughts-trash small {
+      display: none !important;
+    }
+
+    body.device-phone .board-frame .draughts-trash.show,
+    body.device-mobile .board-frame .draughts-trash.show {
+      left: calc(clamp(18px, 3vmin, 30px) + 4px + (var(--board-size) / 2)) !important;
+      top: calc(var(--board-size) / 2) !important;
+      font-size: calc((var(--board-size) / 4) * 0.82) !important;
+    }
+
     :fullscreen {
       background: radial-gradient(circle at top, #232631 0%, var(--bg) 58%);
     }
@@ -3745,7 +4112,83 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+  
+    /* v0.91 final trashcan override */
+    .board-frame .draughts-trash.show {
+      display: block !important;
+      position: absolute !important;
+      left: calc(clamp(18px, 3vmin, 30px) + 4px + (var(--board-size) / 2)) !important;
+      top: calc(var(--board-size) / 2) !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 50 !important;
+      width: auto !important;
+      height: auto !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      padding: 0 !important;
+      font-size: calc((var(--board-size) / 4) * 0.82) !important;
+      line-height: 1 !important;
+      text-align: center !important;
+    }
+
+    .board-frame .draughts-trash.show small {
+      display: none !important;
+    }
+
+
+    /* v0.92: exact JS-positioned centre of the board, no box */
+    .board-frame .draughts-trash.show {
+      display: block !important;
+      position: absolute !important;
+      left: var(--draughts-trash-x, 50%) !important;
+      top: var(--draughts-trash-y, 50%) !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 100 !important;
+      width: auto !important;
+      height: auto !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      padding: 0 !important;
+      font-size: calc((var(--board-size) / 4) * 0.82) !important;
+      line-height: 1 !important;
+      text-align: center !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      text-shadow:
+        0 7px 18px rgba(0,0,0,0.70),
+        0 0 16px rgba(246,200,91,0.25) !important;
+    }
+
+    .board-frame .draughts-trash.show.hover {
+      transform: translate(-50%, -50%) scale(1.12) !important;
+      filter: drop-shadow(0 0 18px rgba(80,220,130,0.95)) !important;
+    }
+
+    .board-frame .draughts-trash.show small {
+      display: none !important;
+    }
+
+
+    /* v0.93: trashcan fits within the four centre squares */
+    .board-frame .draughts-trash.show {
+      width: calc((var(--board-size) / 4) * 0.92) !important;
+      height: calc((var(--board-size) / 4) * 0.92) !important;
+      display: grid !important;
+      place-items: center !important;
+      font-size: calc((var(--board-size) / 4) * 0.72) !important;
+    }
+
+</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -3782,6 +4225,7 @@
 <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
 </div>
 <div aria-label="Chess board" class="board" id="board"></div>
+<div aria-label="Trashcan" class="draughts-trash" id="draughtsTrash" role="button" tabindex="0">🗑️</div>
 <div aria-hidden="true" class="outside-files">
 <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span>
 </div>
@@ -3810,7 +4254,11 @@
 </label>
 <small>All 64 squares filled</small>
 </div>
-<h2 class="board-type-heading">Board type</h2>
+<button class="collapsible-section-toggle board-type-toggle" id="boardTypeToggle" type="button" aria-expanded="true" aria-controls="boardTypeContent">
+<span>Board type</span>
+<span class="collapse-chevron" aria-hidden="true">▾</span>
+</button>
+<div class="board-type-content" id="boardTypeContent">
 <div class="theme-grid" id="themeGrid"></div>
 <div aria-label="Custom board colours" class="custom-board">
 <div class="custom-board-title">Custom colours</div>
@@ -3825,6 +4273,7 @@
 </label>
 </div>
 <button class="custom-board-apply" id="applyCustomBoard" type="button">Apply custom board</button>
+</div>
 </div>
 <section aria-live="polite" class="scoreboard" id="sprintLeaderboard">
 <h2>30s sprint leaderboard</h2>
@@ -3856,6 +4305,21 @@
 <div class="big" id="bestPickupXtreme">—</div>
 </div>
 <ul class="scores-list" id="pickupXtremeScoresList"></ul>
+</section>
+<section aria-live="polite" class="scoreboard hidden" id="knightHopLeaderboard">
+<h2>Knight hop leaderboard</h2>
+<div class="leaderboard-subtitle">Normal mode</div>
+<div class="high-score">
+<div class="stat-label">Best normal</div>
+<div class="big" id="bestKnightHop">—</div>
+</div>
+<ul class="scores-list" id="knightHopScoresList"></ul>
+<div class="leaderboard-subtitle">XTREME mode</div>
+<div class="high-score">
+<div class="stat-label">Best XTREME time</div>
+<div class="big" id="bestKnightHopXtreme">—</div>
+</div>
+<ul class="scores-list" id="knightHopXtremeScoresList"></ul>
 </section>
 <section aria-live="polite" class="scoreboard hidden" id="kingFinderLeaderboard">
 <h2>King finder leaderboard</h2>
@@ -3910,11 +4374,17 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.81</p>
+<p class="easter-version">Version 0.93</p>
 </div>
 </div>
 </div>
 <div aria-live="polite" class="rainbow-toast" id="rainbowToast" role="status">Rainbow mode activated</div>
+<div aria-labelledby="draughtsUnlockTitle" aria-modal="true" class="draughts-unlock-backdrop" id="draughtsUnlockModal" role="dialog">
+<div class="draughts-unlock-modal">
+<h2 id="draughtsUnlockTitle">You have unlocked draughts</h2>
+<button class="action" id="draughtsUnlockClose" type="button">let’s go</button>
+</div>
+</div>
 <div aria-labelledby="instructionsTitle" aria-modal="true" class="instructions-modal-backdrop" id="instructionsModal" role="dialog">
 <div class="instructions-modal">
 <button aria-label="Close" class="instructions-close" id="instructionsClose" type="button">×</button>
@@ -3927,11 +4397,13 @@
 <p>Memorise the position of the king before the pieces vanish, then click the square where the king was. Each round gets harder, and XTREME mode fills all 64 squares for anyone who wants punishment. It is memory, pattern spotting, and chess-board awareness in one unpleasant little package.</p>
 <h3>PICK UP</h3>
 <p>All 32 pieces begin randomly scattered on the board. Move them onto the correct starting squares as fast as possible, using empty squares as temporary parking spaces when another piece is in the way. Pawns can go on any pawn square of their colour, and paired pieces such as bishops, rooks, and knights can go on either matching square. XTREME mode keeps the same goal, but pieces can only move legally: knights jump, sliding pieces need clear paths, kings move one square, and pawns move one square up, down, left, or right.</p>
-<p class="instructions-footer">This is about having fun and learning. If something breaks, just let Sam know.</p>
+<h3>Knight hop</h3>
+<p>A white knight starts on a random square. That square is already touched. Jump the knight until every square has been blacked out. Normal mode lets you revisit touched squares and records time plus moves. XTREME mode only allows untouched destination squares, so a perfect finish is 63 moves and the leaderboard records time.</p>
+<p class="instructions-footer">This is about having <span class="instructions-fun-egg" id="funEgg" role="button" tabindex="0">fun</span> and learning. If something breaks, just let Sam know.</p>
 </div>
 </div>
 <script>
-    const VERSION = "0.81";
+    const VERSION = "0.93";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -4041,6 +4513,13 @@
       },
       pickup: {
         name: "PICK UP"
+      },
+      knightHop: {
+        name: "Knight hop"
+      },
+      draughts: {
+        name: "Draughts",
+        hidden: true
       }
     };
 
@@ -4068,6 +4547,7 @@
     const board = document.getElementById("board");
     const boardWrap = document.getElementById("boardWrap");
     const pickupLayer = document.getElementById("pickupLayer");
+    const draughtsTrash = document.getElementById("draughtsTrash");
     const targetBox = document.getElementById("targetBox");
     const targetLabelEl = document.getElementById("targetLabel");
     const targetSquareEl = document.getElementById("targetSquare");
@@ -4090,6 +4570,11 @@
     const bestPickupEl = document.getElementById("bestPickup");
     const pickupXtremeScoresListEl = document.getElementById("pickupXtremeScoresList");
     const bestPickupXtremeEl = document.getElementById("bestPickupXtreme");
+    const knightHopLeaderboard = document.getElementById("knightHopLeaderboard");
+    const knightHopScoresListEl = document.getElementById("knightHopScoresList");
+    const bestKnightHopEl = document.getElementById("bestKnightHop");
+    const knightHopXtremeScoresListEl = document.getElementById("knightHopXtremeScoresList");
+    const bestKnightHopXtremeEl = document.getElementById("bestKnightHopXtreme");
     const kingFinderLeaderboard = document.getElementById("kingFinderLeaderboard");
     const kingFinderScoresListEl = document.getElementById("kingFinderScoresList");
     const bestKingFinderEl = document.getElementById("bestKingFinder");
@@ -4097,6 +4582,8 @@
     const kingFinderXtremeScoresListEl = document.getElementById("kingFinderXtremeScoresList");
     const bestKingFinderXtremeEl = document.getElementById("bestKingFinderXtreme");
     const themeGrid = document.getElementById("themeGrid");
+    const boardTypeToggle = document.getElementById("boardTypeToggle");
+    const boardTypeContent = document.getElementById("boardTypeContent");
     const customLightInput = document.getElementById("customLight");
     const customDarkInput = document.getElementById("customDark");
     const applyCustomBoardBtn = document.getElementById("applyCustomBoard");
@@ -4106,6 +4593,7 @@
     const pieceGrid = document.getElementById("pieceGrid");
     const resultModal = document.getElementById("resultModal");
     const modalBox = resultModal.querySelector(".modal");
+    const modalTitle = document.getElementById("resultTitle");
     const modalScore = document.getElementById("modalScore");
     const modalRank = document.getElementById("modalRank");
     const modalNote = document.getElementById("modalNote");
@@ -4119,6 +4607,9 @@
     const instructionsBtn = document.getElementById("instructionsBtn");
     const instructionsModal = document.getElementById("instructionsModal");
     const instructionsClose = document.getElementById("instructionsClose");
+    const funEgg = document.getElementById("funEgg");
+    const draughtsUnlockModal = document.getElementById("draughtsUnlockModal");
+    const draughtsUnlockClose = document.getElementById("draughtsUnlockClose");
     const mobileMenuTitle = document.getElementById("mobileMenuTitle");
     const mobileBackBtn = document.getElementById("mobileBackBtn");
     const mobileReturnBtn = document.getElementById("mobileReturnBtn");
@@ -4134,6 +4625,7 @@
     const modeStorageKey = "chess-square-sprint-mode";
     const kingXtremeStorageKey = "chess-square-sprint-king-xtreme";
     const pickupXtremeStorageKey = "kwik-chess-pickup-xtreme";
+    const knightHopXtremeStorageKey = "kwik-chess-knight-hop-xtreme";
     const rainbowUnlockedStorageKey = "chess-sprint-rainbow-unlocked";
     const pieceStyleStorageKey = "chess-square-sprint-piece-style";
     const oldColourStorageKey = "chess-square-sprint-colours";
@@ -4169,6 +4661,7 @@
     let kingFinderPhase = "idle";
     let kingFinderXtreme = false;
     let pickupXtreme = false;
+    let knightHopXtreme = false;
     let kingFinderGuessStartedAt = 0;
     let kingFinderTotalGuessMs = 0;
     let kingFinderFinalTimeScore = 0;
@@ -4183,6 +4676,25 @@
     let pickupTimer = null;
     let pickupCountdownTimers = [];
     let pickupPhase = "idle";
+    let knightHopPhase = "idle";
+    let knightHopCurrentSquare = null;
+    let knightHopTouchedSquares = new Set();
+    let knightHopMoves = 0;
+    let knightHopStartTime = 0;
+    let knightHopElapsedSeconds = 0;
+    let knightHopTimer = null;
+    let knightHopCountdownTimers = [];
+    let draughtsPhase = "idle";
+    let draughtsPieces = [];
+    let draughtsSelectedId = null;
+    let draughtsRemoved = 0;
+    let draughtsStartTime = 0;
+    let draughtsElapsedSeconds = 0;
+    let draughtsTimer = null;
+    let draughtsCountdownTimers = [];
+    let draughtsPointerDrag = null;
+    let draughtsUnlockPending = false;
+    let draughtsCompleted = false;
     let endTime = 0;
     let startTime = 0;
     let timer = null;
@@ -4270,6 +4782,7 @@
     function buildModeButtons() {
       modeGrid.innerHTML = "";
       Object.entries(gameModes).forEach(([key, mode]) => {
+        if (mode.hidden) return;
         const button = document.createElement("button");
         button.type = "button";
         button.className = "mode-button";
@@ -4333,6 +4846,7 @@
       window.setTimeout(() => {
         detectDeviceAndOptimise();
         sizeBoardToWindow();
+        window.setTimeout(positionDraughtsTrash, 0);
       }, delay);
     }
 
@@ -4359,6 +4873,7 @@
       document.documentElement.style.setProperty("--board-size", `${size}px`);
       document.documentElement.style.setProperty("--coord-gutter", `${coordinateGutter}px`);
       window.setTimeout(positionPickupPieces, 0);
+      window.setTimeout(positionDraughtsTrash, 0);
     }
 
     function allSquares() {
@@ -4447,6 +4962,8 @@
       if (currentMode === "sixtyFour") return "64 SQUARES";
       if (currentMode === "kingFinder") return kingFinderXtreme ? "KING FINDER XTREME" : "KING FINDER";
       if (currentMode === "pickup") return pickupXtreme ? "PICK UP XTREME" : "PICK UP";
+      if (currentMode === "knightHop") return knightHopXtreme ? "KNIGHT HOP XTREME" : "KNIGHT HOP";
+      if (currentMode === "draughts") return "DRAUGHTS";
       return "30s SPRINT";
     }
 
@@ -4600,14 +5117,16 @@
       hideKingCountdownWord();
       board.classList.remove("king-finder-mode");
       board.classList.remove("king-find-hidden");
+      clearDraughtsMode();
+      clearKnightHopMode();
       clearPickupMode();
       sixtyFourRemaining = allSquares();
       sixtyFourCompleted = 0;
       penaltySeconds = 0;
       clearSixtyFourMarks();
-      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : currentMode === "kingFinder" ? "Kings" : currentMode === "pickup" ? "Pieces" : "Score";
-      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : currentMode === "kingFinder" ? "0/10" : currentMode === "pickup" ? "0/32" : score;
-      timeLeftEl.textContent = currentMode === "sixtyFour" ? "0" : currentMode === "kingFinder" ? "5" : currentMode === "pickup" ? "0.00" : GAME_LENGTH_SECONDS;
+      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : currentMode === "kingFinder" ? "Kings" : currentMode === "pickup" ? "Pieces" : currentMode === "knightHop" ? "Touched" : currentMode === "draughts" ? "Binned" : "Score";
+      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : currentMode === "kingFinder" ? "0/10" : currentMode === "pickup" ? "0/32" : currentMode === "knightHop" ? "0/64" : currentMode === "draughts" ? "0/24" : score;
+      timeLeftEl.textContent = currentMode === "sixtyFour" ? "0" : currentMode === "kingFinder" ? "5" : currentMode === "pickup" ? "0.00" : currentMode === "knightHop" ? "0.00" : currentMode === "draughts" ? "0.00" : GAME_LENGTH_SECONDS;
       roundStateEl.textContent = "Ready";
       newRoundBtn.textContent = "New round";
 
@@ -4618,6 +5137,14 @@
         messageEl.textContent = "Click anywhere on the board to start.";
       } else if (currentMode === "pickup") {
         preparePickupMode();
+      } else if (currentMode === "knightHop") {
+        prepareKnightHopMode();
+      } else if (currentMode === "draughts") {
+        prepareDraughtsMode();
+      } else if (currentMode === "knightHop") {
+        prepareKnightHopMode();
+      } else if (currentMode === "draughts") {
+        prepareDraughtsMode();
       } else {
         setNormalTarget(false);
         targetLabelEl.textContent = currentPanelTitle();
@@ -4967,6 +5494,573 @@
       if (currentMode !== "pickup" || pickupPhase !== "playing") return;
       pickupElapsedSeconds = (Date.now() - pickupStartTime) / 1000;
       timeLeftEl.textContent = formatHundredths(pickupElapsedSeconds);
+    }
+
+
+
+    function clearDraughtsTimers() {
+      clearInterval(draughtsTimer);
+      draughtsTimer = null;
+      draughtsCountdownTimers.forEach(timerId => clearTimeout(timerId));
+      draughtsCountdownTimers = [];
+    }
+
+    function clearDraughtsMode() {
+      clearDraughtsTimers();
+      cleanupDraughtsPointerDrag();
+      boardWrap.classList.remove("draughts-wrap");
+      draughtsTrash.classList.remove("show", "hover");
+      board.classList.remove("draughts-mode");
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.remove("draughts-selected");
+        delete square.dataset.draughtsPieceId;
+        const holder = square.querySelector(".piece-holder");
+        if (holder) holder.innerHTML = "";
+        square.setAttribute("aria-label", square.dataset.square);
+      });
+      draughtsPhase = "idle";
+      draughtsPieces = [];
+      draughtsSelectedId = null;
+      draughtsRemoved = 0;
+      draughtsStartTime = 0;
+      draughtsElapsedSeconds = 0;
+      draughtsCompleted = false;
+    }
+
+    function draughtsStartSquares() {
+      const black = [];
+      const white = [];
+      allSquares().forEach(squareName => {
+        const { rank } = squareCoords(squareName);
+        const square = document.querySelector(`[data-square="${squareName}"]`);
+        if (!square?.classList.contains("dark")) return;
+        if (rank >= 6) black.push(squareName);
+        if (rank <= 3) white.push(squareName);
+      });
+      return { black, white };
+    }
+
+    function buildDraughtsPieces() {
+      const starts = draughtsStartSquares();
+      const pieces = [];
+      starts.black.forEach((square, index) => pieces.push({ id: `black-${index}`, colour: "black", square }));
+      starts.white.forEach((square, index) => pieces.push({ id: `white-${index}`, colour: "white", square }));
+      return pieces;
+    }
+
+    function findDraughtsPiece(pieceId) {
+      return draughtsPieces.find(piece => piece.id === pieceId);
+    }
+
+    function draughtsPieceAtSquare(squareName) {
+      return draughtsPieces.find(piece => piece.square === squareName);
+    }
+
+    function cleanupDraughtsPointerDrag() {
+      draughtsTrash?.classList.remove("hover");
+      if (draughtsPointerDrag?.ghost) {
+        draughtsPointerDrag.ghost.remove();
+      }
+      draughtsPointerDrag = null;
+    }
+
+    function moveDraughtsGhost(clientX, clientY) {
+      if (!draughtsPointerDrag?.ghost) return;
+      draughtsPointerDrag.ghost.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`;
+    }
+
+    function positionDraughtsTrash() {
+      if (!draughtsTrash || !board || !draughtsTrash.classList.contains("show")) return;
+      const frame = draughtsTrash.offsetParent || board.parentElement;
+      const boardRect = board.getBoundingClientRect();
+      const frameRect = frame.getBoundingClientRect();
+      const centreX = boardRect.left - frameRect.left + boardRect.width / 2;
+      const centreY = boardRect.top - frameRect.top + boardRect.height / 2;
+      draughtsTrash.style.setProperty("--draughts-trash-x", `${centreX}px`);
+      draughtsTrash.style.setProperty("--draughts-trash-y", `${centreY}px`);
+    }
+
+    function pointerIsOverTrash(clientX, clientY) {
+      const rect = draughtsTrash?.getBoundingClientRect();
+      if (rect && clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+        return true;
+      }
+      const element = document.elementFromPoint(clientX, clientY);
+      return Boolean(element?.closest?.("#draughtsTrash"));
+    }
+
+    function updateDraughtsTrashHover(clientX, clientY) {
+      if (!draughtsTrash) return;
+      draughtsTrash.classList.toggle("hover", pointerIsOverTrash(clientX, clientY));
+    }
+
+    function startDraughtsPointerDrag(event, pieceId) {
+      if (currentMode !== "draughts" || draughtsPhase !== "playing") return;
+
+      const piece = findDraughtsPiece(pieceId);
+      if (!piece) return;
+
+      // Use our own pointer drag for mouse, touch, and pen.
+      // Native HTML5 drag/drop has been unreliable here because the trashcan is an overlay.
+      event.preventDefault();
+      event.stopPropagation();
+
+      draughtsSelectedId = piece.id;
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.toggle("draughts-selected", square.dataset.draughtsPieceId === piece.id);
+      });
+
+      const ghost = document.createElement("div");
+      ghost.className = `draughts-drag-ghost ${piece.colour}`;
+      document.body.appendChild(ghost);
+
+      draughtsPointerDrag = {
+        pieceId: piece.id,
+        pointerId: event.pointerId,
+        ghost
+      };
+
+      positionDraughtsTrash();
+      moveDraughtsGhost(event.clientX, event.clientY);
+      updateDraughtsTrashHover(event.clientX, event.clientY);
+
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {
+        // Window listeners still handle it.
+      }
+    }
+
+    function handleDraughtsPointerMove(event) {
+      if (!draughtsPointerDrag || event.pointerId !== draughtsPointerDrag.pointerId) return;
+      event.preventDefault();
+      moveDraughtsGhost(event.clientX, event.clientY);
+      updateDraughtsTrashHover(event.clientX, event.clientY);
+    }
+
+    function handleDraughtsPointerEnd(event) {
+      if (!draughtsPointerDrag || event.pointerId !== draughtsPointerDrag.pointerId) return;
+      event.preventDefault();
+
+      const pieceId = draughtsPointerDrag.pieceId;
+      positionDraughtsTrash();
+      const overTrash = pointerIsOverTrash(event.clientX, event.clientY);
+      cleanupDraughtsPointerDrag();
+
+      if (overTrash) {
+        binDraughtsPiece(pieceId);
+      }
+    }
+
+    function renderDraughtsBoard() {
+      clearBoardPieces();
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.remove("draughts-selected");
+        delete square.dataset.draughtsPieceId;
+        square.setAttribute("aria-label", square.dataset.square);
+      });
+
+      draughtsPieces.forEach(piece => {
+        const square = document.querySelector(`[data-square="${piece.square}"]`);
+        const holder = square?.querySelector(".piece-holder");
+        if (!holder) return;
+
+        square.dataset.draughtsPieceId = piece.id;
+        square.classList.toggle("draughts-selected", piece.id === draughtsSelectedId);
+        square.setAttribute("aria-label", `${square.dataset.square}, ${piece.colour} draught`);
+
+        const chip = document.createElement("div");
+        chip.className = `draughts-piece ${piece.colour}`;
+        chip.draggable = false;
+        chip.dataset.draughtsPieceId = piece.id;
+        chip.setAttribute("aria-hidden", "true");
+        chip.addEventListener("dragstart", event => {
+          draughtsSelectedId = piece.id;
+          document.querySelectorAll(".square").forEach(square => {
+            square.classList.toggle("draughts-selected", square.dataset.draughtsPieceId === piece.id);
+          });
+          event.dataTransfer.setData("text/draughts-piece", piece.id);
+          event.dataTransfer.effectAllowed = "move";
+        });
+        chip.addEventListener("pointerdown", event => startDraughtsPointerDrag(event, piece.id));
+        chip.addEventListener("dragend", () => {
+          draughtsTrash?.classList.remove("hover");
+        });
+        holder.appendChild(chip);
+      });
+    }
+
+    function prepareDraughtsMode() {
+      clearDraughtsMode();
+      clearPickupMode();
+      clearKnightHopMode();
+      clearBoardPieces();
+      active = false;
+      roundOver = false;
+      targetMode = "draughts";
+      draughtsPhase = "idle";
+      scoreLabelEl.textContent = "Binned";
+      scoreEl.textContent = "0/24";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = "DRAUGHTS";
+      setInstructionTarget("Click the word fun in instructions to unlock");
+      messageEl.textContent = "Draughts is hidden until unlocked.";
+      sizeBoardToWindow();
+    }
+
+    function startDraughtsGame() {
+      clearDraughtsMode();
+      clearPickupMode();
+      clearKnightHopMode();
+      clearBoardPieces();
+      hideResultModal();
+      hideKingCountdownWord();
+
+      active = true;
+      roundOver = false;
+      targetMode = "draughts";
+      scoreLabelEl.textContent = "Binned";
+      scoreEl.textContent = "0/24";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Go";
+      targetLabelEl.textContent = "DRAUGHTS";
+      clearInstructionTarget();
+
+      beginDraughtsPlay();
+    }
+
+    function beginDraughtsPlay() {
+      draughtsPhase = "playing";
+      boardWrap.classList.add("draughts-wrap");
+      draughtsTrash.classList.add("show");
+      positionDraughtsTrash();
+      board.classList.add("draughts-mode");
+      draughtsPieces = buildDraughtsPieces();
+      draughtsSelectedId = null;
+      draughtsRemoved = 0;
+      draughtsCompleted = false;
+      draughtsStartTime = Date.now();
+      draughtsElapsedSeconds = 0;
+
+      scoreLabelEl.textContent = "Binned";
+      scoreEl.textContent = "0/24";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Go";
+      targetLabelEl.textContent = "DRAUGHTS";
+      targetSquareEl.textContent = "Trash the draughts";
+      messageEl.textContent = "Pick up the draughts and put them in the trashcan.";
+      renderDraughtsBoard();
+      window.setTimeout(positionDraughtsTrash, 0);
+      playStartSound();
+
+      clearInterval(draughtsTimer);
+      draughtsTimer = setInterval(updateDraughtsTimer, 50);
+      updateDraughtsTimer();
+    }
+
+    function updateDraughtsTimer() {
+      if (currentMode !== "draughts" || draughtsPhase !== "playing") return;
+      draughtsElapsedSeconds = (Date.now() - draughtsStartTime) / 1000;
+      timeLeftEl.textContent = formatHundredths(draughtsElapsedSeconds);
+    }
+
+    function selectDraughtsPiece(pieceId) {
+      if (draughtsPhase !== "playing") return;
+      draughtsSelectedId = pieceId;
+      renderDraughtsBoard();
+      messageEl.textContent = "Now put it in the trashcan.";
+    }
+
+    function binDraughtsPiece(pieceId = draughtsSelectedId) {
+      if (draughtsPhase !== "playing" || !pieceId) return;
+      const piece = findDraughtsPiece(pieceId);
+      if (!piece) return;
+
+      draughtsPieces = draughtsPieces.filter(item => item.id !== pieceId);
+      draughtsSelectedId = null;
+      draughtsRemoved += 1;
+      scoreEl.textContent = `${draughtsRemoved}/24`;
+      targetSquareEl.textContent = `${24 - draughtsRemoved} left`;
+      messageEl.textContent = `Binned ${draughtsRemoved}/24.`;
+      playCorrectSound(nextGameplayPitch());
+      renderDraughtsBoard();
+
+      if (draughtsRemoved >= 24) {
+        endDraughtsGame();
+      }
+    }
+
+    function handleDraughtsClick(squareName, squareEl) {
+      if (roundOver && draughtsPhase === "ended") {
+        resetRound();
+        startDraughtsGame();
+        return;
+      }
+
+      if (draughtsPhase === "idle" || (!active && !roundOver)) {
+        startDraughtsGame();
+        return;
+      }
+
+      if (draughtsPhase !== "playing") return;
+
+      const piece = draughtsPieceAtSquare(squareName);
+      if (!piece) {
+        messageEl.textContent = draughtsSelectedId ? "Put the selected draught in the trashcan." : "Pick up a draught.";
+        return;
+      }
+
+      selectDraughtsPiece(piece.id);
+    }
+
+    function endDraughtsGame() {
+      updateDraughtsTimer();
+      clearDraughtsTimers();
+      active = false;
+      roundOver = true;
+      draughtsPhase = "ended";
+      draughtsCompleted = true;
+      draughtsElapsedSeconds = roundedHundredths((Date.now() - draughtsStartTime) / 1000);
+      timeLeftEl.textContent = formatHundredths(draughtsElapsedSeconds);
+      scoreLabelEl.textContent = "Binned";
+      scoreEl.textContent = "24/24";
+      roundStateEl.textContent = "Done";
+      targetLabelEl.textContent = "DRAUGHTS complete";
+      targetSquareEl.textContent = `${formatHundredths(draughtsElapsedSeconds)}s`;
+      messageEl.textContent = "All draughts binned.";
+      playEndJingle();
+      showResultModal(24, draughtsElapsedSeconds);
+    }
+
+    function clearKnightHopTimers() {
+      clearInterval(knightHopTimer);
+      knightHopTimer = null;
+      knightHopCountdownTimers.forEach(timerId => clearTimeout(timerId));
+      knightHopCountdownTimers = [];
+    }
+
+    function clearKnightHopMarks() {
+      document.querySelectorAll(".square").forEach(square => {
+        square.classList.remove("knight-hop-current", "knight-hop-legal", "knight-hop-illegal", "cleared", "missed");
+        const holder = square.querySelector(".piece-holder");
+        if (holder) holder.innerHTML = "";
+        square.setAttribute("aria-label", square.dataset.square);
+      });
+    }
+
+    function clearKnightHopMode() {
+      clearKnightHopTimers();
+      board.classList.remove("knight-hop-mode");
+      clearKnightHopMarks();
+      knightHopPhase = "idle";
+      knightHopCurrentSquare = null;
+      knightHopTouchedSquares = new Set();
+      knightHopMoves = 0;
+      knightHopStartTime = 0;
+      knightHopElapsedSeconds = 0;
+    }
+
+    function legalKnightHopSquares(fromSquare) {
+      if (!fromSquare) return [];
+      const from = squareCoords(fromSquare);
+      const jumps = [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+      return jumps.map(([df, dr]) => coordsToSquare(from.file + df, from.rank + dr)).filter(Boolean);
+    }
+
+    function currentLegalKnightHopSquares() {
+      return legalKnightHopSquares(knightHopCurrentSquare)
+        .filter(squareName => !knightHopXtreme || !knightHopTouchedSquares.has(squareName));
+    }
+
+    function renderKnightHopBoard() {
+      clearBoardPieces();
+      document.querySelectorAll(".square").forEach(square => {
+        const squareName = square.dataset.square;
+        square.classList.remove("knight-hop-current", "knight-hop-legal", "knight-hop-illegal", "cleared", "missed");
+        square.classList.toggle("cleared", knightHopTouchedSquares.has(squareName));
+        square.setAttribute("aria-label", squareName);
+      });
+
+      if (knightHopCurrentSquare) {
+        const currentSquare = document.querySelector(`[data-square="${knightHopCurrentSquare}"]`);
+        const holder = currentSquare?.querySelector(".piece-holder");
+        if (holder) holder.innerHTML = svgForPiece("knight", "white");
+        currentSquare?.classList.add("knight-hop-current");
+        currentSquare?.setAttribute("aria-label", `${knightHopCurrentSquare}, white knight`);
+      }
+
+      if (knightHopPhase === "playing") {
+        currentLegalKnightHopSquares().forEach(squareName => {
+          document.querySelector(`[data-square="${squareName}"]`)?.classList.add("knight-hop-legal");
+        });
+      }
+    }
+
+    function prepareKnightHopMode() {
+      clearKnightHopMode();
+      clearPickupMode();
+      clearBoardPieces();
+      active = false;
+      roundOver = false;
+      targetMode = "knightHop";
+      knightHopPhase = "idle";
+      scoreLabelEl.textContent = "Touched";
+      scoreEl.textContent = "0/64";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = currentPanelTitle();
+      setInstructionTarget("Click anywhere on the board to start");
+      messageEl.textContent = "Click anywhere on the board to start Knight hop.";
+      sizeBoardToWindow();
+    }
+
+    function startKnightHopGame() {
+      clearKnightHopMode();
+      clearPickupMode();
+      clearBoardPieces();
+      hideResultModal();
+      hideKingCountdownWord();
+
+      active = true;
+      roundOver = false;
+      targetMode = "knightHop";
+      knightHopPhase = "countdown";
+      scoreLabelEl.textContent = knightHopXtreme ? "Hops" : "Touched";
+      scoreEl.textContent = "0/64";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Ready";
+      targetLabelEl.textContent = currentPanelTitle();
+      clearInstructionTarget();
+      targetSquareEl.textContent = "Ready";
+
+      ["Ready", "Set", "GO"].forEach((word, index) => {
+        const timerId = window.setTimeout(() => {
+          showKingCountdownWord(word);
+          playKingCountdownTone(word);
+          roundStateEl.textContent = word;
+          targetSquareEl.textContent = word;
+        }, index * 1000);
+        knightHopCountdownTimers.push(timerId);
+      });
+
+      const startTimer = window.setTimeout(() => {
+        hideKingCountdownWord();
+        beginKnightHopPlay();
+      }, 3000);
+      knightHopCountdownTimers.push(startTimer);
+    }
+
+    function beginKnightHopPlay() {
+      knightHopPhase = "playing";
+      board.classList.add("knight-hop-mode");
+      knightHopTouchedSquares = new Set();
+      knightHopCurrentSquare = randomItem(allSquares());
+      knightHopTouchedSquares.add(knightHopCurrentSquare);
+      knightHopMoves = 0;
+      knightHopStartTime = Date.now();
+      knightHopElapsedSeconds = 0;
+
+      scoreLabelEl.textContent = knightHopXtreme ? "Hops" : "Touched";
+      scoreEl.textContent = knightHopXtreme ? "0/63" : "1/64";
+      timeLeftEl.textContent = "0.00";
+      roundStateEl.textContent = "Go";
+      targetLabelEl.textContent = currentPanelTitle();
+      targetSquareEl.textContent = knightHopXtreme ? "0 moves" : "1 touched";
+      messageEl.textContent = knightHopXtreme
+        ? "Knight hop XTREME: jump to every square once. No repeats."
+        : "Knight hop: jump the knight until all 64 squares are blacked out.";
+      renderKnightHopBoard();
+      playStartSound();
+
+      clearInterval(knightHopTimer);
+      knightHopTimer = setInterval(updateKnightHopTimer, 50);
+      updateKnightHopTimer();
+    }
+
+    function updateKnightHopTimer() {
+      if (currentMode !== "knightHop" || knightHopPhase !== "playing") return;
+      knightHopElapsedSeconds = (Date.now() - knightHopStartTime) / 1000;
+      timeLeftEl.textContent = formatHundredths(knightHopElapsedSeconds);
+    }
+
+    function handleKnightHopClick(squareName, squareEl) {
+      if (roundOver && knightHopPhase === "ended") {
+        resetRound();
+        startKnightHopGame();
+        return;
+      }
+
+      if (knightHopPhase === "idle" || (!active && !roundOver)) {
+        startKnightHopGame();
+        return;
+      }
+
+      if (knightHopPhase !== "playing") return;
+
+      const legalSquares = currentLegalKnightHopSquares();
+      if (!legalSquares.includes(squareName)) {
+        squareEl.classList.add("knight-hop-illegal");
+        window.setTimeout(() => squareEl.classList.remove("knight-hop-illegal"), 260);
+        flashSquare(squareEl, "wrong");
+        playWrongSound();
+        messageEl.textContent = knightHopXtreme && knightHopTouchedSquares.has(squareName)
+          ? "That square has already been touched."
+          : "Illegal knight move.";
+        return;
+      }
+
+      knightHopCurrentSquare = squareName;
+      knightHopTouchedSquares.add(squareName);
+      knightHopMoves += 1;
+
+      renderKnightHopBoard();
+      playCorrectSound(nextGameplayPitch());
+
+      const touched = knightHopTouchedSquares.size;
+      scoreEl.textContent = knightHopXtreme ? `${knightHopMoves}/63` : `${touched}/64`;
+      targetSquareEl.textContent = knightHopXtreme ? `${knightHopMoves} moves` : `${touched}/64 touched`;
+      messageEl.textContent = knightHopXtreme
+        ? `Hop ${knightHopMoves}/63.`
+        : `${touched}/64 touched · ${knightHopMoves} moves.`;
+
+      if (touched >= 64) {
+        endKnightHopGame(true);
+        return;
+      }
+
+      if (knightHopXtreme && !currentLegalKnightHopSquares().length) {
+        endKnightHopGame(false);
+      }
+    }
+
+    function endKnightHopGame(completed) {
+      updateKnightHopTimer();
+      clearKnightHopTimers();
+      active = false;
+      roundOver = true;
+      knightHopPhase = "ended";
+      knightHopElapsedSeconds = roundedHundredths((Date.now() - knightHopStartTime) / 1000);
+      timeLeftEl.textContent = formatHundredths(knightHopElapsedSeconds);
+      scoreLabelEl.textContent = knightHopXtreme ? "Hops" : "Touched";
+      scoreEl.textContent = knightHopXtreme ? `${knightHopMoves}/63` : `${knightHopTouchedSquares.size}/64`;
+      roundStateEl.textContent = completed ? "Done" : "Stuck";
+      targetLabelEl.textContent = completed
+        ? (knightHopXtreme ? "Knight hop XTREME complete" : "Knight hop complete")
+        : "Knight hop failed";
+      targetSquareEl.textContent = completed
+        ? (knightHopXtreme ? `${formatHundredths(knightHopElapsedSeconds)}s` : `${formatHundredths(knightHopElapsedSeconds)}s · ${knightHopMoves} moves`)
+        : `${knightHopTouchedSquares.size}/64 touched`;
+
+      if (completed) {
+        playEndJingle();
+        saveScore(0, knightHopElapsedSeconds);
+        renderScores();
+      } else {
+        playWrongSound();
+      }
+
+      showResultModal(completed ? 64 : knightHopTouchedSquares.size, knightHopElapsedSeconds);
     }
 
     function findPickupPiece(pieceId) {
@@ -5757,6 +6851,16 @@
         return;
       }
 
+      if (currentMode === "knightHop") {
+        handleKnightHopClick(squareName, squareEl);
+        return;
+      }
+
+      if (currentMode === "draughts") {
+        handleDraughtsClick(squareName, squareEl);
+        return;
+      }
+
       if (roundOver) {
         resetRound();
         return;
@@ -5957,6 +7061,8 @@
     }
 
     function showResultModal(finalScore, elapsedSeconds = 0) {
+      modalBox.classList.remove("draughts-result");
+      modalTitle.textContent = "Time up";
       if (currentMode === "sixtyFour") {
         modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = timeRankForSeconds(elapsedSeconds);
@@ -5967,6 +7073,23 @@
           : `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = pickupXtreme ? "PICK UP XTREME complete" : "PICK UP complete";
         modalNote.textContent = pickupXtreme ? "Board set up correctly with legal moves." : "Board set up correctly.";
+      } else if (currentMode === "knightHop") {
+        const completed = knightHopTouchedSquares.size >= 64;
+        modalScore.textContent = knightHopXtreme
+          ? `${formatHundredths(elapsedSeconds)}s`
+          : `${formatHundredths(elapsedSeconds)}s · ${knightHopMoves} moves`;
+        modalRank.textContent = completed
+          ? (knightHopXtreme ? "Knight hop XTREME complete" : "Knight hop complete")
+          : "Knight hop failed";
+        modalNote.textContent = completed
+          ? (knightHopXtreme ? "Perfect 63-hop route." : "All 64 squares blacked out.")
+          : "No legal untouched knight jumps remain.";
+      } else if (currentMode === "draughts") {
+        modalBox.classList.add("draughts-result");
+        modalTitle.textContent = "";
+        modalScore.textContent = `${formatHundredths(elapsedSeconds)}s`;
+        modalRank.textContent = "";
+        modalNote.textContent = "Thanks for putting the draughts where they belong, in the trash.";
       } else if (currentMode === "kingFinder") {
         if (kingFinderRound >= 10) {
           modalScore.textContent = `${kingFinderFinalTimeScore.toFixed(2)}/30`;
@@ -6026,12 +7149,14 @@
         ? "kingFinderXtreme"
         : currentMode === "pickup" && pickupXtreme
           ? "pickupXtreme"
-          : currentMode;
+          : currentMode === "knightHop" && knightHopXtreme
+            ? "knightHopXtreme"
+            : currentMode;
 
       scores.push({
         score: finalScore,
         timeSeconds: Number.isFinite(Number(elapsedSeconds)) ? roundedHundredths(elapsedSeconds) : elapsedSeconds,
-        moves: storedMode === "pickupXtreme" ? pickupMoveCount : undefined,
+        moves: storedMode === "pickupXtreme" ? pickupMoveCount : storedMode === "knightHop" ? knightHopMoves : undefined,
         mode: storedMode,
         scoreType: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? "kingFinderTime" : "standard",
         completed: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? true : undefined,
@@ -6090,6 +7215,21 @@
         .slice(0, 10);
     }
 
+    function topKnightHopTimes(modeKey = "knightHop") {
+      return getScores()
+        .filter(item => item.mode === modeKey && Number.isFinite(Number(item.timeSeconds)))
+        .slice()
+        .sort((a, b) => {
+          const byTime = Number(a.timeSeconds) - Number(b.timeSeconds);
+          if (byTime !== 0) return byTime;
+          const aMoves = Number.isFinite(Number(a.moves)) ? Number(a.moves) : Infinity;
+          const bMoves = Number.isFinite(Number(b.moves)) ? Number(b.moves) : Infinity;
+          if (aMoves !== bMoves) return aMoves - bMoves;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 10);
+    }
+
     function topKingFinderScores(modeKey) {
       return getScores()
         .filter(item =>
@@ -6130,6 +7270,14 @@
         return `1st: ${formatHundredths(times[0].timeSeconds)}s`;
       }
 
+      if (currentMode === "knightHop") {
+        const times = topKnightHopTimes(knightHopXtreme ? "knightHopXtreme" : "knightHop");
+        if (!times.length) return "1st: —";
+        if (knightHopXtreme) return `1st: ${formatHundredths(times[0].timeSeconds)}s`;
+        const moves = Number.isFinite(Number(times[0].moves)) ? Number(times[0].moves) : "—";
+        return `1st: ${formatHundredths(times[0].timeSeconds)}s · ${moves}m`;
+      }
+
       if (currentMode === "kingFinder") {
         const scores = topKingFinderScores(kingFinderXtreme ? "kingFinderXtreme" : "kingFinder");
         return scores.length ? `1st: ${Number(scores[0].score).toFixed(2)}/30` : "1st: —";
@@ -6145,7 +7293,9 @@
         ? "King finder XTREME"
         : currentMode === "pickup" && pickupXtreme
           ? "PICK UP XTREME"
-          : gameModes[currentMode]?.name || "30s sprint";
+          : currentMode === "knightHop" && knightHopXtreme
+            ? "Knight hop XTREME"
+            : gameModes[currentMode]?.name || "30s sprint";
 
       const themeName = boardThemes[currentThemeKey]?.name || "Classic";
 
@@ -6229,6 +7379,43 @@
         });
       }
 
+      const knightHopTimes = topKnightHopTimes("knightHop");
+      bestKnightHopEl.textContent = knightHopTimes.length
+        ? `${formatHundredths(knightHopTimes[0].timeSeconds)}s · ${Number.isFinite(Number(knightHopTimes[0].moves)) ? Number(knightHopTimes[0].moves) : "—"} moves`
+        : "—";
+      knightHopScoresListEl.innerHTML = "";
+      if (!knightHopTimes.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item";
+        empty.innerHTML = `<span class="place">—</span><span>No Knight hop times yet</span><strong>—</strong>`;
+        knightHopScoresListEl.appendChild(empty);
+      } else {
+        knightHopTimes.forEach((item, index) => {
+          const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
+          knightHopScoresListEl.appendChild(li);
+        });
+      }
+
+      const knightHopXtremeTimes = topKnightHopTimes("knightHopXtreme");
+      bestKnightHopXtremeEl.textContent = knightHopXtremeTimes.length ? `${formatHundredths(knightHopXtremeTimes[0].timeSeconds)}s` : "—";
+      knightHopXtremeScoresListEl.innerHTML = "";
+      if (!knightHopXtremeTimes.length) {
+        const empty = document.createElement("li");
+        empty.className = "score-item xtreme-score";
+        empty.innerHTML = `<span class="place">—</span><span>No Knight hop XTREME times yet</span><strong>—</strong>`;
+        knightHopXtremeScoresListEl.appendChild(empty);
+      } else {
+        knightHopXtremeTimes.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item xtreme-score";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          knightHopXtremeScoresListEl.appendChild(li);
+        });
+      }
+
       const kingScores = topKingFinderScores("kingFinder");
       bestKingFinderEl.textContent = kingScores.length ? `${Number(kingScores[0].score).toFixed(2)}/30` : "—";
       kingFinderScoresListEl.innerHTML = "";
@@ -6270,12 +7457,14 @@
       const show64 = currentMode === "sixtyFour";
       const showSprint = currentMode === "sprint";
       const showPickup = currentMode === "pickup";
+      const showKnightHop = currentMode === "knightHop";
       const showKing = currentMode === "kingFinder" && !kingFinderXtreme;
       const showKingXtreme = currentMode === "kingFinder" && kingFinderXtreme;
 
       sprintLeaderboard.classList.toggle("hidden", !showSprint);
       sixtyFourLeaderboard.classList.toggle("hidden", !show64);
       pickupLeaderboard.classList.toggle("hidden", !showPickup);
+      knightHopLeaderboard.classList.toggle("hidden", !showKnightHop);
       kingFinderLeaderboard.classList.toggle("hidden", !showKing);
       kingFinderXtremeLeaderboard.classList.toggle("hidden", !showKingXtreme);
     }
@@ -6294,7 +7483,7 @@
 
 
     function updateKingXtremeVisibility() {
-      const showXtreme = currentMode === "kingFinder" || currentMode === "pickup";
+      const showXtreme = currentMode === "kingFinder" || currentMode === "pickup" || currentMode === "knightHop";
       kingXtremePanel.classList.toggle("hidden", !showXtreme);
 
       const label = kingXtremePanel.querySelector("span");
@@ -6304,6 +7493,10 @@
         if (label) label.textContent = "PICK UP XTREME";
         if (note) note.textContent = "Legal moves only";
         kingXtremeToggle.checked = pickupXtreme;
+      } else if (currentMode === "knightHop") {
+        if (label) label.textContent = "KNIGHT HOP XTREME";
+        if (note) note.textContent = "No touched squares";
+        kingXtremeToggle.checked = knightHopXtreme;
       } else {
         if (label) label.textContent = "XTREME MODE";
         if (note) note.textContent = "All 64 squares filled";
@@ -6314,6 +7507,7 @@
     function loadKingXtremeMode() {
       kingFinderXtreme = localStorage.getItem(kingXtremeStorageKey) === "true";
       pickupXtreme = localStorage.getItem(pickupXtremeStorageKey) === "true";
+      knightHopXtreme = localStorage.getItem(knightHopXtremeStorageKey) === "true";
       updateKingXtremeVisibility();
     }
 
@@ -6322,6 +7516,19 @@
         pickupXtreme = Boolean(enabled);
         kingXtremeToggle.checked = pickupXtreme;
         localStorage.setItem(pickupXtremeStorageKey, pickupXtreme ? "true" : "false");
+        resetRound();
+        targetLabelEl.textContent = currentPanelTitle();
+        setInstructionTarget("Click anywhere on the board to start");
+        updateLeaderboardVisibility();
+        renderScores();
+        updateMobileBottomNavStatus();
+        return;
+      }
+
+      if (currentMode === "knightHop") {
+        knightHopXtreme = Boolean(enabled);
+        kingXtremeToggle.checked = knightHopXtreme;
+        localStorage.setItem(knightHopXtremeStorageKey, knightHopXtreme ? "true" : "false");
         resetRound();
         targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
@@ -6378,7 +7585,9 @@
           ? "King finder selected. Click anywhere on the board to start the game."
           : currentMode === "pickup"
             ? (pickupXtreme ? "PICK UP XTREME selected. Click anywhere on the board to start." : "PICK UP selected. Click anywhere on the board to start.")
-            : `${gameModes[currentMode].name} mode selected.`;
+            : currentMode === "knightHop"
+              ? (knightHopXtreme ? "Knight hop XTREME selected. Click anywhere on the board to start." : "Knight hop selected. Click anywhere on the board to start.")
+              : `${gameModes[currentMode].name} mode selected.`;
       }
     }
 
@@ -6702,6 +7911,15 @@
     mobileBackBtn.addEventListener("click", closeMobileMenuPage);
     mobileReturnBtn.addEventListener("click", closeMobileMenuPage);
 
+    if (boardTypeToggle && boardTypeContent) {
+      boardTypeToggle.addEventListener("click", () => {
+        const isOpen = boardTypeToggle.getAttribute("aria-expanded") !== "false";
+        boardTypeToggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+        boardTypeContent.classList.toggle("collapsed", isOpen);
+        window.setTimeout(sizeBoardToWindow, 60);
+      });
+    }
+
     function showInstructions() {
       instructionsModal.classList.add("show");
     }
@@ -6716,12 +7934,96 @@
       if (event.target === instructionsModal) hideInstructions();
     });
 
-    function showRainbowToast() {
+    function unlockDraughtsEgg() {
+      hideInstructions();
+      draughtsUnlockPending = true;
+      draughtsUnlockModal.classList.add("show");
+    }
+
+    function closeDraughtsUnlockAndStart() {
+      if (!draughtsUnlockPending) return;
+      draughtsUnlockPending = false;
+      draughtsUnlockModal.classList.remove("show");
+      currentMode = "draughts";
+      localStorage.setItem(modeStorageKey, currentMode);
+      document.querySelectorAll(".mode-button").forEach(button => button.classList.remove("active"));
+      resetRound();
+      startDraughtsGame();
+      updateKingXtremeVisibility();
+      updateLeaderboardVisibility();
+      renderScores();
+      updateMobileBottomNavStatus();
+      messageEl.textContent = "Draughts unlocked. Put the draughts in the trashcan.";
+    }
+
+    funEgg?.addEventListener("click", event => {
+      event.stopPropagation();
+      unlockDraughtsEgg();
+    });
+
+    funEgg?.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        unlockDraughtsEgg();
+      }
+    });
+
+    draughtsUnlockClose?.addEventListener("click", closeDraughtsUnlockAndStart);
+    draughtsUnlockModal?.addEventListener("click", event => {
+      if (event.target === draughtsUnlockModal) closeDraughtsUnlockAndStart();
+    });
+
+    draughtsTrash?.addEventListener("click", () => binDraughtsPiece());
+    draughtsTrash?.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        binDraughtsPiece();
+      }
+    });
+    draughtsTrash?.addEventListener("dragover", event => {
+      if (currentMode !== "draughts" || draughtsPhase !== "playing") return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+      draughtsTrash.classList.add("hover");
+    });
+    draughtsTrash?.addEventListener("dragleave", () => draughtsTrash.classList.remove("hover"));
+    draughtsTrash?.addEventListener("drop", event => {
+      event.preventDefault();
+      draughtsTrash.classList.remove("hover");
+      const pieceId = event.dataTransfer.getData("text/draughts-piece") || draughtsSelectedId;
+      binDraughtsPiece(pieceId);
+    });
+    boardWrap?.addEventListener("dragover", event => {
+      if (currentMode !== "draughts" || draughtsPhase !== "playing") return;
+      if (!pointerIsOverTrash(event.clientX, event.clientY)) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+      draughtsTrash.classList.add("hover");
+    });
+    boardWrap?.addEventListener("drop", event => {
+      if (currentMode !== "draughts" || draughtsPhase !== "playing") return;
+      if (!pointerIsOverTrash(event.clientX, event.clientY)) return;
+      event.preventDefault();
+      draughtsTrash.classList.remove("hover");
+      const pieceId = event.dataTransfer.getData("text/draughts-piece") || draughtsSelectedId;
+      binDraughtsPiece(pieceId);
+    });
+
+    window.addEventListener("pointermove", handleDraughtsPointerMove, { passive: false });
+    window.addEventListener("pointerup", handleDraughtsPointerEnd, { passive: false });
+    window.addEventListener("pointercancel", handleDraughtsPointerEnd, { passive: false });
+
+    function showGameToast(message = "Rainbow mode activated") {
       clearTimeout(rainbowToastTimer);
+      rainbowToast.textContent = message;
       rainbowToast.classList.add("show");
       rainbowToastTimer = window.setTimeout(() => {
         rainbowToast.classList.remove("show");
       }, 2200);
+    }
+
+    function showRainbowToast() {
+      showGameToast("Rainbow mode activated");
     }
 
     function activateRainbowEgg() {
@@ -6771,11 +8073,33 @@
     });
 
     newRoundBtn.addEventListener("click", resetRound);
+
+    function vanishDraughtsAndReturnToSprint() {
+      draughtsCompleted = false;
+      hideResultModal();
+      currentMode = "sprint";
+      localStorage.setItem(modeStorageKey, currentMode);
+      document.querySelectorAll(".mode-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.mode === currentMode);
+      });
+      resetRound();
+      updateKingXtremeVisibility();
+      updateLeaderboardVisibility();
+      renderScores();
+      updateMobileBottomNavStatus();
+      messageEl.textContent = "30s sprint selected.";
+    }
+
     resetScoresBtn.addEventListener("click", clearScores);
     applyCustomBoardBtn.addEventListener("click", saveAndApplyCustomTheme);
     kingXtremeToggle.addEventListener("change", () => setKingXtremeMode(kingXtremeToggle.checked));
     fullscreenBtn.addEventListener("click", toggleFullscreen);
     modalCloseBtn.addEventListener("click", () => {
+      if (currentMode === "draughts" && draughtsCompleted) {
+        vanishDraughtsAndReturnToSprint();
+        return;
+      }
+
       hideResultModal();
 
       if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
@@ -6785,9 +8109,22 @@
 
       resetRound();
     });
-    modalAgainBtn.addEventListener("click", resetRound);
+
+    modalAgainBtn.addEventListener("click", () => {
+      if (currentMode === "draughts" && draughtsCompleted) {
+        vanishDraughtsAndReturnToSprint();
+        return;
+      }
+      resetRound();
+    });
+
     resultModal.addEventListener("click", event => {
       if (event.target === resultModal) {
+        if (currentMode === "draughts" && draughtsCompleted) {
+          vanishDraughtsAndReturnToSprint();
+          return;
+        }
+
         hideResultModal();
         if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
           messageEl.textContent = "Solved board left in place. Click the board to start a new PICK UP game.";
@@ -6796,7 +8133,11 @@
     });
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
-        hideResultModal();
+        if (currentMode === "draughts" && draughtsCompleted && resultModal.classList.contains("show")) {
+          vanishDraughtsAndReturnToSprint();
+        } else {
+          hideResultModal();
+        }
         hideEasterEgg();
         hideInstructions();
         closeMobileMenuPage();
