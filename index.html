@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS PWA v0.99</title>
+<title>KWIK CHESS PWA v0.100</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4239,60 +4239,23 @@
 
 
 
-    /* v0.99: mobile logo king is now SVG, not a fragile text glyph */
-    .wordmark {
-      align-items: center !important;
-    }
-
-    .wordmark-king.logo-king {
-      display: inline-grid !important;
-      place-items: center !important;
-      width: 1.05em !important;
-      height: 1.05em !important;
-      font-size: 1em !important;
-      line-height: 1 !important;
-      transform: none !important;
-      padding: 0 !important;
-      margin: 0 0.01em !important;
-      color: #f6c85b !important;
-      flex: 0 0 auto !important;
-    }
-
-    .wordmark-king-svg {
-      display: block !important;
-      width: 1.05em !important;
-      height: 1.05em !important;
-      overflow: visible !important;
-    }
-
-    .wordmark-king-svg .king-outline {
-      fill: rgba(246, 200, 91, 0.48);
-      stroke: #f6c85b;
-      stroke-width: 3;
-      stroke-linejoin: round;
-    }
-
-    .wordmark-king-svg .king-base,
-    .wordmark-king-svg .king-band,
-    .wordmark-king-svg .king-spark {
-      fill: #fff35d;
-    }
-
-    .wordmark-king-svg .king-cut {
-      fill: rgba(10, 11, 16, 0.78);
-      stroke: #f6c85b;
-      stroke-width: 1.8;
-    }
-
+    /* v0.100: keep original king; make it large on mobile */
     @media (max-width: 850px) {
-      .wordmark-king.logo-king {
-        width: 1.12em !important;
-        height: 1.12em !important;
+      .wordmark {
+        align-items: center !important;
+        gap: 0.24em !important;
       }
 
-      .wordmark-king-svg {
-        width: 1.12em !important;
-        height: 1.12em !important;
+      .wordmark-king.logo-king {
+        font-size: 2.25em !important;
+        line-height: 0.5 !important;
+        transform: translateY(-0.015em) !important;
+        transform-origin: center center !important;
+        margin-left: 0.10em !important;
+        margin-right: 0.10em !important;
+        padding: 0 !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
       }
     }
 
@@ -4312,7 +4275,7 @@
 <div class="app" id="app">
 <header class="app-header">
 <div class="title-wrap">
-<h1 class="wordmark"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0"><svg class="wordmark-king-svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><defs><filter id="logoKingGlow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="5" result="blur"/><feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.95 0 1 0 0 0.72 0 0 1 0 0.18 0 0 0 0.85 0" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#logoKingGlow)"><path class="king-outline" d="M43 8h14v15h14v13H57v9l9 9c6-8 16-12 26-8 6 3 8 9 6 15-3 10-15 19-28 24H30C17 80 5 71 2 61c-2-6 0-12 6-15 10-4 20 0 26 8l9-9v-9H29V23h14V8Z"/><path class="king-base" d="M23 75c9-7 45-7 54 0-7 11-47 11-54 0Z"/><path class="king-band" d="M22 62c18-9 38-9 56 0l-9 9c-13-5-25-5-38 0l-9-9Z"/><path class="king-cut" d="M50 57l9 5-9 5-9-5 9-5Z"/><path class="king-spark" d="M50 42l6 6-6 6-6-6 6-6ZM40 19l6 6-6 6-6-6 6-6ZM60 19l6 6-6 6-6-6 6-6Z"/></g></svg></span><span class="wordmark-text">CHESS</span></h1>
+<h1 class="wordmark"><span class="wordmark-text">KW<span aria-label="Activate Rainbow mode" class="rainbow-egg" id="rainbowEgg" role="button" tabindex="0">I</span>K</span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king" id="logoKing" role="button" tabindex="0">♚</span><span class="wordmark-text">CHESS</span></h1>
 </div>
 <div class="header-actions">
 <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
@@ -4492,7 +4455,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.99 PWA</p>
+<p class="easter-version">Version 0.100 PWA</p>
 </div>
 </div>
 </div>
@@ -4521,7 +4484,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.99";
+    const VERSION = "0.100";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
