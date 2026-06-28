@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.120 PWA</title>
+<title>KWIK CHESS v0.140</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -4582,16 +4582,902 @@
     }
 
 
+
+    /* v0.121: leaderboard summary grid + full leaderboard popup */
+    .leaderboard-icon-button {
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      font-family: inherit !important;
+    }
+
+    .mobile-leaderboard-grid {
+      display: none;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel .scoreboard {
+      display: none !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel #mobileLeaderboardGrid {
+      display: grid !important;
+      width: 100% !important;
+      max-width: 390px !important;
+      margin-inline: auto !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      grid-auto-rows: minmax(128px, 1fr);
+      gap: 10px !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel #resetScoresBtn {
+      display: block !important;
+      width: 100% !important;
+      max-width: 390px !important;
+      margin-inline: auto !important;
+    }
+
+    .mobile-leaderboard-card {
+      min-height: 128px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      padding: 10px 8px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      align-items: center;
+      justify-items: center;
+      gap: 4px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .mobile-leaderboard-card-title {
+      font-size: clamp(0.62rem, 2.6vw, 0.76rem);
+      font-weight: 1000;
+      text-transform: uppercase;
+      line-height: 1.02;
+      letter-spacing: 0.03em;
+    }
+
+    .mobile-leaderboard-card-score {
+      font-size: clamp(1.25rem, 6vw, 1.85rem);
+      font-weight: 1000;
+      color: var(--accent);
+      line-height: 0.98;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    .mobile-leaderboard-card-sub {
+      font-size: clamp(0.48rem, 2.1vw, 0.62rem);
+      color: var(--muted);
+      line-height: 1.08;
+      width: 100%;
+    }
+
+    .leaderboard-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.68);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 82;
+      padding: 16px;
+    }
+
+    .leaderboard-modal-backdrop.show {
+      display: flex;
+    }
+
+    .leaderboard-modal {
+      width: min(980px, 100%);
+      max-height: min(86vh, 760px);
+      overflow: auto;
+      background: #1b1d23;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.55);
+      position: relative;
+    }
+
+    .leaderboard-modal h2 {
+      margin: 0 42px 16px 0;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+    }
+
+    .leaderboard-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 1.35rem;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+
+    .leaderboard-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .leaderboard-modal-section {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.055);
+      padding: 14px;
+    }
+
+    .leaderboard-modal-section h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .leaderboard-modal-mode {
+      margin-top: 12px;
+    }
+
+    .leaderboard-modal-mode:first-child {
+      margin-top: 0;
+    }
+
+    .leaderboard-modal-mode-title {
+      font-size: 0.78rem;
+      font-weight: 1000;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .leaderboard-modal-list {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .leaderboard-modal-list li {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 7px 8px;
+      background: rgba(0,0,0,0.12);
+      font-size: 0.82rem;
+    }
+
+    .leaderboard-modal-list .empty-row {
+      color: var(--muted);
+    }
+
+    .leaderboard-modal-list .modal-score-value {
+      font-weight: 1000;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    body.device-phone .leaderboard-modal {
+      max-height: min(84vh, 720px);
+      padding: 18px;
+      border-radius: 20px;
+    }
+
+    body.device-phone .leaderboard-modal-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+
+    /* v0.122: tight heading icons + screenshot-friendly leaderboards */
+    .heading-icon-row {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+
+    .section-heading-row {
+      justify-content: flex-start !important;
+    }
+
+    .leaderboard-modal {
+      width: min(1120px, 100%) !important;
+    }
+
+    .leaderboard-modal h2 {
+      text-align: center;
+      margin: 0 42px 18px !important;
+      color: #f6c85b;
+      text-transform: uppercase;
+      letter-spacing: 0.035em !important;
+      font-size: clamp(1.45rem, 4.2vw, 2.35rem) !important;
+    }
+
+    .leaderboard-modal-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+      align-items: start;
+    }
+
+    .leaderboard-modal-section {
+      break-inside: avoid;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035);
+    }
+
+    .leaderboard-modal-section h3 {
+      text-align: center;
+      color: var(--text);
+      font-size: 1.08rem !important;
+    }
+
+    .leaderboard-modal-list li.leaderboard-first-place {
+      border-color: rgba(80, 220, 130, 0.75) !important;
+      background: linear-gradient(90deg, rgba(80, 220, 130, 0.24), rgba(80, 220, 130, 0.08)) !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(80, 220, 130, 0.30),
+        0 0 16px rgba(80, 220, 130, 0.12);
+    }
+
+    .leaderboard-modal-list li.leaderboard-first-place .modal-score-value,
+    .leaderboard-modal-list li.leaderboard-first-place span:first-child {
+      color: rgba(216, 255, 229, 0.98) !important;
+    }
+
+    .leaderboard-expand-button {
+      margin-top: 10px;
+      width: 100%;
+      min-height: 34px;
+      border: 1px solid rgba(246,200,91,0.38);
+      border-radius: 12px;
+      background: rgba(246,200,91,0.10);
+      color: #f6c85b;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+
+    .leaderboard-expand-button:hover,
+    .leaderboard-expand-button:focus-visible {
+      background: rgba(246,200,91,0.18);
+      outline: none;
+    }
+
+    body.device-phone .heading-icon-row {
+      gap: 6px;
+    }
+
+
+
+    /* v0.123: compact screenshot leaderboard popup */
+    .leaderboard-modal {
+      width: min(1240px, 98vw) !important;
+      max-height: 94vh !important;
+      padding: 14px !important;
+      overflow: auto;
+    }
+
+    .leaderboard-modal h2 {
+      margin: 0 38px 10px !important;
+      font-size: clamp(1.25rem, 3.1vw, 2rem) !important;
+      line-height: 0.95 !important;
+    }
+
+    .leaderboard-modal-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 9px !important;
+    }
+
+    .leaderboard-modal-section {
+      padding: 9px !important;
+      border-radius: 14px !important;
+      min-height: 0;
+    }
+
+    .leaderboard-modal-section h3 {
+      margin: 0 0 6px !important;
+      font-size: clamp(0.72rem, 1.2vw, 0.92rem) !important;
+      line-height: 1 !important;
+    }
+
+    .leaderboard-modal-modes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      gap: 7px;
+      align-items: start;
+    }
+
+    .leaderboard-modal-mode {
+      margin-top: 0 !important;
+      min-width: 0;
+    }
+
+    .leaderboard-modal-mode-title {
+      font-size: 0.58rem !important;
+      margin-bottom: 4px !important;
+      line-height: 1 !important;
+    }
+
+    .leaderboard-modal-list {
+      gap: 3px !important;
+    }
+
+    .leaderboard-modal-list li {
+      grid-template-columns: 20px minmax(0, 1fr) auto !important;
+      gap: 5px !important;
+      padding: 4px 5px !important;
+      border-radius: 8px !important;
+      font-size: clamp(0.58rem, 1vw, 0.72rem) !important;
+      line-height: 1.05 !important;
+      min-width: 0;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .leaderboard-modal-list .modal-score-value {
+      font-size: 0.68rem !important;
+    }
+
+    .leaderboard-expand-button {
+      margin: 6px auto 0 !important;
+      width: 30px !important;
+      height: 24px !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px !important;
+      font-size: 1rem !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .leaderboard-modal-section.expanded {
+      grid-column: span 2;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-modes {
+      grid-template-columns: 1fr;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-list li {
+      font-size: 0.78rem !important;
+      padding: 6px 7px !important;
+    }
+
+    body.device-phone .leaderboard-modal-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    body.device-phone .leaderboard-modal-section.expanded {
+      grid-column: auto;
+    }
+
+
+
+    /* v0.124: tidy empty rows + full short dates */
+    .leaderboard-modal-list li {
+      grid-template-columns: 20px max-content minmax(max-content, auto) !important;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2),
+    .scores-list .score-item span:nth-child(2) {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: nowrap !important;
+    }
+
+    .leaderboard-modal-list .empty-row .modal-score-value,
+    .scores-list .score-item strong {
+      white-space: nowrap;
+    }
+
+
+
+    /* v0.125: tidy popup leaderboard and prevent right panel empty-row scroll */
+    .scores-list .score-item:empty {
+      display: none !important;
+    }
+
+    .leaderboard-modal-modes {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+
+    .leaderboard-modal-list li {
+      grid-template-columns: 20px minmax(0, 1fr) max-content !important;
+      gap: 6px !important;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2) {
+      min-width: 0 !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: nowrap !important;
+      font-size: 0.62rem !important;
+    }
+
+    .leaderboard-modal-list .modal-score-value {
+      font-size: 0.64rem !important;
+      white-space: nowrap !important;
+    }
+
+    .leaderboard-modal-section.expanded {
+      grid-column: span 2;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-modes {
+      grid-template-columns: 1fr !important;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-list li span:nth-child(2) {
+      font-size: 0.76rem !important;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-list .modal-score-value {
+      font-size: 0.76rem !important;
+    }
+
+
+
+    /* v0.126: keep main board panel fixed like v123 */
+    .main-panel {
+      overflow: hidden !important;
+    }
+
+    .side-panel {
+      overflow-x: hidden !important;
+    }
+
+    .scores-list:empty {
+      display: none !important;
+    }
+
+
+
+    /* v0.127: restore right-side panel behaviour; keep full dates only in popup */
+    .side-panel .scoreboard {
+      overflow: hidden !important;
+    }
+
+    .side-panel .scores-list .score-item {
+      min-width: 0 !important;
+    }
+
+    .side-panel .scores-list .score-item span:nth-child(2) {
+      min-width: 0 !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+
+    .side-panel .scores-list .score-item strong {
+      white-space: nowrap !important;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2) {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: nowrap !important;
+    }
+
+
+
+    /* v0.128: restore popup leaderboard font sizing to v122 */
+    .leaderboard-modal h2 {
+      font-size: clamp(1.45rem, 4.2vw, 2.35rem) !important;
+    }
+
+    .leaderboard-modal-section h3 {
+      font-size: 1.08rem !important;
+      line-height: 1.05 !important;
+    }
+
+    .leaderboard-modal-mode-title {
+      font-size: 0.78rem !important;
+      line-height: 1.05 !important;
+    }
+
+    .leaderboard-modal-list li {
+      font-size: 0.82rem !important;
+      line-height: 1.12 !important;
+      padding: 7px 8px !important;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2) {
+      font-size: 0.82rem !important;
+    }
+
+    .leaderboard-modal-list .modal-score-value {
+      font-size: 0.82rem !important;
+    }
+
+
+
+    /* v0.129: disabled chevrons and downward-only expansion */
+    .leaderboard-expand-button.disabled,
+    .leaderboard-expand-button:disabled {
+      opacity: 0.32 !important;
+      cursor: default !important;
+      border-color: rgba(255,255,255,0.16) !important;
+      background: rgba(255,255,255,0.045) !important;
+      color: rgba(255,255,255,0.42) !important;
+      box-shadow: none !important;
+    }
+
+    .leaderboard-modal-section.expanded {
+      grid-column: auto !important;
+    }
+
+    .leaderboard-modal-section.expanded .leaderboard-modal-modes {
+      grid-template-columns: 1fr !important;
+    }
+
+
+
+    /* v0.130: centred grey empty leaderboard rows */
+    .leaderboard-modal-list li.leaderboard-empty-row {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      place-items: center !important;
+      text-align: center !important;
+      min-height: 38px;
+      border-color: rgba(255,255,255,0.10) !important;
+      background: rgba(255,255,255,0.045) !important;
+      box-shadow: none !important;
+    }
+
+    .leaderboard-modal-list li.leaderboard-empty-row .modal-score-value {
+      color: rgba(255,255,255,0.46) !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+    }
+
+
+
+    /* v0.131: popup heading case + larger first-place score */
+    .leaderboard-modal-section h3 {
+      text-transform: none !important;
+    }
+
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) {
+      min-height: 44px;
+    }
+
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .modal-score-value {
+      font-size: 1.08rem !important;
+      line-height: 1 !important;
+      font-weight: 1000 !important;
+    }
+
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) span:first-child {
+      font-size: 0.98rem !important;
+      font-weight: 1000 !important;
+    }
+
+
+
+    /* v0.132: gold first-place score text */
+    .leaderboard-modal-list li.leaderboard-first-place:not(.leaderboard-empty-row) .modal-score-value {
+      color: #f6c85b !important;
+    }
+
+
+
+    /* v0.134: mobile leaderboard cards and popup click layer */
+    .leaderboard-modal-backdrop {
+      z-index: 13000 !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card.has-score {
+      border-color: rgba(80, 220, 130, 0.34) !important;
+      background: linear-gradient(180deg, rgba(80, 220, 130, 0.13), rgba(255,255,255,0.055)) !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(80, 220, 130, 0.10),
+        0 0 14px rgba(80, 220, 130, 0.06) !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card.has-score .mobile-leaderboard-card-score {
+      color: #f6c85b !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card.empty {
+      border-color: rgba(255,255,255,0.11) !important;
+      background: rgba(255,255,255,0.045) !important;
+      box-shadow: none !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card.empty .mobile-leaderboard-card-score {
+      color: rgba(255,255,255,0.48) !important;
+      font-size: clamp(0.9rem, 4vw, 1.15rem) !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card:active {
+      transform: translateY(1px);
+    }
+
+
+
+    /* v0.135: mobile leaderboard page shows only the six boxes */
+    body.device-phone.mobile-page-scores .side-panel .scoreboard,
+    body.device-phone.mobile-page-scores .side-panel .scoreboard:not(.hidden) {
+      display: none !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel #mobileLeaderboardGrid {
+      display: grid !important;
+    }
+
+    body.device-phone.mobile-page-scores .side-panel #resetScoresBtn {
+      display: none !important;
+    }
+
+
+
+    /* v0.136: preserve 30s case on mobile leaderboard cards */
+    body.device-phone .mobile-leaderboard-card-title {
+      text-transform: none !important;
+    }
+
+
+
+    /* v0.137: leaderboard responsive text and mobile two-line metrics */
+    .leaderboard-modal-list li {
+      min-width: 0 !important;
+      overflow: hidden !important;
+      grid-template-columns: 20px minmax(0, 1fr) minmax(0, 48%) !important;
+    }
+
+    .leaderboard-modal-list li span:nth-child(2),
+    .leaderboard-modal-list .modal-score-value {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+    }
+
+    .leaderboard-modal-list .modal-score-value {
+      justify-self: end !important;
+    }
+
+    .two-metric-score {
+      display: inline-flex;
+      gap: 0.34em;
+      align-items: baseline;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .two-metric-score span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.device-phone .leaderboard-modal-list li {
+      grid-template-columns: 20px minmax(0, 1fr) minmax(0, 44%) !important;
+    }
+
+    body.device-phone .two-metric-score,
+    body.device-phone .mobile-leaderboard-card-score .two-metric-score,
+    body.device-phone .mobile-leaderboard-card-sub .two-metric-score {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 1px;
+      align-items: center;
+      justify-content: center;
+      line-height: 0.98;
+      white-space: normal;
+    }
+
+    body.device-phone .two-metric-score .metric-dot {
+      display: none;
+    }
+
+    body.device-phone .mobile-leaderboard-card-sub {
+      color: #f6c85b !important;
+      font-size: clamp(0.41rem, 1.78vw, 0.56rem) !important;
+      line-height: 1.12 !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score {
+      font-size: clamp(0.88rem, 4.65vw, 1.5rem) !important;
+      max-width: 100%;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score .two-metric-score {
+      font-size: 0.94em;
+    }
+
+    body.device-phone .mobile-leaderboard-card.empty .mobile-leaderboard-card-sub {
+      color: rgba(255,255,255,0.38) !important;
+    }
+
+
+
+    /* v0.138: mobile leaderboard boxes show title + equal gold scores */
+    body.device-phone .mobile-leaderboard-card {
+      grid-template-rows: auto minmax(0, 1fr) !important;
+      align-content: center !important;
+      gap: 7px !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-scores {
+      display: grid;
+      grid-auto-rows: minmax(0, auto);
+      align-content: center;
+      justify-items: center;
+      gap: 4px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    body.device-phone .mobile-score-row {
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      gap: 1px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    body.device-phone .mobile-score-label {
+      color: rgba(255,255,255,0.58);
+      font-size: clamp(0.42rem, 1.8vw, 0.56rem);
+      font-weight: 1000;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score,
+    body.device-phone .mobile-leaderboard-card-sub .mobile-leaderboard-card-score,
+    body.device-phone .mobile-score-row .mobile-leaderboard-card-score {
+      color: #f6c85b !important;
+      font-size: clamp(0.72rem, 3.4vw, 1.12rem) !important;
+      line-height: 0.98 !important;
+      font-weight: 1000 !important;
+      max-width: 100%;
+      text-align: center;
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.device-phone .mobile-score-row.empty-score .mobile-leaderboard-card-score,
+    body.device-phone .mobile-leaderboard-card.empty .mobile-leaderboard-card-score {
+      color: rgba(255,255,255,0.48) !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-sub {
+      display: none !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score .two-metric-score,
+    body.device-phone .mobile-score-row .two-metric-score {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      line-height: 0.98;
+    }
+
+
+
+    /* v0.139: larger mobile gold scores and compact two-metric mobile format */
+    body.device-phone .mobile-leaderboard-card-scores {
+      gap: 11px !important;
+    }
+
+    body.device-phone .mobile-score-row {
+      gap: 3px !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score,
+    body.device-phone .mobile-leaderboard-card-sub .mobile-leaderboard-card-score,
+    body.device-phone .mobile-score-row .mobile-leaderboard-card-score {
+      font-size: clamp(0.9rem, 4.15vw, 1.34rem) !important;
+      line-height: 1 !important;
+    }
+
+    body.device-phone .mobile-score-row + .mobile-score-row {
+      margin-top: 2px !important;
+    }
+
+    body.device-phone .mobile-score-row .mobile-inline-metric-score,
+    body.device-phone .mobile-leaderboard-card-score .mobile-inline-metric-score {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      gap: 0.28em !important;
+      align-items: baseline !important;
+      justify-content: center !important;
+      white-space: nowrap !important;
+      line-height: 1 !important;
+    }
+
+    body.device-phone .mobile-inline-metric-score .metric-dot {
+      display: inline !important;
+    }
+
+
+
+    /* v0.140: punchier mobile leaderboard gold scores */
+    body.device-phone .mobile-leaderboard-card {
+      padding: 8px 6px !important;
+      gap: 5px !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-title {
+      font-size: clamp(0.58rem, 2.35vw, 0.72rem) !important;
+      line-height: 0.96 !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-score,
+    body.device-phone .mobile-leaderboard-card-sub .mobile-leaderboard-card-score,
+    body.device-phone .mobile-score-row .mobile-leaderboard-card-score {
+      font-size: clamp(1.12rem, 5.55vw, 1.82rem) !important;
+      line-height: 0.9 !important;
+      letter-spacing: -0.055em !important;
+      text-shadow: 0 0 12px rgba(246, 200, 91, 0.28) !important;
+    }
+
+    body.device-phone .mobile-score-label {
+      font-size: clamp(0.38rem, 1.55vw, 0.5rem) !important;
+      opacity: 0.88 !important;
+    }
+
+    body.device-phone .mobile-leaderboard-card-scores {
+      gap: 13px !important;
+    }
+
+    body.device-phone .mobile-score-row .mobile-inline-metric-score,
+    body.device-phone .mobile-leaderboard-card-score .mobile-inline-metric-score {
+      gap: 0.2em !important;
+      letter-spacing: -0.06em !important;
+    }
+
+    body.device-phone .mobile-score-row.empty-score .mobile-leaderboard-card-score,
+    body.device-phone .mobile-leaderboard-card.empty .mobile-leaderboard-card-score {
+      font-size: clamp(0.92rem, 4.2vw, 1.25rem) !important;
+      letter-spacing: -0.025em !important;
+      text-shadow: none !important;
+    }
+
+
 </style>
-<meta name="theme-color" content="#111111">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/icon-192.png">
-<meta name="theme-color" content="#111217">
+  <link rel="manifest" href="manifest.json?v=0.140">
+  <meta name="theme-color" content="#0f1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
 </head>
 <body>
@@ -4647,7 +5533,10 @@
 <div class="message" id="message">Click the target square to start the timer.</div>
 <div class="section-heading-row">
 <h2>Game mode</h2>
+<div class="heading-icon-row">
+<button aria-label="All leaderboards" class="tiny-info-button leaderboard-icon-button" id="leaderboardBtn" type="button" title="Leaderboards">▤</button>
 <button aria-label="Game instructions" class="tiny-info-button" id="instructionsBtn" type="button">i</button>
+</div>
 </div>
 <div class="mode-grid" id="modeGrid"></div>
 <div class="king-xtreme-toggle hidden" id="kingXtremePanel">
@@ -4756,10 +5645,11 @@
 </div>
 <ul class="scores-list" id="kingFinderXtremeScoresList"></ul>
 </section>
+<div class="mobile-leaderboard-grid" id="mobileLeaderboardGrid" aria-label="Leaderboard summary"></div>
 <button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
 </section>
 </aside>
-<button class="mobile-return-button" id="mobileReturnBtn" type="button">Return to board</button>
+<button class="mobile-return-button" id="mobileReturnBtn" type="button">START game</button>
 <nav aria-label="Mobile menu" class="mobile-bottom-nav" id="mobileBottomNav">
 <button class="mobile-nav-button" data-mobile-page="game" type="button">
 <span class="mobile-nav-title">Game mode</span>
@@ -4786,6 +5676,13 @@
 </div>
 </div>
 </div>
+<div aria-labelledby="leaderboardModalTitle" aria-modal="true" class="leaderboard-modal-backdrop" id="leaderboardModal" role="dialog">
+<div class="leaderboard-modal">
+<button aria-label="Close leaderboards" class="leaderboard-modal-close" id="leaderboardModalClose" type="button">×</button>
+<h2 id="leaderboardModalTitle">KWIK CHESS Leaderboard</h2>
+<div class="leaderboard-modal-content" id="leaderboardModalContent"></div>
+</div>
+</div>
 <div aria-labelledby="easterEggTitle" aria-modal="true" class="easter-modal-backdrop" id="easterEggModal" role="dialog">
 <div class="easter-modal">
 <button aria-label="Close" class="easter-close" id="easterEggClose" type="button">×</button>
@@ -4793,7 +5690,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.120 PWA</p>
+<p class="easter-version">Version 0.140</p>
 </div>
 </div>
 </div>
@@ -4824,7 +5721,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.120";
+    const VERSION = "0.140";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -5034,6 +5931,12 @@
     const rainbowEgg = document.getElementById("rainbowEgg");
     const rainbowToast = document.getElementById("rainbowToast");
     const instructionsBtn = document.getElementById("instructionsBtn");
+    const leaderboardBtn = document.getElementById("leaderboardBtn");
+    const leaderboardModal = document.getElementById("leaderboardModal");
+    const leaderboardModalClose = document.getElementById("leaderboardModalClose");
+    const leaderboardModalTitle = document.getElementById("leaderboardModalTitle");
+    const leaderboardModalContent = document.getElementById("leaderboardModalContent");
+    const mobileLeaderboardGrid = document.getElementById("mobileLeaderboardGrid");
     const instructionsModal = document.getElementById("instructionsModal");
     const instructionsClose = document.getElementById("instructionsClose");
     const funEgg = document.getElementById("funEgg");
@@ -5100,6 +6003,7 @@
     let pickupXtreme = false;
     let knightHopXtreme = false;
     let oddOneOutRainbow = false;
+    let leaderboardExpandedGroups = new Set();
     let kingFinderGuessStartedAt = 0;
     let kingFinderTotalGuessMs = 0;
     let kingFinderFinalTimeScore = 0;
@@ -5137,6 +6041,7 @@
     let startTime = 0;
     let timer = null;
     let audioContext = null;
+    let audioPrimed = false;
     let pitchStep = 0;
 
     function svgForPiece(pieceKey, pieceColour = "black", className = "piece") {
@@ -6298,6 +7203,7 @@
     }
 
     function startDraughtsGame() {
+      primeAudioContext();
       clearDraughtsMode();
       clearPickupMode();
       clearKnightHopMode();
@@ -6354,6 +7260,7 @@
     }
 
     function selectDraughtsPiece(pieceId) {
+      primeAudioContext();
       if (draughtsPhase !== "playing") return;
       draughtsSelectedId = pieceId;
       renderDraughtsBoard();
@@ -6361,6 +7268,7 @@
     }
 
     function binDraughtsPiece(pieceId = draughtsSelectedId) {
+      primeAudioContext();
       if (draughtsPhase !== "playing" || !pieceId) return;
       const piece = findDraughtsPiece(pieceId);
       if (!piece) return;
@@ -6810,12 +7718,18 @@
         return;
       }
 
+      const hoppedToBlackSquare = !knightHopXtreme && knightHopTouchedSquares.has(squareName);
+
       knightHopCurrentSquare = squareName;
       knightHopTouchedSquares.add(squareName);
       knightHopMoves += 1;
 
       renderKnightHopBoard();
-      playCorrectSound(nextGameplayPitch());
+      if (hoppedToBlackSquare) {
+        playKnightHopBlackSquareSound();
+      } else {
+        playCorrectSound(nextGameplayPitch());
+      }
 
       const touched = knightHopTouchedSquares.size;
       scoreEl.textContent = knightHopXtreme ? `${knightHopMoves}/63` : `${touched}/64`;
@@ -6849,7 +7763,7 @@
         ? (knightHopXtreme ? "Knight hop XTREME complete" : "Knight hop complete")
         : "Knight hop failed";
       targetSquareEl.textContent = completed
-        ? (knightHopXtreme ? `${formatHundredths(knightHopElapsedSeconds)}s` : `${formatHundredths(knightHopElapsedSeconds)}s · ${knightHopMoves} moves`)
+        ? (knightHopXtreme ? `${formatHundredths(knightHopElapsedSeconds)}s` : `${formatHundredths(knightHopElapsedSeconds)} secs • ${knightHopMoves} moves`)
         : `${knightHopTouchedSquares.size}/64 touched`;
 
       if (completed) {
@@ -7874,7 +8788,7 @@
         modalNote.textContent = `You cleared all 64 squares.`;
       } else if (currentMode === "pickup") {
         modalScore.textContent = pickupXtreme
-          ? `${formatHundredths(elapsedSeconds)}s · ${pickupMoveCount} moves`
+          ? `${formatHundredths(elapsedSeconds)} secs • ${pickupMoveCount} moves`
           : `${formatHundredths(elapsedSeconds)}s`;
         modalRank.textContent = pickupXtreme ? "PICK UP XTREME complete" : "PICK UP complete";
         modalNote.textContent = pickupXtreme ? "Board set up correctly with legal moves." : "Board set up correctly.";
@@ -7882,7 +8796,7 @@
         const completed = knightHopTouchedSquares.size >= 64;
         modalScore.textContent = knightHopXtreme
           ? `${formatHundredths(elapsedSeconds)}s`
-          : `${formatHundredths(elapsedSeconds)}s · ${knightHopMoves} moves`;
+          : `${formatHundredths(elapsedSeconds)} secs • ${knightHopMoves} moves`;
         modalRank.textContent = completed
           ? (knightHopXtreme ? "Knight hop XTREME complete" : "Knight hop complete")
           : "Knight hop failed";
@@ -7955,6 +8869,28 @@
       }
     }
 
+    function formatScoreDate(value = new Date()) {
+      const pad = number => String(number).padStart(2, "0");
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+      const date = value instanceof Date ? value : new Date(value);
+
+      if (!Number.isNaN(date.getTime())) {
+        return `${date.getDate()} ${months[date.getMonth()]} '${String(date.getFullYear()).slice(-2)}, ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+
+      const text = String(value || "");
+      const match = text.match(/^(\d{1,2})\s+([A-Za-z]{3,4})\s+(\d{4}),\s+(\d{1,2}:\d{2})/);
+      if (match) {
+        return `${match[1]} ${match[2]} '${match[3].slice(-2)}, ${match[4]}`;
+      }
+
+      return text;
+    }
+
+    function appendEmptyLeaderboardRow() {
+      return;
+    }
+
     function saveScore(finalScore, elapsedSeconds = null) {
       const scores = getScores();
       const storedMode = currentMode === "kingFinder" && kingFinderXtreme
@@ -7974,13 +8910,7 @@
         mode: storedMode,
         scoreType: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? "kingFinderTime" : "standard",
         completed: storedMode === "kingFinder" || storedMode === "kingFinderXtreme" ? true : undefined,
-        date: new Date().toLocaleString([], {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        })
+        date: formatScoreDate(new Date())
       });
 
       const trimmed = scores
@@ -8075,43 +9005,228 @@
         .slice(0, 10);
     }
 
+    function scoreDisplayForItem(item, type) {
+      if (!item) return "—";
+      if (type === "score") return `${item.score} moves`;
+      if (type === "level") return `level ${item.score}`;
+      if (type === "king") return `${Number(item.score).toFixed(2)} secs`;
+      if (type === "time") return `${formatHundredths(item.timeSeconds)} secs`;
+      if (type === "moves") {
+        const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : Number(item.score);
+        return `${moves} moves`;
+      }
+      if (type === "timeMoves") {
+        const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
+        return `${formatHundredths(item.timeSeconds)} secs • ${moves} moves`;
+      }
+      return String(item.score ?? "—");
+    }
+
+    function scoreDisplayHtmlForItem(item, type) {
+      if (!item) return "—";
+      if (type === "timeMoves") {
+        const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
+        return `<span class="two-metric-score"><span>${formatHundredths(item.timeSeconds)} secs</span><span class="metric-dot">•</span><span>${moves} moves</span></span>`;
+      }
+      return scoreDisplayForItem(item, type);
+    }
+
+    function mobileScoreDisplayHtmlForItem(item, type) {
+      if (!item) return "—";
+      if (type === "timeMoves") {
+        const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
+        return `<span class="two-metric-score mobile-inline-metric-score"><span>${formatHundredths(item.timeSeconds)}s</span><span class="metric-dot">•</span><span>${moves}m</span></span>`;
+      }
+      return scoreDisplayHtmlForItem(item, type);
+    }
+
+    function leaderboardGroups() {
+      return [
+        {
+          key: "sprint",
+          title: "30s SPRINT",
+          modes: [
+            { label: "TOP", type: "score", empty: "No sprint scores yet", scores: topSprintScores() }
+          ]
+        },
+        {
+          key: "sixtyFour",
+          title: "64 SQUARES",
+          modes: [
+            { label: "TOP", type: "time", empty: "No 64-square times yet", scores: topSixtyFourTimes() }
+          ]
+        },
+        {
+          key: "kingFinder",
+          title: "KING FINDER",
+          modes: [
+            { label: "NORMAL", type: "king", empty: "No King finder wins yet", scores: topKingFinderScores("kingFinder") },
+            { label: "XTREME", type: "king", empty: "No King finder XTREME wins yet", scores: topKingFinderScores("kingFinderXtreme") }
+          ]
+        },
+        {
+          key: "pickup",
+          title: "PICK UP",
+          modes: [
+            { label: "NORMAL", type: "time", empty: "No PICK UP times yet", scores: topPickupTimes("pickup") },
+            { label: "XTREME", type: "timeMoves", empty: "No PICK UP XTREME times yet", scores: topPickupTimes("pickupXtreme") }
+          ]
+        },
+        {
+          key: "knightHop",
+          title: "KNIGHT HOP",
+          modes: [
+            { label: "NORMAL", type: "timeMoves", empty: "No Knight hop times yet", scores: topKnightHopTimes("knightHop") },
+            { label: "XTREME", type: "time", empty: "No Knight hop XTREME times yet", scores: topKnightHopTimes("knightHopXtreme") }
+          ]
+        },
+        {
+          key: "oddOneOut",
+          title: "ODD ONE OUT",
+          modes: [
+            { label: "NORMAL", type: "level", empty: "No ODD ONE OUT scores yet", scores: topOddOneOutScores("oddOneOut") },
+            { label: "RAINBOW", type: "level", empty: "No ODD ONE OUT RAINBOW scores yet", scores: topOddOneOutScores("oddOneOutRainbow") }
+          ]
+        }
+      ];
+    }
+
+    function renderMobileLeaderboardGrid() {
+      if (!mobileLeaderboardGrid) return;
+      mobileLeaderboardGrid.innerHTML = "";
+
+      leaderboardGroups().forEach(group => {
+        const isEmpty = !group.modes.some(mode => mode.scores.length);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `mobile-leaderboard-card ${isEmpty ? "empty" : "has-score"}`;
+        button.dataset.leaderboardGroup = group.key;
+
+        const scoreRows = group.modes.map((mode, index) => {
+          const scoreHtml = mobileScoreDisplayHtmlForItem(mode.scores[0], mode.type);
+          const labelHtml = group.modes.length > 1 ? `<span class="mobile-score-label">${mode.label}</span>` : "";
+          return `
+            <span class="mobile-score-row ${mode.scores.length ? "has-score" : "empty-score"} ${index > 0 ? "variation-score" : "normal-score"}">
+              ${labelHtml}
+              <strong class="mobile-leaderboard-card-score">${scoreHtml}</strong>
+            </span>
+          `;
+        }).join("");
+
+        button.innerHTML = `
+          <span class="mobile-leaderboard-card-title">${group.title}</span>
+          <span class="mobile-leaderboard-card-scores">${isEmpty ? `<span class="mobile-score-row empty-score"><strong class="mobile-leaderboard-card-score">I'm empty</strong></span>` : scoreRows}</span>
+        `;
+
+        mobileLeaderboardGrid.appendChild(button);
+      });
+    }
+
+    function leaderboardRowsHtml(mode, expanded = false) {
+      if (!mode.scores.length) {
+        return `<li class="empty-row leaderboard-empty-row"><span class="modal-score-value">I'm empty</span></li>`;
+      }
+
+      const visibleScores = expanded ? mode.scores : mode.scores.slice(0, 3);
+
+      return visibleScores.map((item, index) => `
+        <li class="${index === 0 ? 'leaderboard-first-place' : ''}">
+          <span>${index + 1}</span>
+          <span>${formatScoreDate(item.date)}</span>
+          <span class="modal-score-value">${scoreDisplayHtmlForItem(item, mode.type)}</span>
+        </li>
+      `).join("");
+    }
+
+    function leaderboardSectionHtml(group) {
+      const expanded = leaderboardExpandedGroups.has(group.key);
+      const hasMore = group.modes.some(mode => mode.scores.length > 3);
+      const modesHtml = group.modes.map(mode => `
+        <div class="leaderboard-modal-mode">
+          <div class="leaderboard-modal-mode-title">${mode.label}</div>
+          <ul class="leaderboard-modal-list">${leaderboardRowsHtml(mode, expanded)}</ul>
+        </div>
+      `).join("");
+
+      const expandButton = `<button class="leaderboard-expand-button ${hasMore ? "" : "disabled"}" type="button" data-leaderboard-expand="${group.key}" aria-label="${hasMore ? (expanded ? "Show top 3" : "Show full leaderboard") : "No hidden scores"}" ${hasMore ? "" : "disabled"}>${expanded && hasMore ? "⌃" : "⌄"}</button>`;
+
+      return `
+        <section class="leaderboard-modal-section ${expanded && hasMore ? "expanded" : ""}">
+          <h3>${group.title}</h3>
+          <div class="leaderboard-modal-modes">${modesHtml}</div>
+          ${expandButton}
+        </section>
+      `;
+    }
+
+    function wireLeaderboardExpandButtons() {
+      leaderboardModalContent.querySelectorAll("[data-leaderboard-expand]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.disabled) return;
+          const groupKey = button.dataset.leaderboardExpand;
+          if (leaderboardExpandedGroups.has(groupKey)) {
+            leaderboardExpandedGroups.delete(groupKey);
+          } else {
+            leaderboardExpandedGroups.add(groupKey);
+          }
+          renderLeaderboardModalContent();
+        });
+      });
+    }
+
+    function renderLeaderboardModalContent() {
+      const groupKey = leaderboardModal.dataset.groupKey || "";
+      const groups = leaderboardGroups();
+      const selectedGroups = groupKey ? groups.filter(group => group.key === groupKey) : groups;
+      leaderboardModalContent.innerHTML = `<div class="leaderboard-modal-grid">${selectedGroups.map(leaderboardSectionHtml).join("")}</div>`;
+      wireLeaderboardExpandButtons();
+    }
+
+    function openLeaderboardModal(groupKey = null) {
+      leaderboardModal.dataset.groupKey = groupKey || "";
+      if (groupKey) {
+        leaderboardExpandedGroups.add(groupKey);
+      }
+      leaderboardModalTitle.textContent = "KWIK CHESS Leaderboard";
+      renderLeaderboardModalContent();
+      leaderboardModal.classList.add("show");
+    }
+
+    function hideLeaderboardModal() {
+      leaderboardModal.classList.remove("show");
+    }
+
     function formatMobileTopScore() {
       if (currentMode === "sprint") {
         const scores = topSprintScores();
-        return scores.length ? `1st: ${scores[0].score}` : "1st: —";
+        return scores.length ? `1st: ${scoreDisplayForItem(scores[0], "score")}` : "1st: —";
       }
 
       if (currentMode === "sixtyFour") {
         const times = topSixtyFourTimes();
-        return times.length ? `1st: ${formatHundredths(times[0].timeSeconds)}s` : "1st: —";
+        return times.length ? `1st: ${scoreDisplayForItem(times[0], "time")}` : "1st: —";
       }
 
       if (currentMode === "pickup") {
         const times = topPickupTimes(pickupXtreme ? "pickupXtreme" : "pickup");
         if (!times.length) return "1st: —";
-        if (pickupXtreme) {
-          const moves = Number.isFinite(Number(times[0].moves)) ? Number(times[0].moves) : "—";
-          return `1st: ${formatHundredths(times[0].timeSeconds)}s · ${moves}m`;
-        }
-        return `1st: ${formatHundredths(times[0].timeSeconds)}s`;
+        return `1st: ${scoreDisplayForItem(times[0], pickupXtreme ? "timeMoves" : "time")}`;
       }
 
       if (currentMode === "knightHop") {
         const times = topKnightHopTimes(knightHopXtreme ? "knightHopXtreme" : "knightHop");
         if (!times.length) return "1st: —";
-        if (knightHopXtreme) return `1st: ${formatHundredths(times[0].timeSeconds)}s`;
-        const moves = Number.isFinite(Number(times[0].moves)) ? Number(times[0].moves) : "—";
-        return `1st: ${formatHundredths(times[0].timeSeconds)}s · ${moves}m`;
+        return `1st: ${scoreDisplayForItem(times[0], knightHopXtreme ? "time" : "timeMoves")}`;
       }
 
       if (currentMode === "kingFinder") {
         const scores = topKingFinderScores(kingFinderXtreme ? "kingFinderXtreme" : "kingFinder");
-        return scores.length ? `1st: ${Number(scores[0].score).toFixed(2)}/30` : "1st: —";
+        return scores.length ? `1st: ${scoreDisplayForItem(scores[0], "king")}` : "1st: —";
       }
 
       if (currentMode === "oddOneOut") {
         const scores = topOddOneOutScores(oddOneOutRainbow ? "oddOneOutRainbow" : "oddOneOut");
-        return scores.length ? `1st: level ${scores[0].score}` : "1st: —";
+        return scores.length ? `1st: ${scoreDisplayForItem(scores[0], "level")}` : "1st: —";
       }
 
       return "1st: —";
@@ -8145,141 +9260,117 @@
 
       scoresListEl.innerHTML = "";
       if (!sprintScores.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No sprint scores yet</span><strong>—</strong>`;
-        scoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         sprintScores.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${item.score}</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${item.score}</strong>`;
           scoresListEl.appendChild(li);
         });
       }
 
       const times = topSixtyFourTimes();
-      bestTimeEl.textContent = times.length ? `${formatHundredths(times[0].timeSeconds)}s` : "—";
+      bestTimeEl.textContent = times.length ? `${formatHundredths(times[0].timeSeconds)} secs` : "—";
 
       timeScoresListEl.innerHTML = "";
       if (!times.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No 64-square times yet</span><strong>—</strong>`;
-        timeScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         times.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           timeScoresListEl.appendChild(li);
         });
       }
 
       const pickupTimes = topPickupTimes("pickup");
-      bestPickupEl.textContent = pickupTimes.length ? `${formatHundredths(pickupTimes[0].timeSeconds)}s` : "—";
+      bestPickupEl.textContent = pickupTimes.length ? `${formatHundredths(pickupTimes[0].timeSeconds)} secs` : "—";
       pickupScoresListEl.innerHTML = "";
       if (!pickupTimes.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No normal PICK UP times yet</span><strong>—</strong>`;
-        pickupScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         pickupTimes.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           pickupScoresListEl.appendChild(li);
         });
       }
 
       const pickupXtremeTimes = topPickupTimes("pickupXtreme");
       bestPickupXtremeEl.textContent = pickupXtremeTimes.length
-        ? `${formatHundredths(pickupXtremeTimes[0].timeSeconds)}s · ${Number.isFinite(Number(pickupXtremeTimes[0].moves)) ? Number(pickupXtremeTimes[0].moves) : "—"} moves`
+        ? `${formatHundredths(pickupXtremeTimes[0].timeSeconds)} secs • ${Number.isFinite(Number(pickupXtremeTimes[0].moves)) ? Number(pickupXtremeTimes[0].moves) : "—"} moves`
         : "—";
       pickupXtremeScoresListEl.innerHTML = "";
       if (!pickupXtremeTimes.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item xtreme-score";
-        empty.innerHTML = `<span class="place">—</span><span>No PICK UP XTREME times yet</span><strong>—</strong>`;
-        pickupXtremeScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         pickupXtremeTimes.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item xtreme-score";
           const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
           pickupXtremeScoresListEl.appendChild(li);
         });
       }
 
       const knightHopTimes = topKnightHopTimes("knightHop");
       bestKnightHopEl.textContent = knightHopTimes.length
-        ? `${formatHundredths(knightHopTimes[0].timeSeconds)}s · ${Number.isFinite(Number(knightHopTimes[0].moves)) ? Number(knightHopTimes[0].moves) : "—"} moves`
+        ? `${formatHundredths(knightHopTimes[0].timeSeconds)} secs • ${Number.isFinite(Number(knightHopTimes[0].moves)) ? Number(knightHopTimes[0].moves) : "—"} moves`
         : "—";
       knightHopScoresListEl.innerHTML = "";
       if (!knightHopTimes.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No Knight hop times yet</span><strong>—</strong>`;
-        knightHopScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         knightHopTimes.forEach((item, index) => {
           const moves = Number.isFinite(Number(item.moves)) ? Number(item.moves) : "—";
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${formatHundredths(item.timeSeconds)}s · ${moves} moves</strong>`;
           knightHopScoresListEl.appendChild(li);
         });
       }
 
       const knightHopXtremeTimes = topKnightHopTimes("knightHopXtreme");
-      bestKnightHopXtremeEl.textContent = knightHopXtremeTimes.length ? `${formatHundredths(knightHopXtremeTimes[0].timeSeconds)}s` : "—";
+      bestKnightHopXtremeEl.textContent = knightHopXtremeTimes.length ? `${formatHundredths(knightHopXtremeTimes[0].timeSeconds)} secs` : "—";
       knightHopXtremeScoresListEl.innerHTML = "";
       if (!knightHopXtremeTimes.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item xtreme-score";
-        empty.innerHTML = `<span class="place">—</span><span>No Knight hop XTREME times yet</span><strong>—</strong>`;
-        knightHopXtremeScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         knightHopXtremeTimes.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item xtreme-score";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${formatHundredths(item.timeSeconds)}s</strong>`;
           knightHopXtremeScoresListEl.appendChild(li);
         });
       }
 
       const kingScores = topKingFinderScores("kingFinder");
-      bestKingFinderEl.textContent = kingScores.length ? `${Number(kingScores[0].score).toFixed(2)}/30` : "—";
+      bestKingFinderEl.textContent = kingScores.length ? `${Number(kingScores[0].score).toFixed(2)} secs` : "—";
       kingFinderScoresListEl.innerHTML = "";
       if (!kingScores.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No King finder wins yet</span><strong>—</strong>`;
-        kingFinderScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         kingScores.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.score).toFixed(2)}/30</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${Number(item.score).toFixed(2)} secs</strong>`;
           kingFinderScoresListEl.appendChild(li);
         });
       }
 
       const kingXtremeScores = topKingFinderScores("kingFinderXtreme");
-      bestKingFinderXtremeEl.textContent = kingXtremeScores.length ? `${Number(kingXtremeScores[0].score).toFixed(2)}/30` : "—";
+      bestKingFinderXtremeEl.textContent = kingXtremeScores.length ? `${Number(kingXtremeScores[0].score).toFixed(2)} secs` : "—";
       kingFinderXtremeScoresListEl.innerHTML = "";
       if (!kingXtremeScores.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item xtreme-score";
-        empty.innerHTML = `<span class="place">—</span><span>No XTREME wins yet</span><strong>—</strong>`;
-        kingFinderXtremeScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         kingXtremeScores.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item xtreme-score";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>${Number(item.score).toFixed(2)}/30</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${Number(item.score).toFixed(2)} secs</strong>`;
           kingFinderXtremeScoresListEl.appendChild(li);
         });
       }
@@ -8288,15 +9379,12 @@
       bestOddOneOutEl.textContent = oddScores.length ? oddScores[0].score : "—";
       oddOneOutScoresListEl.innerHTML = "";
       if (!oddScores.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item";
-        empty.innerHTML = `<span class="place">—</span><span>No normal ODD ONE OUT scores yet</span><strong>—</strong>`;
-        oddOneOutScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         oddScores.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>level ${item.score}</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>level ${item.score}</strong>`;
           oddOneOutScoresListEl.appendChild(li);
         });
       }
@@ -8305,19 +9393,17 @@
       bestOddOneOutRainbowEl.textContent = oddRainbowScores.length ? oddRainbowScores[0].score : "—";
       oddOneOutRainbowScoresListEl.innerHTML = "";
       if (!oddRainbowScores.length) {
-        const empty = document.createElement("li");
-        empty.className = "score-item xtreme-score";
-        empty.innerHTML = `<span class="place">—</span><span>No RAINBOW scores yet</span><strong>—</strong>`;
-        oddOneOutRainbowScoresListEl.appendChild(empty);
+        appendEmptyLeaderboardRow();
       } else {
         oddRainbowScores.forEach((item, index) => {
           const li = document.createElement("li");
           li.className = "score-item xtreme-score";
-          li.innerHTML = `<span class="place">${index + 1}</span><span>${item.date}</span><strong>level ${item.score}</strong>`;
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>level ${item.score}</strong>`;
           oddOneOutRainbowScoresListEl.appendChild(li);
         });
       }
 
+      renderMobileLeaderboardGrid();
       updateMobileBottomNavStatus();
     }
 
@@ -8668,6 +9754,21 @@
       return audioContext;
     }
 
+    function primeAudioContext() {
+      const ctx = ensureAudioContext();
+      if (!ctx || audioPrimed) return;
+      try {
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.035);
+        audioPrimed = true;
+      } catch {}
+    }
+
     function playTone(frequency, startOffset, duration, volume = 0.055, type = "sine") {
       const ctx = ensureAudioContext();
       if (!ctx) return;
@@ -8692,6 +9793,12 @@
       // Softer bell/chime instead of a harsh square beep.
       playTone(baseFrequency, 0.00, 0.15, 0.30, "triangle");
       playTone(baseFrequency * 2.01, 0.012, 0.11, 0.09, "sine");
+    }
+
+    function playKnightHopBlackSquareSound() {
+      playTone(220, 0.00, 0.11, 0.24, "triangle");
+      playTone(145, 0.09, 0.13, 0.24, "triangle");
+      playTone(96, 0.19, 0.15, 0.20, "sine");
     }
 
     function playWrongSound() {
@@ -8807,7 +9914,7 @@
       const titles = {
         game: "Game mode",
         board: "Style",
-        scores: "Leaderboard"
+        scores: "Leaderboards"
       };
       const resolvedPage = titles[page] ? page : "game";
 
@@ -8833,6 +9940,14 @@
       button.addEventListener("click", () => openMobileMenuPage(button.dataset.mobilePage));
     });
 
+    if (mobileLeaderboardGrid) {
+      mobileLeaderboardGrid.addEventListener("click", event => {
+        const card = event.target.closest("[data-leaderboard-group]");
+        if (!card) return;
+        openLeaderboardModal(card.dataset.leaderboardGroup);
+      });
+    }
+
     mobileBackBtn.addEventListener("click", closeMobileMenuPage);
     mobileReturnBtn.addEventListener("click", closeMobileMenuPage);
 
@@ -8857,6 +9972,11 @@
     }
 
     instructionsBtn.addEventListener("click", showInstructions);
+    leaderboardBtn.addEventListener("click", () => openLeaderboardModal());
+    leaderboardModalClose.addEventListener("click", hideLeaderboardModal);
+    leaderboardModal.addEventListener("click", event => {
+      if (event.target === leaderboardModal) hideLeaderboardModal();
+    });
     instructionsClose.addEventListener("click", hideInstructions);
     instructionsModal.addEventListener("click", event => {
       if (event.target === instructionsModal) hideInstructions();
@@ -9087,9 +10207,13 @@
         }
         hideEasterEgg();
         hideInstructions();
+        hideLeaderboardModal();
         closeMobileMenuPage();
         rainbowToast.classList.remove("show");
       }
+    });
+    ["pointerdown", "touchstart", "mousedown", "keydown"].forEach(eventName => {
+      document.addEventListener(eventName, primeAudioContext, { passive: true });
     });
     document.addEventListener("fullscreenchange", updateFullscreenButton);
 
@@ -9167,12 +10291,15 @@
     setMobileBottomNavMainState();
     handleViewportChange(50);
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-      });
-    }
-
   </script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js?v=0.140").catch(() => {});
+    });
+  }
+</script>
+
 </body>
 </html>
