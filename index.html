@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.142</title>
+<title>KWIK CHESS v0.143</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -5503,8 +5503,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="de8e2e37-e9d2-4c2c-abe7-1c3617a42505"></script>
 
-  <link rel="manifest" href="manifest.json?v=0.142">
+  <link rel="manifest" href="manifest.json?v=0.143">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5722,7 +5723,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.142</p>
+<p class="easter-version">Version 0.143</p>
 </div>
 </div>
 </div>
@@ -5753,8 +5754,65 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.142";
+    const VERSION = "0.143";
     const GAME_LENGTH_SECONDS = 30;
+
+    function analyticsDeviceType() {
+      return document.body.classList.contains("device-phone") ? "mobile" : "desktop";
+    }
+
+    function analyticsVariantForMode(mode = currentMode) {
+      if (mode === "kingFinder") return kingFinderXtreme ? "xtreme" : "normal";
+      if (mode === "pickup") return pickupXtreme ? "xtreme" : "normal";
+      if (mode === "knightHop") return knightHopXtreme ? "xtreme" : "normal";
+      if (mode === "oddOneOut") return oddOneOutRainbow ? "rainbow" : "normal";
+      return "normal";
+    }
+
+    function analyticsModeFromStoredMode(storedMode = currentMode) {
+      if (storedMode === "kingFinderXtreme") return "kingFinder";
+      if (storedMode === "pickupXtreme") return "pickup";
+      if (storedMode === "knightHopXtreme") return "knightHop";
+      if (storedMode === "oddOneOutRainbow") return "oddOneOut";
+      return storedMode;
+    }
+
+    function analyticsVariantFromStoredMode(storedMode = currentMode) {
+      if (storedMode === "kingFinderXtreme" || storedMode === "pickupXtreme" || storedMode === "knightHopXtreme") return "xtreme";
+      if (storedMode === "oddOneOutRainbow") return "rainbow";
+      return "normal";
+    }
+
+    function trackEvent(name, props = {}) {
+      try {
+        if (!window.umami || typeof window.umami.track !== "function") return;
+        window.umami.track(name, {
+          version: VERSION,
+          device: analyticsDeviceType(),
+          ...props
+        });
+      } catch {}
+    }
+
+    function trackGameStart(source = "board") {
+      trackEvent("game_start", {
+        mode: currentMode,
+        variant: analyticsVariantForMode(currentMode),
+        source
+      });
+    }
+
+    window.addEventListener("load", () => {
+      trackEvent("app_open");
+    });
+
+    window.addEventListener("beforeinstallprompt", () => {
+      trackEvent("pwa_install_prompt_seen");
+    });
+
+    window.addEventListener("appinstalled", () => {
+      trackEvent("pwa_installed");
+    });
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
 
@@ -6707,6 +6765,7 @@
       targetSquareEl.textContent = currentTarget;
       messageEl.textContent = "Go.";
       playStartSound();
+      trackGameStart("board");
 
       clearInterval(timer);
       timer = setInterval(updateTimer, 100);
@@ -7009,6 +7068,7 @@
       updatePickupProgress(false);
       messageEl.textContent = pickupXtreme ? "PICK UP XTREME: pieces can only move legally. Select a piece to show its legal moves." : "Drag and drop pieces, or tap a piece then tap an empty square. Occupied squares must be cleared first.";
       playStartSound();
+      trackGameStart("board");
 
       clearInterval(pickupTimer);
       pickupTimer = setInterval(updatePickupTimer, 50);
@@ -7515,6 +7575,7 @@
       score = 0;
       renderOddOneOutRound();
       playOddOneOutStartSound();
+      trackGameStart("board");
     }
 
     function handleOddOneOutClick(squareName, squareEl) {
@@ -7712,6 +7773,7 @@
         : "Knight hop: jump the knight until all 64 squares are blacked out.";
       renderKnightHopBoard();
       playStartSound();
+      trackGameStart("board");
 
       clearInterval(knightHopTimer);
       knightHopTimer = setInterval(updateKnightHopTimer, 50);
@@ -8358,6 +8420,7 @@
       targetLabelEl.textContent = kingFinderXtreme ? "King finder XTREME" : "King finder";
       clearInstructionTarget();
       renderKingProgress();
+      trackGameStart("board");
 
       prepareKingFinderRound(true);
     }
@@ -8950,6 +9013,14 @@
         .slice(-150);
 
       localStorage.setItem(scoreStorageKey, JSON.stringify(trimmed));
+
+      trackEvent("game_complete", {
+        mode: analyticsModeFromStoredMode(storedMode),
+        variant: analyticsVariantFromStoredMode(storedMode),
+        score: Number.isFinite(Number(finalScore)) ? Number(finalScore) : undefined,
+        time_seconds: Number.isFinite(Number(elapsedSeconds)) ? roundedHundredths(elapsedSeconds) : undefined,
+        moves: storedMode === "pickupXtreme" ? pickupMoveCount : storedMode === "knightHop" ? knightHopMoves : undefined
+      });
     }
 
     function topSprintScores() {
@@ -9215,6 +9286,10 @@
     }
 
     function openLeaderboardModal(groupKey = null) {
+      trackEvent("leaderboard_open", {
+        group: groupKey || "all",
+        source: document.body.classList.contains("mobile-menu-open") ? "mobile_menu" : "main"
+      });
       leaderboardModal.dataset.groupKey = groupKey || "";
       if (groupKey) {
         leaderboardExpandedGroups.add(groupKey);
@@ -9563,6 +9638,12 @@
       currentMode = gameModes[modeKey] ? modeKey : "sprint";
       updateTargetBoxModeClass();
       localStorage.setItem(modeStorageKey, currentMode);
+      if (showMessage && previousMode !== currentMode) {
+        trackEvent("game_mode_selected", {
+          mode: currentMode,
+          variant: analyticsVariantForMode(currentMode)
+        });
+      }
 
       if (previousMode === "oddOneOut" && currentMode !== "oddOneOut") {
         board.classList.remove("odd-one-out-rainbow");
@@ -10328,7 +10409,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.142").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.143").catch(() => {});
     });
   }
 </script>
