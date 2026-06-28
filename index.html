@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.140</title>
+<title>KWIK CHESS v0.142</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -5466,13 +5466,45 @@
     }
 
 
+
+    /* v0.141: mobile leaderboard page title only */
+    body.device-phone.mobile-page-scores .mobile-menu-title {
+      text-align: center !important;
+      width: 100% !important;
+      justify-self: center !important;
+      font-size: clamp(0.9rem, 3.5vw, 1.16rem) !important;
+      letter-spacing: -0.02em !important;
+    }
+
+
+
+    /* v0.142: mobile leaderboard title black rounded box */
+    body.device-phone.mobile-page-scores .mobile-menu-header {
+      align-items: center !important;
+    }
+
+    body.device-phone.mobile-page-scores .mobile-menu-title {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 38px !important;
+      padding: 8px 14px 7px !important;
+      border-radius: 999px !important;
+      background: rgba(0,0,0,0.72) !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.24) !important;
+      line-height: 1 !important;
+      text-align: center !important;
+    }
+
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="manifest" href="manifest.json?v=0.140">
+  <link rel="manifest" href="manifest.json?v=0.142">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5690,7 +5722,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.140</p>
+<p class="easter-version">Version 0.142</p>
 </div>
 </div>
 </div>
@@ -5721,7 +5753,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.140";
+    const VERSION = "0.142";
     const GAME_LENGTH_SECONDS = 30;
     const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
     const ranksTopToBottom = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -9914,7 +9946,7 @@
       const titles = {
         game: "Game mode",
         board: "Style",
-        scores: "Leaderboards"
+        scores: "KWIK CHESS LEADERBOARDS"
       };
       const resolvedPage = titles[page] ? page : "game";
 
@@ -10296,7 +10328,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.140").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.142").catch(() => {});
     });
   }
 </script>
