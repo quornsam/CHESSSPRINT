@@ -5733,6 +5733,781 @@
       transform: none !important;
     }
 
+
+
+    /* v0.158: native KINGMAKER 2048 mode, no iframe */
+    body.mode-kingmaker #targetBox {
+      display: none !important;
+    }
+
+    body.mode-kingmaker .top-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .board.kingmaker-mode {
+      touch-action: none;
+    }
+
+    .board.kingmaker-mode .square {
+      cursor: default;
+      overflow: visible;
+    }
+
+    .board.kingmaker-mode .square:focus-visible {
+      outline: 2px solid rgba(246, 200, 91, 0.6);
+      outline-offset: -2px;
+    }
+
+    .board.kingmaker-mode .piece-holder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .km-tile {
+      width: 84%;
+      height: 84%;
+      border-radius: 18%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      box-shadow:
+        0 7px 14px rgba(0,0,0,.28),
+        inset 0 0 0 2px rgba(255,255,255,.18),
+        inset 0 -8px 16px rgba(0,0,0,.12);
+    }
+
+    .km-tile.white-tile {
+      background: linear-gradient(145deg,#ffffff,#e3e8ef);
+      border: 1px solid rgba(20,24,32,.34);
+    }
+
+    .km-tile.black-tile {
+      background: linear-gradient(145deg,#343b4d,#0f121a);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .km-tile.gold-tile {
+      background: radial-gradient(circle at 34% 26%,#fff2a3,#f6c85b 52%,#9a650e 100%);
+      border: 1px solid rgba(70,42,0,.38);
+      box-shadow:
+        0 0 0 2px rgba(246,200,91,.24),
+        0 0 18px rgba(246,200,91,.42),
+        0 0 34px rgba(246,200,91,.24),
+        0 8px 18px rgba(0,0,0,.3),
+        inset 0 0 0 3px rgba(255,255,255,.25),
+        inset 0 -10px 18px rgba(106,65,0,.18);
+    }
+
+    .km-tile.edge-gold {
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,.42),
+        0 0 16px rgba(255,247,176,.92),
+        0 0 34px rgba(255,222,90,.75),
+        0 0 58px rgba(246,200,91,.46),
+        0 10px 22px rgba(0,0,0,.32),
+        inset 0 0 0 3px rgba(255,255,255,.42),
+        inset 0 -10px 18px rgba(126,72,0,.2);
+    }
+
+    .km-glyph {
+      font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "DejaVu Sans", serif;
+      font-size: calc(var(--board-size) / 11.1);
+      line-height: .92;
+      text-shadow: 0 1px 2px rgba(0,0,0,.35);
+      transform: translateY(.01em);
+    }
+
+    .km-pawn { color: #e03131; }
+    .km-knight { color: #22c7ff; }
+    .km-bishop { color: #4ade80; }
+    .km-rook { color: #60a5fa; }
+    .km-queen { color: #ff5fd2; }
+    .km-king { color: #171000; filter: drop-shadow(0 0 8px rgba(255,240,170,.72)); }
+
+    .km-tile.black-tile .km-glyph,
+    .km-tile.white-tile .km-glyph {
+      filter: none;
+    }
+
+    .km-tile.merged-tile {
+      animation: km-merge-pop 260ms cubic-bezier(.15,1.45,.35,1) both;
+    }
+
+    .km-tile.move-left:not(.gold-tile) { animation: km-slide-left 205ms cubic-bezier(.18,.86,.22,1) both; }
+    .km-tile.move-right:not(.gold-tile) { animation: km-slide-right 205ms cubic-bezier(.18,.86,.22,1) both; }
+    .km-tile.move-up:not(.gold-tile) { animation: km-slide-up 205ms cubic-bezier(.18,.86,.22,1) both; }
+    .km-tile.move-down:not(.gold-tile) { animation: km-slide-down 205ms cubic-bezier(.18,.86,.22,1) both; }
+
+    @keyframes km-merge-pop {
+      0% { transform: scale(.72); filter: brightness(1); }
+      55% { transform: scale(1.16); filter: brightness(1.25); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    @keyframes km-slide-left {
+      0% { transform: translateX(58%) scale(.995); }
+      48% { transform: translateX(14%) scale(1.006); }
+      82% { transform: translateX(-2%) scale(1.002); }
+      100% { transform: translateX(0) scale(1); }
+    }
+
+    @keyframes km-slide-right {
+      0% { transform: translateX(-58%) scale(.995); }
+      48% { transform: translateX(-14%) scale(1.006); }
+      82% { transform: translateX(2%) scale(1.002); }
+      100% { transform: translateX(0) scale(1); }
+    }
+
+    @keyframes km-slide-up {
+      0% { transform: translateY(58%) scale(.995); }
+      48% { transform: translateY(14%) scale(1.006); }
+      82% { transform: translateY(-2%) scale(1.002); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes km-slide-down {
+      0% { transform: translateY(-58%) scale(.995); }
+      48% { transform: translateY(-14%) scale(1.006); }
+      82% { transform: translateY(2%) scale(1.002); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    body.device-phone.mode-kingmaker .main-panel,
+    body.device-mobile.mode-kingmaker .main-panel {
+      overflow: hidden !important;
+    }
+
+    body.device-phone.mode-kingmaker .top-strip {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    body.device-phone.mode-kingmaker #boardWrap {
+      display: grid !important;
+      place-items: center !important;
+    }
+
+    body.device-phone.mode-kingmaker .board-frame {
+      display: grid !important;
+    }
+
+    body.device-phone.mode-kingmaker .km-glyph {
+      font-size: calc(var(--board-size) / 10.8) !important;
+    }
+
+
+/* v0.162: native KINGMAKER bigger next tile and single fireworks row */
+.kingmaker-only-stat{
+  display:none;
+}
+
+body.mode-kingmaker .kingmaker-only-stat{
+  display:block;
+}
+
+body.mode-kingmaker #targetBox{
+  display:none !important;
+}
+
+body.mode-kingmaker #newRoundBtn{
+  display:none !important;
+}
+
+body.mode-kingmaker .top-strip{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:clamp(5px,1.2vmin,10px) !important;
+}
+
+body.mode-kingmaker .top-strip .stat{
+  display:grid;
+  grid-template-rows:auto 1fr;
+  align-items:center;
+  justify-items:center;
+  text-align:center;
+  min-width:0;
+  padding:clamp(6px,1.15vmin,10px) clamp(3px,0.8vmin,8px);
+}
+
+body.mode-kingmaker .top-strip .stat-label{
+  margin:0;
+  line-height:1;
+  white-space:nowrap;
+  font-size:clamp(.42rem,1.35vmin,.72rem);
+}
+
+body.mode-kingmaker .top-strip .stat-value{
+  margin:0 !important;
+  padding:0 !important;
+  min-height:0 !important;
+  line-height:1 !important;
+  display:grid !important;
+  place-items:center !important;
+  align-self:center !important;
+}
+
+body.mode-kingmaker .stat.km-muted{
+  opacity:.36;
+  filter:grayscale(1) saturate(.45);
+}
+
+.board.kingmaker-mode{
+  position:relative;
+  touch-action:none;
+}
+
+.board.kingmaker-mode .square{
+  cursor:default;
+  overflow:visible;
+}
+
+.board.kingmaker-mode .square:active{
+  transform:none;
+}
+
+.board.kingmaker-mode .piece-holder{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+}
+
+.km-tile{
+  width:84%;
+  height:84%;
+  border-radius:18%;
+  display:grid;
+  place-items:center;
+  position:relative;
+  user-select:none;
+  box-shadow:
+    0 7px 14px rgba(0,0,0,.26),
+    inset 0 0 0 2px rgba(255,255,255,.18),
+    inset 0 -8px 16px rgba(0,0,0,.12);
+  overflow:visible;
+}
+
+.km-tile.white-tile{
+  background:linear-gradient(145deg,#ffffff,#e3e8ef) !important;
+  border:1px solid rgba(20,24,32,.34) !important;
+}
+
+.km-tile.black-tile{
+  background:linear-gradient(145deg,#343b4d,#0f121a) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+}
+
+.km-tile.gold-tile{
+  background:radial-gradient(circle at 34% 26%,#fff2a3,#f6c85b 52%,#9a650e 100%) !important;
+  border:1px solid rgba(70,42,0,.38) !important;
+  box-shadow:
+    0 0 0 2px rgba(246,200,91,.24),
+    0 0 18px rgba(246,200,91,.42),
+    0 0 34px rgba(246,200,91,.24),
+    0 8px 18px rgba(0,0,0,.3),
+    inset 0 0 0 3px rgba(255,255,255,.25),
+    inset 0 -10px 18px rgba(106,65,0,.18) !important;
+}
+
+.km-tile.gold-tile::before{
+  content:"";
+  position:absolute;
+  inset:-10%;
+  border-radius:22%;
+  background:radial-gradient(circle,rgba(246,200,91,.34),rgba(246,200,91,0) 68%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+.km-tile.edge-gold{
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.42),
+    0 0 16px rgba(255,247,176,.92),
+    0 0 34px rgba(255,222,90,.75),
+    0 0 58px rgba(246,200,91,.46),
+    0 10px 22px rgba(0,0,0,.32),
+    inset 0 0 0 3px rgba(255,255,255,.42),
+    inset 0 -10px 18px rgba(126,72,0,.2) !important;
+}
+
+.km-glyph{
+  font-family:"Segoe UI Symbol","Noto Sans Symbols 2","Apple Symbols","DejaVu Sans",serif !important;
+  font-size:calc(var(--board-size)/11.1);
+  line-height:.92 !important;
+  transform:translateY(.005em);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+  z-index:1;
+}
+
+.km-pawn{color:#e03131 !important;}
+.km-knight{color:#22c7ff !important;}
+.km-bishop{color:#4ade80 !important;}
+.km-rook{color:#60a5fa !important;}
+.km-queen{color:#ff5fd2 !important;}
+.km-king{color:#171000 !important;filter:drop-shadow(0 0 9px rgba(255,240,170,.8)) !important;}
+
+.km-tile.black-tile .km-glyph,
+.km-tile.white-tile .km-glyph{
+  filter:none !important;
+}
+
+.km-tile.gold-tile .km-glyph{
+  transform:scale(1.02,.92) translateY(.005em) !important;
+}
+
+.km-tile.merged-tile{
+  animation:km-merge-pop-v27 300ms cubic-bezier(.15,1.45,.35,1) both !important;
+}
+
+.km-tile.gold-tile.merged-tile{
+  animation:km-king-birth-v27 720ms cubic-bezier(.15,1.45,.35,1) both !important;
+}
+
+.km-tile.move-left:not(.gold-tile){animation:km-slide-left 205ms cubic-bezier(.18,.86,.22,1) both !important;}
+.km-tile.move-right:not(.gold-tile){animation:km-slide-right 205ms cubic-bezier(.18,.86,.22,1) both !important;}
+.km-tile.move-up:not(.gold-tile){animation:km-slide-up 205ms cubic-bezier(.18,.86,.22,1) both !important;}
+.km-tile.move-down:not(.gold-tile){animation:km-slide-down 205ms cubic-bezier(.18,.86,.22,1) both !important;}
+
+@keyframes km-merge-pop-v27{
+  0%{transform:scale(.72);filter:brightness(1)}
+  55%{transform:scale(1.18);filter:brightness(1.25)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+@keyframes km-king-birth-v27{
+  0%{transform:scale(.7);filter:brightness(1)}
+  35%{transform:scale(1.2);filter:brightness(1.4)}
+  70%{transform:scale(.96);filter:brightness(1.08)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+.km-next-preview{
+  display:grid !important;
+  place-items:center !important;
+}
+
+.km-next-mini{
+  width:clamp(28px,4.8vmin,40px);
+  height:clamp(28px,4.8vmin,40px);
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  box-shadow:0 5px 12px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.14);
+}
+
+.km-next-mini.white-tile{
+  background:linear-gradient(180deg,#fafafa,#d7d7d7);
+}
+
+.km-next-mini.black-tile{
+  background:linear-gradient(180deg,#454545,#0f0f0f);
+}
+
+.km-next-mini .km-glyph{
+  font-size:clamp(1rem,3.3vmin,1.55rem) !important;
+}
+
+.km-bonus-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:20;
+  opacity:0;
+  transition:
+    opacity 1.65s cubic-bezier(.22,.8,.28,1),
+    filter 1.65s cubic-bezier(.22,.8,.28,1),
+    transform 1.65s cubic-bezier(.22,.8,.28,1);
+  text-align:center;
+}
+
+.km-bonus-overlay.show{opacity:1;}
+.km-bonus-overlay.dim{
+  opacity:.08;
+  filter:saturate(.45) blur(.5px);
+  transform:scale(.985);
+}
+.km-bonus-overlay.fade-away{
+  opacity:0;
+  filter:saturate(.35) blur(1.6px);
+  transform:scale(.955);
+}
+
+.km-bonus-overlay::before{
+  content:"";
+  position:absolute;
+  width:min(82%,520px);
+  height:38%;
+  border-radius:999px;
+  background:radial-gradient(circle,rgba(0,0,0,.68),rgba(0,0,0,.36) 42%,rgba(0,0,0,0) 72%);
+  filter:blur(3px);
+  z-index:-1;
+}
+
+.km-bonus-overlay.counter{
+  justify-content:flex-start;
+  padding-top:7%;
+}
+
+.km-bonus-overlay.board-jammed-sequence{
+  justify-content:flex-start;
+  padding-top:19%;
+}
+
+.km-bonus-main,
+.km-bonus-value{
+  font-weight:1000;
+  letter-spacing:-.05em;
+  line-height:.92;
+  text-shadow:
+    0 4px 0 rgba(0,0,0,.42),
+    0 0 10px rgba(0,0,0,.82),
+    0 0 22px rgba(0,0,0,.72),
+    0 0 36px rgba(0,0,0,.56);
+}
+
+.km-bonus-main{
+  font-size:clamp(2.2rem,9vw,4.3rem);
+  color:#fff4cf;
+}
+
+.km-bonus-value{
+  font-size:clamp(2.3rem,10vw,4.8rem);
+  color:#f6c85b;
+  margin-top:.18em;
+}
+
+.km-bonus-overlay.danger .km-bonus-main,
+.km-bonus-overlay.danger .km-bonus-value{
+  color:#ff4d5a !important;
+  text-shadow:
+    0 4px 0 rgba(0,0,0,.5),
+    0 0 12px rgba(0,0,0,.9),
+    0 0 24px rgba(0,0,0,.82),
+    0 0 38px rgba(255,77,90,.42) !important;
+}
+
+.km-bonus-overlay.punch .km-bonus-main,
+.km-bonus-overlay.punch .km-bonus-value{
+  animation:km-bonus-punch .42s cubic-bezier(.18,1.35,.22,1) both;
+}
+
+@keyframes km-bonus-punch{
+  0%{transform:scale(.58);opacity:0}
+  60%{transform:scale(1.08);opacity:1}
+  100%{transform:scale(1);opacity:1}
+}
+
+.km-bonus-stack{
+  display:grid;
+  gap:.14em;
+  justify-items:center;
+  align-items:center;
+  text-align:center;
+  width:100%;
+}
+
+.km-bonus-stack .line{
+  display:block;
+  white-space:nowrap;
+  margin:0;
+  padding:0;
+}
+
+.km-bonus-stack .line.primary{
+  transform:none !important;
+  animation:none !important;
+}
+
+.km-bonus-stack .line.secondary{
+  color:#ff8590;
+  animation:km-game-over-under-punch .42s cubic-bezier(.18,1.35,.22,1) both;
+  transform-origin:center;
+}
+
+@keyframes km-game-over-under-punch{
+  0%{transform:scale(.58);opacity:0}
+  62%{transform:scale(1.08);opacity:1}
+  100%{transform:scale(.92);opacity:1}
+}
+
+.km-tile.bonus-flash{
+  z-index:2 !important;
+  outline:3px solid rgba(255,255,255,.86) !important;
+  outline-offset:3px !important;
+  box-shadow:
+    0 0 0 8px rgba(246,200,91,.22),
+    0 0 28px rgba(255,242,150,.76),
+    0 0 48px rgba(246,200,91,.44),
+    0 10px 18px rgba(0,0,0,.3) !important;
+}
+
+.km-tile.edge-gold.bonus-flash{
+  outline:4px solid rgba(255,255,255,.94) !important;
+  outline-offset:4px !important;
+  box-shadow:
+    0 0 0 10px rgba(255,246,180,.25),
+    0 0 34px rgba(255,246,180,.95),
+    0 0 70px rgba(246,200,91,.72),
+    0 10px 24px rgba(0,0,0,.34) !important;
+}
+
+.modal-score.km-final-flash{
+  animation:km-final-score-flash .78s cubic-bezier(.12,1.5,.22,1) both;
+}
+
+@keyframes km-final-score-flash{
+  0%{transform:scale(1);filter:brightness(1)}
+  28%{transform:scale(1.22);filter:brightness(2.1);text-shadow:0 0 24px rgba(255,255,255,.95),0 0 44px rgba(246,200,91,.9)}
+  58%{transform:scale(.96);filter:brightness(1.15)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+body.device-phone.mode-kingmaker .top-strip,
+body.device-mobile.mode-kingmaker .top-strip{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:4px !important;
+}
+
+body.device-phone.mode-kingmaker .top-strip .stat,
+body.device-mobile.mode-kingmaker .top-strip .stat{
+  min-height:50px !important;
+  padding:4px 2px !important;
+  border-radius:10px !important;
+}
+
+body.device-phone.mode-kingmaker .top-strip .stat-label,
+body.device-mobile.mode-kingmaker .top-strip .stat-label{
+  font-size:clamp(.38rem,1.85vw,.56rem) !important;
+}
+
+body.device-phone.mode-kingmaker .top-strip .stat-value,
+body.device-mobile.mode-kingmaker .top-strip .stat-value{
+  font-size:clamp(.95rem,4.4vw,1.42rem) !important;
+}
+
+body.device-phone.mode-kingmaker .km-glyph,
+body.device-mobile.mode-kingmaker .km-glyph{
+  font-size:calc(var(--board-size)/10.8) !important;
+}
+
+
+/* v0.160: final v27 KINGMAKER edge aura, bonus pulses, score rows and fireworks */
+.km-tile.gold-tile::after{
+  content:"";
+  position:absolute;
+  inset:8%;
+  border-radius:14%;
+  border:2px solid rgba(0,0,0,.16);
+  pointer-events:none;
+}
+
+.km-tile.edge-gold::before{
+  content:"";
+  position:absolute;
+  inset:-22%;
+  border-radius:25%;
+  background:radial-gradient(circle,rgba(255,242,150,.58),rgba(246,200,91,.24) 38%,rgba(246,200,91,0) 72%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+.km-tile.edge-gold .km-glyph{
+  filter:drop-shadow(0 0 10px rgba(255,250,198,.95)) drop-shadow(0 0 18px rgba(255,218,80,.58)) !important;
+}
+
+.km-tile.bonus-flash{
+  animation:km-bonus-king-pulse .52s cubic-bezier(.15,1.4,.25,1) both !important;
+}
+
+.km-tile.edge-gold.bonus-flash{
+  animation:km-bonus-edge-pulse .64s cubic-bezier(.15,1.4,.25,1) both !important;
+}
+
+@keyframes km-bonus-king-pulse{
+  0%{transform:scale(1);filter:brightness(1)}
+  35%{transform:scale(1.18);filter:brightness(1.35)}
+  70%{transform:scale(.96);filter:brightness(1.12)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+@keyframes km-bonus-edge-pulse{
+  0%{transform:scale(1);filter:brightness(1)}
+  30%{transform:scale(1.22);filter:brightness(1.65)}
+  65%{transform:scale(.96);filter:brightness(1.18)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+.km-final-score-wrap{
+  display:grid;
+  gap:12px;
+  margin:8px 0 18px;
+}
+
+.km-final-row{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  border-radius:14px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.075);
+  font-weight:1000;
+  color:#fff4cf;
+}
+
+.km-final-row span{
+  color:rgba(255,255,255,.78);
+}
+
+.km-final-row strong{
+  color:#7dd3fc;
+}
+
+.km-final-row.bonus strong{
+  color:#ff5fd2;
+}
+
+.km-final-row.edge strong{
+  color:#f6c85b;
+}
+
+.modal.km-fireworks{
+  position:relative;
+  overflow:hidden;
+}
+
+.modal.km-fireworks::before,
+.modal.km-fireworks::after{
+  content:"✦ ✹ ✧ ✦ ✹";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  color:#f6c85b;
+  font-size:1.4rem;
+  letter-spacing:.55em;
+  animation:km-firework-burst .9s ease-out infinite;
+  pointer-events:none;
+  z-index:0;
+}
+
+.modal.km-fireworks::before{top:10px}
+.modal.km-fireworks::after{bottom:10px;animation-delay:.28s}
+
+.modal.km-fireworks-ended::before,
+.modal.km-fireworks-ended::after{
+  content:none !important;
+  animation:none !important;
+}
+
+@keyframes km-firework-burst{
+  0%{opacity:0;transform:translateX(-50%) scale(.7)}
+  35%{opacity:1;transform:translateX(-50%) scale(1.1)}
+  100%{opacity:0;transform:translateX(-50%) scale(1.45)}
+}
+
+body.mode-kingmaker .modal-score{
+  color:#f6c85b;
+  text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 24px rgba(246,200,91,.35);
+}
+
+body.mode-kingmaker .modal-note{
+  margin-top:12px;
+}
+
+
+/* v0.163: KINGMAKER Next preview reduced */
+body.mode-kingmaker .km-next-preview{
+  overflow:visible !important;
+  min-height:clamp(34px,6.2vmin,52px) !important;
+}
+
+body.mode-kingmaker .km-next-mini{
+  width:clamp(34px,6.2vmin,52px) !important;
+  height:clamp(34px,6.2vmin,52px) !important;
+  border-radius:12px !important;
+}
+
+body.mode-kingmaker .km-next-mini .km-glyph{
+  font-size:clamp(1.25rem,4.2vmin,2rem) !important;
+  line-height:.9 !important;
+}
+
+body.device-phone.mode-kingmaker .top-strip .stat,
+body.device-mobile.mode-kingmaker .top-strip .stat{
+  min-height:58px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-preview,
+body.device-mobile.mode-kingmaker .km-next-preview{
+  min-height:40px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-mini,
+body.device-mobile.mode-kingmaker .km-next-mini{
+  width:38px !important;
+  height:38px !important;
+  border-radius:11px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-mini .km-glyph,
+body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
+  font-size:1.42rem !important;
+}
+
+/* Keep the nice top fireworks only. The bottom row is visual clutter. */
+.modal.km-fireworks::after,
+.modal.km-fireworks-ended::after{
+  content:none !important;
+  display:none !important;
+  animation:none !important;
+}
+
+
+/* v0.163: KINGMAKER Next preview reduced after v0.162 oversize */
+body.mode-kingmaker .km-next-preview{
+  overflow:visible !important;
+  min-height:clamp(30px,5.2vmin,44px) !important;
+}
+
+body.mode-kingmaker .km-next-mini{
+  width:clamp(28px,5.0vmin,42px) !important;
+  height:clamp(28px,5.0vmin,42px) !important;
+  border-radius:10px !important;
+}
+
+body.mode-kingmaker .km-next-mini .km-glyph{
+  font-size:clamp(1.05rem,3.5vmin,1.62rem) !important;
+  line-height:.9 !important;
+}
+
+body.device-phone.mode-kingmaker .top-strip .stat,
+body.device-mobile.mode-kingmaker .top-strip .stat{
+  min-height:54px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-preview,
+body.device-mobile.mode-kingmaker .km-next-preview{
+  min-height:34px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-mini,
+body.device-mobile.mode-kingmaker .km-next-mini{
+  width:32px !important;
+  height:32px !important;
+  border-radius:9px !important;
+}
+
+body.device-phone.mode-kingmaker .km-next-mini .km-glyph,
+body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
+  font-size:1.18rem !important;
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5762,14 +6537,6 @@
     "applicationCategory": "Game"
   }
   </script>
-
-  <link rel="manifest" href="manifest.json?v=0.152">
-  <meta name="theme-color" content="#0f1117">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
 </head>
 <body>
 <div class="app" id="app">
@@ -5794,6 +6561,14 @@
 <div class="stat">
 <div class="stat-label">Round</div>
 <div class="stat-value" id="roundState">Ready</div>
+</div>
+<div class="stat kingmaker-only-stat">
+<div class="stat-label">Best</div>
+<div class="stat-value" id="kmBest">0</div>
+</div>
+<div class="stat kingmaker-only-stat">
+<div class="stat-label">Next</div>
+<div class="stat-value km-next-preview" id="kmNext">?</div>
 </div>
 </section>
 <section aria-live="polite" class="target-box" id="targetBox">
@@ -5937,6 +6712,14 @@
 </div>
 <ul class="scores-list" id="kingFinderXtremeScoresList"></ul>
 </section>
+<section aria-live="polite" class="scoreboard hidden" id="kingmakerLeaderboard">
+<h2>KINGMAKER 2048 leaderboard</h2>
+<div class="high-score">
+<div class="stat-label">High score</div>
+<div class="big" id="bestKingmaker">—</div>
+</div>
+<ul class="scores-list" id="kingmakerScoresList"></ul>
+</section>
 <div class="mobile-leaderboard-grid" id="mobileLeaderboardGrid" aria-label="Leaderboard summary"></div>
 <button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
 </section>
@@ -5983,7 +6766,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.152</p>
+<p class="easter-version">Version 0.163 TEST</p>
 </div>
 </div>
 </div>
@@ -6010,11 +6793,13 @@
 <p>A white knight starts on a random square. That square is already touched. Jump the knight until every square has been blacked out. Normal mode lets you revisit touched squares and records time plus moves. XTREME mode only allows untouched destination squares, so a perfect finish is 63 moves and the leaderboard records time.</p>
 <h3>ODD ONE OUT</h3>
 <p>Find the one square that is the wrong colour. Round one is obvious. Each round gets more subtle. One wrong click or a 15-second timeout ends the game. RAINBOW mode gives the board fresh rainbow colour bands every round.</p>
+<h3>KINGMAKER 2048</h3>
+<p>Swipe the board, use the arrow keys, or use WASD. Pieces slide like 2048. Only matching tile colours merge: white with white, black with black. Pieces climb from pawn to knight, bishop, rook, queen, then king. A king becomes a gold tile, locks in place, blocks movement, and scores heavily. When no move is possible, the board jams and your final score is saved.</p>
 <p class="instructions-footer">This is about having <span class="instructions-fun-egg" id="funEgg" role="button" tabindex="0">fun</span> and learning. If something breaks, just let Sam know.</p>
 </div>
 </div>
 <script>
-    const VERSION = "0.152";
+    const VERSION = "0.163";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -6051,6 +6836,7 @@
         pickup: "pick_up",
         knightHop: "knight_hop",
         oddOneOut: "odd_one_out",
+        kingmaker: "kingmaker_2048",
         draughts: "draughts"
       }[mode] || String(mode || "unknown").replace(/[^a-z0-9]+/gi, "_").toLowerCase();
 
@@ -6215,6 +7001,9 @@
       oddOneOut: {
         name: "ODD ONE OUT"
       },
+      kingmaker: {
+        name: "KINGMAKER 2048"
+      },
       draughts: {
         name: "DRAUGHTS",
         hidden: true
@@ -6282,6 +7071,9 @@
     const kingFinderScoresListEl = document.getElementById("kingFinderScoresList");
     const bestKingFinderEl = document.getElementById("bestKingFinder");
     const kingFinderXtremeLeaderboard = document.getElementById("kingFinderXtremeLeaderboard");
+    const kingmakerLeaderboard = document.getElementById("kingmakerLeaderboard");
+    const kingmakerScoresListEl = document.getElementById("kingmakerScoresList");
+    const bestKingmakerEl = document.getElementById("bestKingmaker");
     const kingFinderXtremeScoresListEl = document.getElementById("kingFinderXtremeScoresList");
     const bestKingFinderXtremeEl = document.getElementById("bestKingFinderXtreme");
     const themeGrid = document.getElementById("themeGrid");
@@ -6362,6 +7154,27 @@
     let oddOneOutFailureReason = "wrong";
     let oddOneOutResultPending = false;
     let targetMode = "square";
+    const KM_SIZE = 8;
+    const KM_EMPTY = null;
+    const KM_PAWN = 1, KM_KNIGHT = 2, KM_BISHOP = 3, KM_ROOK = 4, KM_QUEEN = 5, KM_KING = 6;
+    const KM_MOVE_DELAY_MS = 165;
+    const kmGlyphs = { white: {1:"♙",2:"♘",3:"♗",4:"♖",5:"♕",6:"♔"}, black: {1:"♙",2:"♘",3:"♗",4:"♖",5:"♕",6:"♔"} };
+    const kmNames = {1:"pawn",2:"knight",3:"bishop",4:"rook",5:"queen",6:"king"};
+    const kmLabels = {1:"Pawn",2:"Knight",3:"Bishop",4:"Rook",5:"Queen",6:"King"};
+    let kmBoard = [];
+    let kmPreviousState = null;
+    let kmMoves = 0;
+    let kmNextSpawn = null;
+    let kmLastPreMoveBoard = null;
+    let kmLastMoveDirection = null;
+    let kmLastMoveMadeKing = false;
+    let kmLastMergeTypes = [];
+    let kmInputLockedUntil = 0;
+    let kmRoundOver = false;
+    let kmTouchStart = null;
+    let kmBonusRunning = false;
+    let kmBonusHighlightKey = null;
+    let kmBestScore = Number(localStorage.getItem("kingmaker-score-best") || 0);
     let bonusUsed = false;
     let bonusCountThisRound = 0;
     let normalClickCount = 0;
@@ -6516,6 +7329,680 @@
         button.addEventListener("click", () => setMode(key));
         modeGrid.appendChild(button);
       });
+    }
+
+
+
+
+    function isKingmakerMode() {
+      return currentMode === "kingmaker";
+    }
+
+    function updateKingmakerModeClass() {
+      const on = isKingmakerMode();
+      document.body.classList.toggle("mode-kingmaker", on);
+      board.classList.toggle("kingmaker-mode", on);
+    }
+
+    function kmMakePiece(side, type, merged = false) {
+      return { side, type, merged };
+    }
+
+    function kmEmptyBoard() {
+      return Array.from({ length: KM_SIZE }, () => Array(KM_SIZE).fill(KM_EMPTY));
+    }
+
+    function kmClonePiece(piece) {
+      return piece ? { side: piece.side, type: piece.type, merged: false } : KM_EMPTY;
+    }
+
+    function kmCloneBoard(source) {
+      return source.map(row => row.map(kmClonePiece));
+    }
+
+    function kmPiecesEqual(a, b) {
+      if (!a && !b) return true;
+      if (!a || !b) return false;
+      return a.side === b.side && a.type === b.type;
+    }
+
+    function kmBoardsEqual(a, b) {
+      return a.every((row, r) => row.every((piece, c) => kmPiecesEqual(piece, b[r][c])));
+    }
+
+    function kmSameMergeable(a, b) {
+      return Boolean(a && b && a.side === b.side && a.type === b.type && a.type < KM_KING);
+    }
+
+    function kmIsEdge(r, c) {
+      return r === 0 || c === 0 || r === KM_SIZE - 1 || c === KM_SIZE - 1;
+    }
+
+    function kmScoreForPiece(piece, r, c) {
+      if (!piece) return 0;
+      if (piece.type === KM_PAWN) return 2;
+      if (piece.type === KM_KNIGHT) return 5;
+      if (piece.type === KM_BISHOP) return 12;
+      if (piece.type === KM_ROOK) return 25;
+      if (piece.type === KM_QUEEN) return 100;
+      if (piece.type === KM_KING) return kmIsEdge(r, c) ? 500 : 250;
+      return 0;
+    }
+
+    function kmTotalScore(source = kmBoard) {
+      let total = 0;
+      for (let r = 0; r < KM_SIZE; r++) {
+        for (let c = 0; c < KM_SIZE; c++) total += kmScoreForPiece(source[r][c], r, c);
+      }
+      return total;
+    }
+
+    function kmCountGold(source = kmBoard) {
+      let total = 0;
+      for (const row of source) for (const piece of row) if (piece && piece.type === KM_KING) total++;
+      return total;
+    }
+
+    function kmKingCells(edgeOnly = false) {
+      const cells = [];
+      for (let r = 0; r < KM_SIZE; r++) {
+        for (let c = 0; c < KM_SIZE; c++) {
+          const piece = kmBoard[r][c];
+          if (piece && piece.type === KM_KING && kmIsEdge(r, c) === edgeOnly) {
+            cells.push({ r, c, key: `${r}-${c}` });
+          }
+        }
+      }
+      return cells;
+    }
+
+    function kmSetBonusHighlight(cell) {
+      if (!cell) {
+        kmBonusHighlightKey = null;
+        return;
+      }
+      const piece = kmBoard[cell.r]?.[cell.c];
+      kmBonusHighlightKey = piece && piece.type === KM_KING ? cell.key : null;
+    }
+
+    function kmEmptyCells() {
+      const cells = [];
+      for (let r = 0; r < KM_SIZE; r++) for (let c = 0; c < KM_SIZE; c++) if (!kmBoard[r][c]) cells.push({ r, c });
+      return cells;
+    }
+
+    function kmRandomSpawnPiece() {
+      return kmMakePiece(Math.random() < 0.5 ? "white" : "black", Math.random() < 0.5 ? KM_PAWN : KM_KNIGHT);
+    }
+
+    function kmSpawnNextPiece() {
+      const cells = kmEmptyCells();
+      if (!cells.length) return false;
+      if (!kmNextSpawn) kmNextSpawn = kmRandomSpawnPiece();
+      const cell = cells[Math.floor(Math.random() * cells.length)];
+      kmBoard[cell.r][cell.c] = kmClonePiece(kmNextSpawn);
+      kmNextSpawn = kmRandomSpawnPiece();
+      return true;
+    }
+
+    function kmMergeSegment(values) {
+      const compact = values.filter(Boolean);
+      const merged = [];
+      for (let i = 0; i < compact.length; i++) {
+        const current = compact[i];
+        const next = compact[i + 1];
+        if (kmSameMergeable(current, next)) {
+          const newType = current.type + 1;
+          kmLastMergeTypes.push(newType);
+          if (newType === KM_KING) kmLastMoveMadeKing = true;
+          merged.push(kmMakePiece(current.side, newType, true));
+          i++;
+        } else {
+          merged.push(kmClonePiece(current));
+        }
+      }
+      return merged;
+    }
+
+    function kmMergeLineWithWalls(values) {
+      const result = Array(values.length).fill(KM_EMPTY);
+      let start = 0;
+      while (start < values.length) {
+        if (values[start] && values[start].type === KM_KING) {
+          result[start] = kmClonePiece(values[start]);
+          start++;
+          continue;
+        }
+
+        let end = start;
+        while (end < values.length && !(values[end] && values[end].type === KM_KING)) end++;
+
+        const merged = kmMergeSegment(values.slice(start, end));
+        for (let i = 0; i < merged.length; i++) result[start + i] = merged[i];
+
+        if (end < values.length && values[end] && values[end].type === KM_KING) {
+          result[end] = kmClonePiece(values[end]);
+        }
+
+        start = end + 1;
+      }
+      return result;
+    }
+
+    function kmComputeMovedBoard(direction) {
+      const next = kmEmptyBoard();
+      kmLastMoveMadeKing = false;
+
+      for (let i = 0; i < KM_SIZE; i++) {
+        let line = [];
+        if (direction === "left") {
+          line = kmBoard[i].slice();
+          next[i] = kmMergeLineWithWalls(line);
+        }
+        if (direction === "right") {
+          line = kmBoard[i].slice().reverse();
+          next[i] = kmMergeLineWithWalls(line).reverse();
+        }
+        if (direction === "up") {
+          for (let r = 0; r < KM_SIZE; r++) line.push(kmBoard[r][i]);
+          const merged = kmMergeLineWithWalls(line);
+          for (let r = 0; r < KM_SIZE; r++) next[r][i] = merged[r];
+        }
+        if (direction === "down") {
+          for (let r = KM_SIZE - 1; r >= 0; r--) line.push(kmBoard[r][i]);
+          const merged = kmMergeLineWithWalls(line).reverse();
+          for (let r = 0; r < KM_SIZE; r++) next[r][i] = merged[r];
+        }
+      }
+      return next;
+    }
+
+    function kmCanMove() {
+      const oldMadeKing = kmLastMoveMadeKing;
+      const oldTypes = kmLastMergeTypes.slice();
+      const possible = ["left", "right", "up", "down"].some(direction => !kmBoardsEqual(kmBoard, kmComputeMovedBoard(direction)));
+      kmLastMoveMadeKing = oldMadeKing;
+      kmLastMergeTypes = oldTypes;
+      return possible;
+    }
+
+    function kmClearBoardVisuals() {
+      board.querySelectorAll(".square").forEach((square, index) => {
+        const row = Math.floor(index / KM_SIZE);
+        const col = index % KM_SIZE;
+        square.className = `square ${(row + col) % 2 === 0 ? "light" : "dark"}`;
+        square.removeAttribute("data-pickup-piece-id");
+        const holder = square.querySelector(".piece-holder");
+        if (holder) holder.innerHTML = "";
+      });
+      board.querySelector(".km-bonus-overlay")?.remove();
+    }
+
+    function kmEnsureBonusOverlay() {
+      let overlay = board.querySelector(".km-bonus-overlay");
+      if (overlay) return overlay;
+      overlay = document.createElement("div");
+      overlay.className = "km-bonus-overlay";
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.innerHTML = `<div class="km-bonus-main"></div><div class="km-bonus-value"></div>`;
+      board.appendChild(overlay);
+      return overlay;
+    }
+
+    function kmShowBonusOverlay(main = "", value = "", punch = false, dim = false, placement = "center", toneClass = "gold") {
+      const overlay = kmEnsureBonusOverlay();
+      const mainEl = overlay.querySelector(".km-bonus-main");
+      const valueEl = overlay.querySelector(".km-bonus-value");
+      if (String(main).includes("<")) mainEl.innerHTML = main || "";
+      else mainEl.textContent = main || "";
+      valueEl.textContent = value || "";
+      overlay.classList.add("show");
+      overlay.classList.toggle("dim", Boolean(dim));
+      overlay.classList.toggle("counter", placement === "counter");
+      overlay.classList.toggle("board-jammed-sequence", placement === "boardjammed");
+      overlay.classList.toggle("danger", toneClass === "danger");
+      overlay.classList.remove("punch", "fade-away");
+      if (punch) {
+        void overlay.offsetWidth;
+        overlay.classList.add("punch");
+      }
+    }
+
+    function kmHideBonusOverlay() {
+      const overlay = kmEnsureBonusOverlay();
+      overlay.classList.remove("show", "dim", "punch", "counter", "danger", "board-jammed-sequence", "fade-away");
+      overlay.querySelector(".km-bonus-main").textContent = "";
+      overlay.querySelector(".km-bonus-value").textContent = "";
+    }
+
+    const kmSleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    function kmTone(freq, start, duration, type = "sine", gain = .045) {
+      try {
+        const ctx = ensureAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const vol = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+        vol.gain.setValueAtTime(0, ctx.currentTime + start);
+        vol.gain.linearRampToValueAtTime(gain, ctx.currentTime + start + .015);
+        vol.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + start + duration);
+        osc.connect(vol).connect(ctx.destination);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + duration + .03);
+      } catch {}
+    }
+
+    function kmNoiseBurst(start = 0, duration = .08, gain = .018) {
+      try {
+        const ctx = ensureAudioContext();
+        if (!ctx) return;
+        const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+        const src = ctx.createBufferSource();
+        const vol = ctx.createGain();
+        vol.gain.setValueAtTime(gain, ctx.currentTime + start);
+        vol.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + start + duration);
+        src.buffer = buffer;
+        src.connect(vol).connect(ctx.destination);
+        src.start(ctx.currentTime + start);
+      } catch {}
+    }
+
+    function kmPlayMoveSound() {
+      kmTone(130, 0, .07, "triangle", .026);
+      kmTone(196, .035, .06, "triangle", .018);
+    }
+
+    function kmPlayMergeSound(pieceType) {
+      const base = {
+        [KM_KNIGHT]: 220,
+        [KM_BISHOP]: 277.18,
+        [KM_ROOK]: 329.63,
+        [KM_QUEEN]: 415.30
+      }[pieceType] || 220;
+      kmTone(base, 0, .09, "sine", .034);
+      kmTone(base * 1.25, .055, .105, "triangle", .027);
+      kmTone(base * 1.5, .12, .12, "sine", .022);
+    }
+
+    function kmPlayKingSound() {
+      kmTone(261.63, 0, .72, "sine", .030);
+      kmTone(329.63, .035, .78, "sine", .026);
+      kmTone(392.00, .07, .84, "sine", .026);
+      kmTone(523.25, .18, .70, "triangle", .020);
+      kmTone(659.25, .31, .58, "sine", .018);
+      kmTone(783.99, .45, .48, "triangle", .014);
+    }
+
+    function kmPlayGameEndErrorSound() {
+      kmTone(92.5, 0, .42, "square", .034);
+      kmTone(61.7, .08, .46, "sine", .026);
+      kmNoiseBurst(.02, .06, .006);
+    }
+
+    function kmPlayGameOverSound() {
+      kmTone(110, 0, .34, "sine", .052);
+      kmTone(82.41, .42, .38, "sine", .056);
+      kmTone(55, .90, .92, "triangle", .060);
+      kmTone(41.2, .96, 1.05, "sine", .038);
+    }
+
+    function kmBonusTickSound(amount = 1) {
+      const f = amount > 500 ? 880 : 660;
+      kmTone(f, 0, .055, "triangle", .018);
+      kmTone(f * 1.5, .035, .045, "sine", .012);
+    }
+
+    function kmPlayScoreWhizzSound() {
+      for (let i = 0; i < 18; i++) {
+        const f = 220 + (i * i * 3.5);
+        kmTone(f, i * .045, .055, "triangle", .014);
+      }
+      kmNoiseBurst(.18, .18, .010);
+      kmNoiseBurst(.52, .16, .012);
+      kmTone(880, .82, .14, "sine", .022);
+      kmTone(1320, .92, .18, "triangle", .018);
+    }
+
+    function kmPlayFireworksSound() {
+      kmTone(196, 0, .22, "triangle", .026);
+      kmTone(392, .04, .18, "sine", .022);
+      kmNoiseBurst(.08, .08, .018);
+      kmTone(261.63, .42, .22, "triangle", .026);
+      kmTone(523.25, .46, .18, "sine", .022);
+      kmNoiseBurst(.50, .10, .020);
+      kmTone(329.63, .86, .24, "triangle", .026);
+      kmTone(659.25, .90, .20, "sine", .022);
+      kmNoiseBurst(.96, .12, .022);
+    }
+
+    async function kmTallyFinalScore(finalTotal, duration = 1150) {
+      modalScore.textContent = "0";
+      modalScore.classList.remove("km-final-flash");
+      kmPlayScoreWhizzSound();
+      const startTimeMs = performance.now();
+      while (true) {
+        const elapsed = performance.now() - startTimeMs;
+        const t = Math.min(1, elapsed / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const value = Math.round(finalTotal * eased);
+        modalScore.textContent = String(value);
+        scoreEl.textContent = String(value);
+        if (t >= 1) break;
+        await kmSleep(32);
+      }
+      modalScore.textContent = String(finalTotal);
+      scoreEl.textContent = String(finalTotal);
+      modalScore.classList.add("km-final-flash");
+      kmBonusTickSound(500);
+      await kmSleep(780);
+    }
+
+    function kmUpdateBestFromSavedScores() {
+      try {
+        const top = topKingmakerScores?.()[0];
+        const topScore = top ? Number(top.score) : 0;
+        kmBestScore = Math.max(kmBestScore || 0, Number(localStorage.getItem("kingmaker-score-best") || 0), topScore || 0);
+      } catch {
+        kmBestScore = Math.max(kmBestScore || 0, Number(localStorage.getItem("kingmaker-score-best") || 0));
+      }
+    }
+
+    function kmRenderNextPreview() {
+      const nextEl = document.getElementById("kmNext");
+      if (!nextEl) return;
+      if (!kmNextSpawn) {
+        nextEl.textContent = "?";
+        return;
+      }
+      nextEl.innerHTML = `<span class="km-next-mini ${kmNextSpawn.side}-tile" aria-label="Next tile"><span class="km-glyph km-${kmNames[kmNextSpawn.type]}">${kmGlyphs[kmNextSpawn.side][kmNextSpawn.type]}</span></span>`;
+    }
+
+    function kmRender() {
+      updateKingmakerModeClass();
+      kmEnsureBonusOverlay();
+      const squares = Array.from(board.querySelectorAll(".square"));
+      squares.forEach((square, index) => {
+        const r = Math.floor(index / KM_SIZE);
+        const c = index % KM_SIZE;
+        const holder = square.querySelector(".piece-holder");
+        square.className = `square ${(r + c) % 2 === 0 ? "light" : "dark"}`;
+        holder.innerHTML = "";
+        const piece = kmBoard[r]?.[c];
+        if (!piece) return;
+
+        const tile = document.createElement("span");
+        tile.className = `km-tile ${piece.type === KM_KING ? "gold-tile" : `${piece.side}-tile`}`;
+        if (piece.type === KM_KING && kmIsEdge(r, c)) tile.classList.add("edge-gold");
+        if (piece.type === KM_KING && kmBonusHighlightKey === `${r}-${c}`) tile.classList.add("bonus-flash");
+
+        const previousCell = kmLastPreMoveBoard ? kmLastPreMoveBoard[r][c] : null;
+        const changedCell = !kmPiecesEqual(previousCell, piece);
+        if (kmLastMoveDirection && piece.type !== KM_KING && (piece.merged || changedCell)) tile.classList.add(`move-${kmLastMoveDirection}`);
+        if (piece.merged) tile.classList.add("merged-tile");
+
+        const glyph = document.createElement("span");
+        glyph.className = `km-glyph km-${kmNames[piece.type]}`;
+        glyph.textContent = piece.type === KM_KING ? "♔" : kmGlyphs[piece.side][piece.type];
+        tile.appendChild(glyph);
+        holder.appendChild(tile);
+      });
+
+      const gold = kmCountGold();
+      const scoreNow = kmTotalScore();
+      kmUpdateBestFromSavedScores();
+      timeLeftEl.textContent = String(kmMoves);
+      scoreEl.textContent = String(scoreNow);
+      roundStateEl.textContent = String(gold);
+      document.getElementById("kmBest").textContent = String(kmBestScore || 0);
+      kmRenderNextPreview();
+
+      // v0.161: merge animation is one-shot only.
+      // Without this, any piece that was born/merged on the final move can re-animate
+      // during every bonus-count render and look like an extra flashing bonus tile.
+      for (const row of kmBoard) {
+        for (const piece of row) {
+          if (piece) piece.merged = false;
+        }
+      }
+
+      kmLastMoveDirection = null;
+      kmLastPreMoveBoard = null;
+    }
+
+    function kmSetStatLabels() {
+      const timeLabel = timeLeftEl.closest(".stat")?.querySelector(".stat-label");
+      const roundLabel = roundStateEl.closest(".stat")?.querySelector(".stat-label");
+      if (timeLabel) timeLabel.textContent = isKingmakerMode() ? "Moves" : "Time";
+      if (roundLabel) roundLabel.textContent = isKingmakerMode() ? "Gold tiles" : "Round";
+    }
+
+    function kmStartNewGame() {
+      active = true;
+      roundOver = false;
+      kmRoundOver = false;
+      kmBonusRunning = false;
+      kmBonusHighlightKey = null;
+      kmBoard = kmEmptyBoard();
+      kmPreviousState = null;
+      kmMoves = 0;
+      kmNextSpawn = kmRandomSpawnPiece();
+      kmLastPreMoveBoard = null;
+      kmLastMoveDirection = null;
+      kmLastMergeTypes = [];
+      kmLastMoveMadeKing = false;
+      kmInputLockedUntil = 0;
+      kmSpawnNextPiece();
+      kmSetStatLabels();
+      updateKingmakerModeClass();
+      kmHideBonusOverlay();
+      targetLabelEl.textContent = "KINGMAKER 2048";
+      messageEl.textContent = "";
+      newRoundBtn.textContent = "New game";
+      kmRender();
+      updateMobileGameActionButtons();
+      sizeBoardToWindow();
+    }
+
+    function kmMove(direction) {
+      if (!isKingmakerMode() || kmRoundOver || kmBonusRunning) return false;
+      const now = performance.now();
+      if (now < kmInputLockedUntil) return false;
+      primeAudioContext();
+
+      kmLastMergeTypes = [];
+      const before = kmCloneBoard(kmBoard);
+      const next = kmComputeMovedBoard(direction);
+      if (kmBoardsEqual(before, next)) return false;
+
+      kmPreviousState = { board: before, moves: kmMoves, nextSpawn: kmClonePiece(kmNextSpawn) };
+      kmLastPreMoveBoard = before;
+      kmBoard = next;
+      kmLastMoveDirection = direction;
+      kmMoves += 1;
+      kmSpawnNextPiece();
+      kmInputLockedUntil = performance.now() + KM_MOVE_DELAY_MS;
+      kmRender();
+
+      const scoreNow = kmTotalScore();
+      if (scoreNow > kmBestScore) {
+        kmBestScore = scoreNow;
+        localStorage.setItem("kingmaker-score-best", String(kmBestScore));
+      }
+
+      if (kmLastMoveMadeKing) {
+        kmPlayKingSound();
+      } else {
+        const specialMergeTypes = kmLastMergeTypes.filter(type => type > KM_BISHOP - 1 && type < KM_KING);
+        if (specialMergeTypes.length) kmPlayMergeSound(Math.max(...specialMergeTypes));
+        else kmPlayMoveSound();
+      }
+
+      if (!kmCanMove()) {
+        kmEndGame();
+        return true;
+      }
+
+      updateMobileGameActionButtons();
+      return true;
+    }
+
+    async function kmEndGame() {
+      if (kmBonusRunning || kmRoundOver) return;
+      kmBonusRunning = true;
+      kmRoundOver = true;
+      active = false;
+      roundOver = true;
+      kmInputLockedUntil = performance.now() + 999999;
+
+      const gold = kmCountGold();
+      const baseScore = kmTotalScore();
+      const middleKings = kmKingCells(false);
+      const edgeKings = kmKingCells(true);
+      const middleBonus = middleKings.length * 500;
+      const edgeBonus = edgeKings.length * 1000;
+      const finalScore = baseScore + middleBonus + edgeBonus;
+
+      hideResultModal();
+      modalBox.classList.remove("km-fireworks", "km-fireworks-ended");
+      messageEl.textContent = "";
+      scoreEl.textContent = String(baseScore);
+      scoreEl.closest(".stat")?.classList.add("km-muted");
+
+      kmPlayGameEndErrorSound();
+      await kmSleep(1000);
+
+      // Final v27: BOARD JAMMED first, then GAME OVER appears underneath while BOARD JAMMED stays still.
+      kmShowBonusOverlay("BOARD JAMMED", "", true, false, "boardjammed", "danger");
+      await kmSleep(1350);
+
+      kmShowBonusOverlay(`<div class="km-bonus-stack"><span class="line primary">BOARD JAMMED</span><span class="line secondary">GAME OVER</span></div>`, "", false, false, "boardjammed", "danger");
+      kmPlayGameOverSound();
+      await kmSleep(1700);
+      kmHideBonusOverlay();
+      await kmSleep(320);
+
+      // Final v27: BONUS intro.
+      kmShowBonusOverlay("BONUS", "", true, false, "center");
+      await kmSleep(1700);
+      kmHideBonusOverlay();
+      await kmSleep(260);
+
+      // Final v27: middle king count-up, with tile pulse and +500 each.
+      kmShowBonusOverlay("MIDDLE KINGS", "+0", true, false, "counter");
+      await kmSleep(600);
+      for (let i = 0; i < middleKings.length; i++) {
+        kmSetBonusHighlight(middleKings[i]);
+        kmRender();
+        const running = (i + 1) * 500;
+        kmShowBonusOverlay("MIDDLE KINGS", `+${running}`, false, false, "counter");
+        kmBonusTickSound(500);
+        await kmSleep(620);
+      }
+
+      kmBonusHighlightKey = null;
+      kmRender();
+      await kmSleep(950);
+
+      // Final v27: edge king count-up, brighter pulse and +1000 each.
+      kmShowBonusOverlay("EDGE KINGS", "+0", true, false, "counter");
+      await kmSleep(700);
+      for (let i = 0; i < edgeKings.length; i++) {
+        kmSetBonusHighlight(edgeKings[i]);
+        kmRender();
+        const running = (i + 1) * 1000;
+        kmShowBonusOverlay("EDGE KINGS", `+${running}`, false, false, "counter");
+        kmBonusTickSound(1000);
+        await kmSleep(760);
+      }
+
+      kmBonusHighlightKey = null;
+      kmRender();
+
+      if (finalScore > kmBestScore) {
+        kmBestScore = finalScore;
+        localStorage.setItem("kingmaker-score-best", String(kmBestScore));
+        document.getElementById("kmBest").textContent = String(kmBestScore);
+      }
+
+      // Final v27: pause, dim and fade the final edge bonus before score reveal.
+      await kmSleep(1425);
+      kmShowBonusOverlay("EDGE KINGS", `+${edgeBonus}`, false, false, "counter");
+      await kmSleep(340);
+      kmEnsureBonusOverlay().classList.add("dim");
+      await kmSleep(675);
+      kmEnsureBonusOverlay().classList.add("fade-away");
+      await kmSleep(1310);
+      kmHideBonusOverlay();
+      await kmSleep(165);
+
+      modalBox.classList.remove("draughts-result", "km-fireworks-ended");
+      modalBox.classList.add("km-fireworks");
+      modalTitle.textContent = "FINAL SCORE";
+      modalScore.textContent = "0";
+      modalScore.classList.remove("km-final-flash");
+      modalRank.textContent = "KINGMAKER final score";
+      modalNote.innerHTML = `<div class="km-final-score-wrap">
+        <div class="km-final-row"><span>Board score</span><strong>${baseScore}</strong></div>
+        <div class="km-final-row bonus"><span>Middle king bonus</span><strong>+${middleBonus}</strong></div>
+        <div class="km-final-row edge"><span>Edge king bonus</span><strong>+${edgeBonus}</strong></div>
+      </div>`;
+      resetModalPosition();
+      resultModal.classList.add("show");
+      messageEl.textContent = "";
+      scoreEl.closest(".stat")?.classList.remove("km-muted");
+      scoreEl.textContent = "0";
+
+      await kmSleep(240);
+      await kmTallyFinalScore(finalScore);
+      kmPlayFireworksSound();
+
+      setTimeout(() => {
+        modalBox.classList.remove("km-fireworks");
+        modalBox.classList.add("km-fireworks-ended");
+      }, 3200);
+
+      saveKingmakerScore(finalScore, baseScore, middleBonus, edgeBonus);
+      renderScores();
+      updateMobileGameActionButtons();
+    }
+
+    function kmDirectionFromKey(key) {
+      return ({ ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right" })[key] || null;
+    }
+
+    function kmHandleSwipe(start, end) {
+      if (!start || !end) return;
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      kmTouchStart = null;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 28) return;
+      kmMove(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
+    }
+
+    function topKingmakerScores() {
+      return getScores()
+        .filter(item => item.mode === "kingmaker" && Number.isFinite(Number(item.score)))
+        .slice()
+        .sort((a, b) => {
+          const byScore = Number(b.score) - Number(a.score);
+          if (byScore !== 0) return byScore;
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, 1);
+    }
+
+    function saveKingmakerScore(score, baseScore = 0, middleBonus = 0, edgeBonus = 0) {
+      const numericScore = Number(score);
+      if (!Number.isFinite(numericScore)) return;
+      const scores = getScores();
+      scores.push({ score: numericScore, mode: "kingmaker", scoreType: "points", baseScore, middleBonus, edgeBonus, moves: kmMoves, date: formatScoreDate(new Date()) });
+      localStorage.setItem(scoreStorageKey, JSON.stringify(scores.filter(item => Number.isFinite(Number(item.score))).slice(-150)));
+      trackEvent("game_complete", { mode: "kingmaker", variant: "normal", score: numericScore });
+      trackReadableGameEvent("complete", "kingmaker", "normal", { score: numericScore });
     }
 
     function buildPieceButtons() {
@@ -6819,12 +8306,13 @@
       if (currentMode === "pickup") return pickupXtreme ? "PICK UP XTREME" : "PICK UP";
       if (currentMode === "knightHop") return knightHopXtreme ? "KNIGHT HOP XTREME" : "KNIGHT HOP";
       if (currentMode === "oddOneOut") return oddOneOutRainbow ? "ODD ONE OUT RAINBOW" : "ODD ONE OUT";
+      if (currentMode === "kingmaker") return "KINGMAKER 2048";
       if (currentMode === "draughts") return "DRAUGHTS";
       return "30s SPRINT";
     }
 
     function updateTargetBoxModeClass() {
-      targetBox.classList.remove("mode-sprint", "mode-sixtyFour", "mode-kingFinder", "mode-pickup", "mode-knightHop", "mode-oddOneOut", "mode-draughts");
+      targetBox.classList.remove("mode-sprint", "mode-sixtyFour", "mode-kingFinder", "mode-pickup", "mode-knightHop", "mode-oddOneOut", "mode-kingmaker", "mode-draughts");
       targetBox.classList.add(`mode-${currentMode}`);
       document.body.classList.toggle("odd-one-out-active", currentMode === "oddOneOut");
       if (currentMode === "oddOneOut") {
@@ -6965,6 +8453,7 @@
       if (mode === "oddOneOut") return oddOneOutRainbow
         ? "Spot the odd colour before your eyes give up."
         : "Find the square that is just wrong enough to annoy you.";
+      if (mode === "kingmaker") return "Swipe the board. Same-colour tiles merge up the chess ladder. Gold kings lock in place. Highest score wins.";
       if (mode === "draughts") return "Put the draughts where they belong: in the trash.";
       return "Pick a mode and test your board vision.";
     }
@@ -7014,41 +8503,15 @@
     }
 
     function resetRound() {
-      updateTargetBoxModeClass();
       active = false;
       roundOver = false;
-      hideResultModal();
-      clearGameStartCountdown();
+      clockRunning = false;
+      gameStartCountdownActive = false;
+      lastInputMethod = null;
       clearInterval(timer);
-      clearKingFinderTimers();
-      clearPickupTimers();
-      timer = null;
-      score = 0;
-      endTime = 0;
-      startTime = 0;
-      pitchStep = 0;
-      bonusUsed = false;
-      bonusCountThisRound = 0;
-      normalClickCount = 0;
-      guaranteedBonusDeadlineMs = 10000;
-      bonusTargetSquare = null;
-      bonusTargetPiece = null;
-      kingFinderRound = 0;
-      kingFinderTargetSquare = null;
-      kingFinderAcceptingGuess = false;
-      kingFinderStarted = false;
-      kingFinderPhase = "idle";
-      kingFinderGuessStartedAt = 0;
-      kingFinderTotalGuessMs = 0;
-      kingFinderFinalTimeScore = 0;
-      clearKingFinderAnswerMark();
-      hideKingCountdownWord();
-      board.classList.remove("king-finder-mode");
-      board.classList.remove("king-find-hidden");
-      clearOddOneOutMarks();
-      clearOddOneOutTimer();
-      oddOneOutPlaying = false;
-      oddOneOutTargetSquare = null;
+      clearInterval(oddOneOutTimer);
+      oddOneOutTimer = null;
+      oddOneOutAutoFinishPending = false;
       oddOneOutFailureReason = "wrong";
       oddOneOutResultPending = false;
       clearDraughtsMode();
@@ -7058,13 +8521,17 @@
       sixtyFourCompleted = 0;
       penaltySeconds = 0;
       clearSixtyFourMarks();
-      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : currentMode === "kingFinder" ? "Kings" : currentMode === "pickup" ? "Pieces" : currentMode === "knightHop" ? "Touched" : currentMode === "oddOneOut" ? "Level" : currentMode === "draughts" ? "Binned" : "Score";
-      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : currentMode === "kingFinder" ? "0/10" : currentMode === "pickup" ? "0/32" : currentMode === "knightHop" ? "0/64" : currentMode === "oddOneOut" ? "1" : currentMode === "draughts" ? "0/24" : score;
-      timeLeftEl.textContent = currentMode === "sixtyFour" ? "0" : currentMode === "kingFinder" ? "5" : currentMode === "pickup" ? "0.00" : currentMode === "knightHop" ? "0.00" : currentMode === "oddOneOut" ? "30.00" : currentMode === "draughts" ? "0.00" : GAME_LENGTH_SECONDS;
-      roundStateEl.textContent = "Ready";
-      newRoundBtn.textContent = "New round";
+      updateKingmakerModeClass();
+      kmSetStatLabels();
+      scoreLabelEl.textContent = currentMode === "sixtyFour" ? "Done" : currentMode === "kingFinder" ? "Kings" : currentMode === "pickup" ? "Pieces" : currentMode === "knightHop" ? "Touched" : currentMode === "oddOneOut" ? "Level" : currentMode === "kingmaker" ? "Score" : currentMode === "draughts" ? "Binned" : "Score";
+      scoreEl.textContent = currentMode === "sixtyFour" ? "0/64" : currentMode === "kingFinder" ? "0/10" : currentMode === "pickup" ? "0/32" : currentMode === "knightHop" ? "0/64" : currentMode === "oddOneOut" ? "1" : currentMode === "kingmaker" ? "0" : currentMode === "draughts" ? "0/24" : score;
+      timeLeftEl.textContent = currentMode === "sixtyFour" ? "0" : currentMode === "kingFinder" ? "5" : currentMode === "pickup" ? "0.00" : currentMode === "knightHop" ? "0.00" : currentMode === "oddOneOut" ? "30.00" : currentMode === "kingmaker" ? "0" : currentMode === "draughts" ? "0.00" : GAME_LENGTH_SECONDS;
+      roundStateEl.textContent = currentMode === "kingmaker" ? "0" : "Ready";
+      newRoundBtn.textContent = currentMode === "kingmaker" ? "New game" : "New round";
 
-      if (currentMode === "kingFinder") {
+      if (currentMode === "kingmaker") {
+        kmStartNewGame();
+      } else if (currentMode === "kingFinder") {
         targetMode = "kingFinder";
         targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
@@ -7075,15 +8542,10 @@
         prepareOddOneOutMode();
       } else if (currentMode === "knightHop") {
         prepareKnightHopMode();
-      } else if (currentMode === "oddOneOut") {
-        prepareOddOneOutMode();
-      } else if (currentMode === "draughts") {
-        prepareDraughtsMode();
-      } else if (currentMode === "knightHop") {
-        prepareKnightHopMode();
       } else if (currentMode === "draughts") {
         prepareDraughtsMode();
       } else {
+        kmClearBoardVisuals();
         setNormalTarget(false);
         targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
@@ -7113,6 +8575,10 @@
       }
       if (currentMode === "draughts") {
         startDraughtsGame();
+        return;
+      }
+      if (currentMode === "kingmaker") {
+        if (kmRoundOver) kmStartNewGame();
         return;
       }
       if (gameStartCountdownActive) return;
@@ -9072,6 +10538,11 @@
         return;
       }
 
+      if (currentMode === "kingmaker") {
+        if (kmRoundOver) kmStartNewGame();
+        return;
+      }
+
       if (roundOver) {
         resetRound();
         return;
@@ -9306,6 +10777,11 @@
         modalScore.textContent = finalScore;
         modalRank.textContent = oddOneOutRankForLevel(finalScore);
         modalNote.textContent = oddOneOutFunLineForLevel(finalScore);
+      } else if (currentMode === "kingmaker") {
+        modalTitle.textContent = "FINAL SCORE";
+        modalScore.textContent = finalScore;
+        modalRank.textContent = "KINGMAKER final score";
+        modalNote.textContent = "Middle kings +500. Edge kings +1000.";
       } else if (currentMode === "kingFinder") {
         if (kingFinderRound >= 10) {
           modalScore.textContent = `${kingFinderFinalTimeScore.toFixed(2)}/30`;
@@ -9338,6 +10814,7 @@
 
     function hideResultModal() {
       resultModal.classList.remove("show");
+      modalBox.classList.remove("km-fireworks", "km-fireworks-ended");
       updateMobileGameActionButtons();
     }
 
@@ -9514,6 +10991,7 @@
 
     function scoreDisplayForItem(item, type) {
       if (!item) return "—";
+      if (type === "points") return `${item.score}`;
       if (type === "score") return `${item.score} moves`;
       if (type === "level") return `level ${item.score}`;
       if (type === "king") return `${Number(item.score).toFixed(2)} secs`;
@@ -9593,6 +11071,13 @@
           modes: [
             { label: "NORMAL", type: "level", empty: "No ODD ONE OUT scores yet", scores: topOddOneOutScores("oddOneOut") },
             { label: "RAINBOW", type: "level", empty: "No ODD ONE OUT RAINBOW scores yet", scores: topOddOneOutScores("oddOneOutRainbow") }
+          ]
+        },
+        {
+          key: "kingmaker",
+          title: "KINGMAKER 2048",
+          modes: [
+            { label: "HIGH SCORE", type: "points", empty: "No KINGMAKER scores yet", scores: topKingmakerScores() }
           ]
         }
       ];
@@ -9740,6 +11225,11 @@
         return scores.length ? `1st: ${scoreDisplayForItem(scores[0], "level")}` : "1st: —";
       }
 
+      if (currentMode === "kingmaker") {
+        const scores = topKingmakerScores();
+        return scores.length ? `1st: ${scores[0].score}` : "1st: —";
+      }
+
       return "1st: —";
     }
 
@@ -9756,7 +11246,7 @@
               ? "ODD ONE OUT RAINBOW"
               : gameModes[currentMode]?.name || "30s sprint";
 
-      const themeName = currentMode === "oddOneOut" ? (oddOneOutRainbow ? "Rainbow locked" : "Random locked") : (boardThemes[currentThemeKey]?.name || "Classic");
+      const themeName = currentMode === "oddOneOut" ? (oddOneOutRainbow ? "Rainbow locked" : "Random locked") : currentMode === "kingmaker" ? "Built-in" : (boardThemes[currentThemeKey]?.name || "Classic");
 
       mobileNavGameValue.textContent = modeName;
       mobileNavStyleValue.textContent = themeName;
@@ -9914,6 +11404,18 @@
         });
       }
 
+      const kingmakerScores = topKingmakerScores();
+      bestKingmakerEl.textContent = kingmakerScores.length ? kingmakerScores[0].score : "—";
+      kingmakerScoresListEl.innerHTML = "";
+      if (kingmakerScores.length) {
+        kingmakerScores.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "score-item";
+          li.innerHTML = `<span class="place">${index + 1}</span><span>${formatScoreDate(item.date)}</span><strong>${item.score}</strong>`;
+          kingmakerScoresListEl.appendChild(li);
+        });
+      }
+
       renderMobileLeaderboardGrid();
       updateMobileBottomNavStatus();
     }
@@ -9924,6 +11426,7 @@
       const showPickup = currentMode === "pickup";
       const showKnightHop = currentMode === "knightHop";
       const showOddOneOut = currentMode === "oddOneOut";
+      const showKingmaker = currentMode === "kingmaker";
       const showKing = currentMode === "kingFinder" && !kingFinderXtreme;
       const showKingXtreme = currentMode === "kingFinder" && kingFinderXtreme;
 
@@ -9932,6 +11435,7 @@
       pickupLeaderboard.classList.toggle("hidden", !showPickup);
       knightHopLeaderboard.classList.toggle("hidden", !showKnightHop);
       oddOneOutLeaderboard.classList.toggle("hidden", !showOddOneOut);
+      kingmakerLeaderboard.classList.toggle("hidden", !showKingmaker);
       kingFinderLeaderboard.classList.toggle("hidden", !showKing);
       kingFinderXtremeLeaderboard.classList.toggle("hidden", !showKingXtreme);
     }
@@ -10054,6 +11558,11 @@
         setTheme(currentThemeKey, false);
       }
 
+      if (previousMode === "kingmaker" && currentMode !== "kingmaker") {
+        kmRoundOver = false;
+        kmClearBoardVisuals();
+      }
+
       document.querySelectorAll(".mode-button").forEach(button => {
         const isActiveMode = button.dataset.mode === currentMode;
         button.classList.toggle("active", isActiveMode);
@@ -10074,6 +11583,8 @@
         preparePickupMode();
       }
 
+      updateKingmakerModeClass();
+      kmSetStatLabels();
       updateKingXtremeVisibility();
       updateLeaderboardVisibility();
       renderScores();
@@ -10087,6 +11598,7 @@
     }
 
     function loadPieceStyle() {
+
       const savedStyle = localStorage.getItem(pieceStyleStorageKey);
       setPieceStyle(pieceStyles[savedStyle] ? savedStyle : "woodcut", false);
     }
@@ -10416,10 +11928,12 @@
 
 
     function mobileGameplayIsActive() {
+      if (currentMode === "kingmaker") return Boolean(!kmRoundOver);
       return Boolean(active && !roundOver);
     }
 
     function mobileGameplayCanReturn() {
+      if (currentMode === "kingmaker") return true;
       return Boolean(
         gameStartCountdownActive ||
         active ||
@@ -10460,6 +11974,10 @@
     function restartCurrentModeFromMobileButton() {
       closeMobileMenuPage();
       window.setTimeout(() => {
+        if (currentMode === "kingmaker") {
+          kmStartNewGame();
+          return;
+        }
         resetRound();
         startClockOnFirstClick();
       }, 80);
@@ -10774,6 +12292,14 @@
       }
     });
     document.addEventListener("keydown", event => {
+      if (currentMode === "kingmaker") {
+        const direction = kmDirectionFromKey(event.key);
+        if (direction) {
+          event.preventDefault();
+          kmMove(direction);
+          return;
+        }
+      }
       if (event.key === "Escape") {
         if (currentMode === "draughts" && draughtsCompleted && resultModal.classList.contains("show")) {
           vanishDraughtsAndReturnToSprint();
@@ -10795,6 +12321,32 @@
       document.addEventListener(eventName, primeAudioContext, { passive: true });
     });
     document.addEventListener("fullscreenchange", updateFullscreenButton);
+
+    board.addEventListener("pointerdown", event => {
+      if (currentMode !== "kingmaker") return;
+      kmTouchStart = { x: event.clientX, y: event.clientY };
+    }, { passive: true });
+
+    board.addEventListener("pointerup", event => {
+      if (currentMode !== "kingmaker") return;
+      kmHandleSwipe(kmTouchStart, { x: event.clientX, y: event.clientY });
+      kmTouchStart = null;
+    }, { passive: true });
+
+    board.addEventListener("touchstart", event => {
+      if (currentMode !== "kingmaker") return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      kmTouchStart = { x: touch.clientX, y: touch.clientY };
+    }, { passive: true });
+
+    board.addEventListener("touchend", event => {
+      if (currentMode !== "kingmaker") return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      kmHandleSwipe(kmTouchStart, { x: touch.clientX, y: touch.clientY });
+      kmTouchStart = null;
+    }, { passive: true });
 
     function pickupPieceFromTouchTarget(target) {
       const pieceElement = target?.closest?.(".unicode-piece");
@@ -10857,6 +12409,7 @@
     detectDeviceAndOptimise();
     updateTargetBoxModeClass();
     buildBoard();
+    updateKingmakerModeClass();
     loadKingXtremeMode();
     rainbowUnlocked = false;
     localStorage.removeItem(rainbowUnlockedStorageKey);
@@ -10875,7 +12428,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.152").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.163").catch(() => {});
     });
   }
 </script>
