@@ -5631,7 +5631,7 @@
   }
   </script>
 
-  <link rel="manifest" href="manifest.json?v=0.147">
+  <link rel="manifest" href="manifest.json?v=0.148">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5849,7 +5849,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.147</p>
+<p class="easter-version">Version 0.148</p>
 </div>
 </div>
 </div>
@@ -5880,7 +5880,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.147";
+    const VERSION = "0.148";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -5909,6 +5909,31 @@
       return "normal";
     }
 
+    function analyticsReadableModeSlug(mode, variant = "normal") {
+      const base = {
+        sprint: "30s_sprint",
+        sixtyFour: "64_squares",
+        kingFinder: "king_finder",
+        pickup: "pick_up",
+        knightHop: "knight_hop",
+        oddOneOut: "odd_one_out",
+        draughts: "draughts"
+      }[mode] || String(mode || "unknown").replace(/[^a-z0-9]+/gi, "_").toLowerCase();
+
+      if (variant === "xtreme") return `${base}_xtreme`;
+      if (variant === "rainbow") return `${base}_rainbow`;
+      return base;
+    }
+
+    function trackReadableGameEvent(action, mode, variant = "normal", props = {}) {
+      const slug = analyticsReadableModeSlug(mode, variant);
+      trackEvent(`${action}_${slug}`, {
+        mode,
+        variant,
+        ...props
+      });
+    }
+
     function trackEvent(name, props = {}) {
       try {
         if (!window.umami || typeof window.umami.track !== "function") return;
@@ -5921,11 +5946,13 @@
     }
 
     function trackGameStart(source = "board") {
+      const variant = analyticsVariantForMode(currentMode);
       trackEvent("game_start", {
         mode: currentMode,
-        variant: analyticsVariantForMode(currentMode),
+        variant,
         source
       });
+      trackReadableGameEvent("play", currentMode, variant, { source });
     }
 
     window.addEventListener("load", () => {
@@ -9152,13 +9179,20 @@
 
       localStorage.setItem(scoreStorageKey, JSON.stringify(trimmed));
 
-      trackEvent("game_complete", {
-        mode: analyticsModeFromStoredMode(storedMode),
-        variant: analyticsVariantFromStoredMode(storedMode),
+      const completedMode = analyticsModeFromStoredMode(storedMode);
+      const completedVariant = analyticsVariantFromStoredMode(storedMode);
+      const completedProps = {
         score: Number.isFinite(Number(finalScore)) ? Number(finalScore) : undefined,
         time_seconds: Number.isFinite(Number(elapsedSeconds)) ? roundedHundredths(elapsedSeconds) : undefined,
         moves: storedMode === "pickupXtreme" ? pickupMoveCount : storedMode === "knightHop" ? knightHopMoves : undefined
+      };
+
+      trackEvent("game_complete", {
+        mode: completedMode,
+        variant: completedVariant,
+        ...completedProps
       });
+      trackReadableGameEvent("complete", completedMode, completedVariant, completedProps);
     }
 
     function topSprintScores() {
@@ -10547,7 +10581,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.147").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.148").catch(() => {});
     });
   }
 </script>
