@@ -6421,7 +6421,7 @@ body.mode-kingmaker .modal-note{
 }
 
 
-/* v0.165: production PWA label, no TEST suffix */
+/* v0.165: production PWA label, no suffix */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(34px,6.2vmin,52px) !important;
@@ -6469,7 +6469,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 }
 
 
-/* v0.165: production PWA label, no TEST suffix after v0.162 oversize */
+/* v0.165: production PWA label, no suffix after v0.162 oversize */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(30px,5.2vmin,44px) !important;
@@ -6851,7 +6851,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.170</p>
+<p class="easter-version">Version 0.171</p>
 </div>
 </div>
 </div>
@@ -6884,7 +6884,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 </div>
 </div>
 <script>
-    const VERSION = "0.170";
+    const VERSION = "0.171";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -11016,6 +11016,19 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       updateMobileGameActionButtons();
     }
 
+    function closeKingmakerFinalScoreModal() {
+      hideResultModal();
+      active = false;
+      roundOver = true;
+      kmRoundOver = true;
+      kmBonusRunning = false;
+      kmBonusHighlightKey = null;
+      kmHideBonusOverlay();
+      kmRender();
+      messageEl.textContent = "Final board left in place. Start a new KINGMAKER game when ready.";
+      updateMobileGameActionButtons();
+    }
+
     function migrateOldScores() {
       if (localStorage.getItem(scoreStorageKey)) return;
 
@@ -12453,6 +12466,11 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
         return;
       }
 
+      if (currentMode === "kingmaker" && kmRoundOver && resultModal.classList.contains("show")) {
+        closeKingmakerFinalScoreModal();
+        return;
+      }
+
       hideResultModal();
 
       if (currentMode === "oddOneOut" && roundOver) {
@@ -12483,11 +12501,15 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
           return;
         }
 
-        hideResultModal();
-        if (currentMode === "oddOneOut" && roundOver) {
-          messageEl.textContent = "Final board left in place. Click the board to start a new ODD ONE OUT game.";
-        } else if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
-          messageEl.textContent = "Solved board left in place. Click the board to start a new PICK UP game.";
+        if (currentMode === "kingmaker" && kmRoundOver && resultModal.classList.contains("show")) {
+          closeKingmakerFinalScoreModal();
+        } else {
+          hideResultModal();
+          if (currentMode === "oddOneOut" && roundOver) {
+            messageEl.textContent = "Final board left in place. Click the board to start a new ODD ONE OUT game.";
+          } else if (currentMode === "pickup" && roundOver && pickupPhase === "ended") {
+            messageEl.textContent = "Solved board left in place. Click the board to start a new PICK UP game.";
+          }
         }
       }
     });
@@ -12507,6 +12529,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       if (event.key === "Escape") {
         if (currentMode === "draughts" && draughtsCompleted && resultModal.classList.contains("show")) {
           vanishDraughtsAndReturnToSprint();
+        } else if (currentMode === "kingmaker" && kmRoundOver && resultModal.classList.contains("show")) {
+          closeKingmakerFinalScoreModal();
         } else {
           const wasOddOneOutResult = currentMode === "oddOneOut" && roundOver && resultModal.classList.contains("show");
           hideResultModal();
@@ -12631,12 +12655,13 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
 
 
+
 <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.170").catch(() => {});
-    });
-  }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js?v=0.171").catch(() => {});
+  });
+}
 </script>
 
 </body>
