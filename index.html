@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>KWIK CHESS v0.146</title>
+<title>KWIK CHESS - Chess board training game</title>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -5607,8 +5607,31 @@
 <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="de8e2e37-e9d2-4c2c-abe7-1c3617a42505"></script>
+  <meta name="description" content="KWIK CHESS is a fast chess board training game with modes for square recognition, chess-board memory, piece placement, knight movement, knight's tour practice and visual spotting.">
+  <link rel="canonical" href="https://kwikchess.com/">
+  <meta property="og:title" content="KWIK CHESS">
+  <meta property="og:description" content="A fast chess board training game with 30s Sprint, 64 Squares, King Finder, Pick Up, Knight Hop, knight's tour practice and Odd One Out.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kwikchess.com/">
+  <meta property="og:image" content="https://kwikchess.com/assets/logo-king.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="KWIK CHESS">
+  <meta name="twitter:description" content="A fast chess board training game with 30s Sprint, 64 Squares, King Finder, Pick Up, Knight Hop, knight's tour practice and Odd One Out.">
+  <meta name="twitter:image" content="https://kwikchess.com/assets/logo-king.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    "name": "KWIK CHESS",
+    "url": "https://kwikchess.com/",
+    "description": "KWIK CHESS is a fast chess board training game with modes for square recognition, chess-board memory, piece placement, knight movement, knight's tour practice and visual spotting.",
+    "genre": ["Chess", "Board training", "Memory game", "Puzzle game"],
+    "gamePlatform": "Web browser",
+    "applicationCategory": "Game"
+  }
+  </script>
 
-  <link rel="manifest" href="manifest.json?v=0.146">
+  <link rel="manifest" href="manifest.json?v=0.147">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5826,7 +5849,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.146</p>
+<p class="easter-version">Version 0.147</p>
 </div>
 </div>
 </div>
@@ -5857,7 +5880,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.146";
+    const VERSION = "0.147";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -10524,7 +10547,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.146").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.147").catch(() => {});
     });
   }
 </script>
