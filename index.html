@@ -6421,7 +6421,7 @@ body.mode-kingmaker .modal-note{
 }
 
 
-/* v0.164: KINGMAKER mobile start button state fixed */
+/* v0.165: production PWA label, no TEST suffix */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(34px,6.2vmin,52px) !important;
@@ -6469,7 +6469,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 }
 
 
-/* v0.164: KINGMAKER mobile start button state fixed after v0.162 oversize */
+/* v0.165: production PWA label, no TEST suffix after v0.162 oversize */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(30px,5.2vmin,44px) !important;
@@ -6766,7 +6766,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.164 TEST</p>
+<p class="easter-version">Version 0.165</p>
 </div>
 </div>
 </div>
@@ -6799,7 +6799,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 </div>
 </div>
 <script>
-    const VERSION = "0.164";
+    const VERSION = "0.165";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -12441,10 +12441,11 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
   </script>
 
+
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.164").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.165").catch(() => {});
     });
   }
 </script>
