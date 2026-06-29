@@ -6421,7 +6421,7 @@ body.mode-kingmaker .modal-note{
 }
 
 
-/* v0.163: KINGMAKER Next preview reduced */
+/* v0.164: KINGMAKER mobile start button state fixed */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(34px,6.2vmin,52px) !important;
@@ -6469,7 +6469,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 }
 
 
-/* v0.163: KINGMAKER Next preview reduced after v0.162 oversize */
+/* v0.164: KINGMAKER mobile start button state fixed after v0.162 oversize */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(30px,5.2vmin,44px) !important;
@@ -6766,7 +6766,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.163 TEST</p>
+<p class="easter-version">Version 0.164 TEST</p>
 </div>
 </div>
 </div>
@@ -6799,7 +6799,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 </div>
 </div>
 <script>
-    const VERSION = "0.163";
+    const VERSION = "0.164";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -7780,8 +7780,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       if (roundLabel) roundLabel.textContent = isKingmakerMode() ? "Gold tiles" : "Round";
     }
 
-    function kmStartNewGame() {
-      active = true;
+    function kmStartNewGame(started = true) {
+      active = Boolean(started);
       roundOver = false;
       kmRoundOver = false;
       kmBonusRunning = false;
@@ -7809,6 +7809,12 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
     function kmMove(direction) {
       if (!isKingmakerMode() || kmRoundOver || kmBonusRunning) return false;
+      if (!active) {
+        active = true;
+        roundOver = false;
+        kmRoundOver = false;
+        updateMobileGameActionButtons();
+      }
       const now = performance.now();
       if (now < kmInputLockedUntil) return false;
       primeAudioContext();
@@ -8530,7 +8536,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       newRoundBtn.textContent = currentMode === "kingmaker" ? "New game" : "New round";
 
       if (currentMode === "kingmaker") {
-        kmStartNewGame();
+        kmStartNewGame(false);
       } else if (currentMode === "kingFinder") {
         targetMode = "kingFinder";
         targetLabelEl.textContent = currentPanelTitle();
@@ -8578,7 +8584,15 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
         return;
       }
       if (currentMode === "kingmaker") {
-        if (kmRoundOver) kmStartNewGame();
+        if (kmRoundOver) {
+          kmStartNewGame(true);
+        } else {
+          active = true;
+          roundOver = false;
+          kmRoundOver = false;
+          messageEl.textContent = "";
+          updateMobileGameActionButtons();
+        }
         return;
       }
       if (gameStartCountdownActive) return;
@@ -11928,12 +11942,14 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
 
     function mobileGameplayIsActive() {
-      if (currentMode === "kingmaker") return Boolean(!kmRoundOver);
+      if (currentMode === "kingmaker") return Boolean(active && !kmRoundOver);
       return Boolean(active && !roundOver);
     }
 
     function mobileGameplayCanReturn() {
-      if (currentMode === "kingmaker") return true;
+      if (currentMode === "kingmaker") {
+        return Boolean(active || kmRoundOver || resultModal.classList.contains("show"));
+      }
       return Boolean(
         gameStartCountdownActive ||
         active ||
@@ -12428,7 +12444,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.163").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.164").catch(() => {});
     });
   }
 </script>
