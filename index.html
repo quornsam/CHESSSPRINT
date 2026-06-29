@@ -5601,6 +5601,138 @@
       line-height: 1 !important;
     }
 
+
+    /* v0.149: mobile return/restart game controls */
+    .mobile-restart-button {
+      display: none;
+    }
+
+    body.device-phone .mobile-restart-button {
+      position: fixed;
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      z-index: 96;
+      min-height: 44px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.09);
+      color: var(--text);
+      font-weight: 1000;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.42);
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .mobile-restart-button:not(.hidden) {
+      display: block !important;
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .mobile-return-button {
+      bottom: calc(124px + env(safe-area-inset-bottom)) !important;
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .side-panel {
+      padding-bottom: calc(194px + env(safe-area-inset-bottom)) !important;
+    }
+
+
+    /* v0.150: mobile return/restart spacing + game mode subtitle */
+    body.device-phone.mobile-page-game .mobile-menu-header {
+      flex-direction: column !important;
+      gap: 6px !important;
+      align-items: center !important;
+      padding-bottom: 14px !important;
+    }
+
+    body.device-phone .mobile-menu-subtitle {
+      display: none;
+      width: min(100%, 390px);
+      margin: 0 auto;
+      color: rgba(255,255,255,0.72);
+      font-size: clamp(0.78rem, 3.15vw, 0.94rem);
+      font-weight: 760;
+      line-height: 1.22;
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+
+    body.device-phone.mobile-page-game .mobile-menu-subtitle {
+      display: block !important;
+    }
+
+    body.device-phone.mobile-page-scores .mobile-menu-subtitle,
+    body.device-phone.mobile-page-board .mobile-menu-subtitle {
+      display: none !important;
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-returnable.mobile-page-game .mobile-restart-button:not(.hidden) {
+      display: block !important;
+      bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-returnable.mobile-page-game .mobile-return-button {
+      bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+    }
+
+    body.device-phone.mobile-menu-open.mobile-game-returnable.mobile-page-game .side-panel {
+      padding-bottom: calc(214px + env(safe-area-inset-bottom)) !important;
+    }
+
+
+    /* v0.151: restore mobile Game Mode title bar; explanation only in grey box */
+    body.device-phone.mobile-page-game .mobile-menu-header {
+      flex-direction: row !important;
+      gap: 0 !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 0 12px !important;
+      margin-bottom: 8px !important;
+    }
+
+    body.device-phone.mobile-page-game .mobile-menu-title {
+      display: block !important;
+      width: auto !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      line-height: 1 !important;
+      text-align: center !important;
+    }
+
+    body.device-phone .mobile-menu-subtitle,
+    body.device-phone.mobile-page-game .mobile-menu-subtitle {
+      display: none !important;
+    }
+
+
+    /* v0.152: mobile Game Mode title box centred properly */
+    body.device-phone.mobile-page-game .mobile-menu-header {
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 0 14px !important;
+      margin-bottom: 10px !important;
+    }
+
+    body.device-phone.mobile-page-game .mobile-menu-title {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 44px !important;
+      width: min(100%, 390px) !important;
+      padding: 9px 16px 8px !important;
+      border-radius: 0 !important;
+      background: rgba(0,0,0,0.66) !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      line-height: 1 !important;
+      text-align: center !important;
+      transform: none !important;
+    }
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5631,7 +5763,7 @@
   }
   </script>
 
-  <link rel="manifest" href="manifest.json?v=0.148">
+  <link rel="manifest" href="manifest.json?v=0.152">
   <meta name="theme-color" content="#0f1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -5686,6 +5818,7 @@
 <div aria-hidden="true" class="mobile-menu-header">
 <button class="mobile-back-button" id="mobileBackBtn" type="button">← Board</button>
 <div class="mobile-menu-title" id="mobileMenuTitle">Menu</div>
+<div class="mobile-menu-subtitle" id="mobileMenuSubtitle"></div>
 </div>
 <section class="controls settings">
 <button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
@@ -5808,6 +5941,7 @@
 <button class="action secondary full-width" id="resetScoresBtn">Clear leaderboard</button>
 </section>
 </aside>
+<button class="mobile-restart-button" id="mobileRestartBtn" type="button">RESTART game</button>
 <button class="mobile-return-button" id="mobileReturnBtn" type="button">START game</button>
 <nav aria-label="Mobile menu" class="mobile-bottom-nav" id="mobileBottomNav">
 <button class="mobile-nav-button" data-mobile-page="game" type="button">
@@ -5849,7 +5983,7 @@
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.148</p>
+<p class="easter-version">Version 0.152</p>
 </div>
 </div>
 </div>
@@ -5880,7 +6014,7 @@
 </div>
 </div>
 <script>
-    const VERSION = "0.148";
+    const VERSION = "0.152";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -6188,6 +6322,8 @@
     const mobileMenuTitle = document.getElementById("mobileMenuTitle");
     const mobileBackBtn = document.getElementById("mobileBackBtn");
     const mobileReturnBtn = document.getElementById("mobileReturnBtn");
+    const mobileRestartBtn = document.getElementById("mobileRestartBtn");
+    const mobileMenuSubtitle = document.getElementById("mobileMenuSubtitle");
     const mobileNavButtons = document.querySelectorAll(".mobile-nav-button");
     const mobileNavGameValue = document.getElementById("mobileNavGameValue");
     const mobileNavStyleValue = document.getElementById("mobileNavStyleValue");
@@ -6283,6 +6419,8 @@
     let endTime = 0;
     let startTime = 0;
     let timer = null;
+    let gameStartCountdownActive = false;
+    let gameStartCountdownTimers = [];
     let audioContext = null;
     let audioPrimed = false;
     let pitchStep = 0;
@@ -6812,11 +6950,75 @@
       // No sound here. The piece round must not have its own audio cue.
     }
 
+    function gameModeBlurb(mode = currentMode) {
+      if (mode === "sprint") return "Thirty seconds. Hit the named squares. Misses hurt, speed helps.";
+      if (mode === "sixtyFour") return "Clear all 64 squares as quickly as you can. Wrong clicks add time.";
+      if (mode === "kingFinder") return kingFinderXtreme
+        ? "Memorise the kings, then hunt them down after the board fills up."
+        : "Memorise the kings, then find them when the board clears.";
+      if (mode === "pickup") return pickupXtreme
+        ? "Rebuild the starting position, but pieces must move legally."
+        : "Put the pieces back where they belong.";
+      if (mode === "knightHop") return knightHopXtreme
+        ? "A knight’s tour challenge: every square once, no repeats."
+        : "Hop the knight until the board is blacked out.";
+      if (mode === "oddOneOut") return oddOneOutRainbow
+        ? "Spot the odd colour before your eyes give up."
+        : "Find the square that is just wrong enough to annoy you.";
+      if (mode === "draughts") return "Put the draughts where they belong: in the trash.";
+      return "Pick a mode and test your board vision.";
+    }
+
+    function clearGameStartCountdown() {
+      gameStartCountdownTimers.forEach(timerId => clearTimeout(timerId));
+      gameStartCountdownTimers = [];
+      gameStartCountdownActive = false;
+    }
+
+    function runReadySetGoCountdown(onGo, label = currentPanelTitle()) {
+      clearGameStartCountdown();
+      hideResultModal();
+      hideKingCountdownWord();
+
+      gameStartCountdownActive = true;
+      active = true;
+      roundOver = false;
+
+      clearInstructionTarget();
+      targetLabelEl.textContent = label;
+      targetSquareEl.textContent = "Ready";
+      roundStateEl.textContent = "Ready";
+      messageEl.textContent = "Ready. Set. Go.";
+
+      ["Ready", "Set", "GO"].forEach((word, index) => {
+        const timerId = window.setTimeout(() => {
+          if (!gameStartCountdownActive) return;
+          showKingCountdownWord(word);
+          playKingCountdownTone(word);
+          roundStateEl.textContent = word;
+          targetSquareEl.textContent = word;
+        }, index * 1000);
+        gameStartCountdownTimers.push(timerId);
+      });
+
+      const startTimer = window.setTimeout(() => {
+        if (!gameStartCountdownActive) return;
+        gameStartCountdownActive = false;
+        hideKingCountdownWord();
+        if (typeof onGo === "function") onGo();
+        updateMobileGameActionButtons();
+      }, 3000);
+      gameStartCountdownTimers.push(startTimer);
+
+      updateMobileGameActionButtons();
+    }
+
     function resetRound() {
       updateTargetBoxModeClass();
       active = false;
       roundOver = false;
       hideResultModal();
+      clearGameStartCountdown();
       clearInterval(timer);
       clearKingFinderTimers();
       clearPickupTimers();
@@ -6866,7 +7068,7 @@
         targetMode = "kingFinder";
         targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
-        messageEl.textContent = "Click anywhere on the board to start.";
+        messageEl.textContent = gameModeBlurb();
       } else if (currentMode === "pickup") {
         preparePickupMode();
       } else if (currentMode === "oddOneOut") {
@@ -6885,9 +7087,10 @@
         setNormalTarget(false);
         targetLabelEl.textContent = currentPanelTitle();
         setInstructionTarget("Click anywhere on the board to start");
-        messageEl.textContent = "Click anywhere on the board to start.";
+        messageEl.textContent = gameModeBlurb();
       }
 
+      updateMobileGameActionButtons();
       sizeBoardToWindow();
     }
 
@@ -6900,6 +7103,23 @@
         startPickupGame();
         return;
       }
+      if (currentMode === "knightHop") {
+        startKnightHopGame();
+        return;
+      }
+      if (currentMode === "oddOneOut") {
+        startOddOneOutGame();
+        return;
+      }
+      if (currentMode === "draughts") {
+        startDraughtsGame();
+        return;
+      }
+      if (gameStartCountdownActive) return;
+      runReadySetGoCountdown(beginTimedBoardGame, currentPanelTitle());
+    }
+
+    function beginTimedBoardGame() {
       active = true;
       roundOver = false;
       score = 0;
@@ -6923,6 +7143,7 @@
       clearInterval(timer);
       timer = setInterval(updateTimer, 100);
       updateTimer();
+      updateMobileGameActionButtons();
     }
 
     function nextGameplayPitch() {
@@ -7162,7 +7383,7 @@
       roundStateEl.textContent = "Ready";
       targetLabelEl.textContent = currentPanelTitle();
       setInstructionTarget("Click anywhere on the board to start");
-      messageEl.textContent = "Click anywhere on the board to start PICK UP.";
+      messageEl.textContent = gameModeBlurb();
       sizeBoardToWindow();
     }
 
@@ -7448,6 +7669,7 @@
     }
 
     function startDraughtsGame() {
+      if (gameStartCountdownActive) return;
       primeAudioContext();
       clearDraughtsMode();
       clearPickupMode();
@@ -7462,11 +7684,12 @@
       scoreLabelEl.textContent = "Binned";
       scoreEl.textContent = "0/24";
       timeLeftEl.textContent = "0.00";
-      roundStateEl.textContent = "Go";
+      roundStateEl.textContent = "Ready";
       targetLabelEl.textContent = "DRAUGHTS";
       clearInstructionTarget();
+      targetSquareEl.textContent = "Ready";
 
-      beginDraughtsPlay();
+      runReadySetGoCountdown(beginDraughtsPlay, "DRAUGHTS");
     }
 
     function beginDraughtsPlay() {
@@ -7732,17 +7955,20 @@
       roundStateEl.textContent = "Ready";
       targetLabelEl.textContent = currentPanelTitle();
       setInstructionTarget("Click anywhere on the board to start");
-      messageEl.textContent = oddOneOutRainbow
-        ? "ODD ONE OUT RAINBOW selected. Click anywhere on the board to start."
-        : "ODD ONE OUT selected. Click anywhere on the board to start.";
+      messageEl.textContent = gameModeBlurb();
     }
 
     function startOddOneOutGame() {
+      if (gameStartCountdownActive) return;
       oddOneOutLevel = 1;
       score = 0;
-      renderOddOneOutRound();
-      playOddOneOutStartSound();
-      trackGameStart("board");
+      oddOneOutPlaying = false;
+      clearOddOneOutTimer();
+      runReadySetGoCountdown(() => {
+        renderOddOneOutRound();
+        playOddOneOutStartSound();
+        trackGameStart("board");
+      }, currentPanelTitle());
     }
 
     function handleOddOneOutClick(squareName, squareEl) {
@@ -7879,7 +8105,7 @@
       roundStateEl.textContent = "Ready";
       targetLabelEl.textContent = currentPanelTitle();
       setInstructionTarget("Click anywhere on the board to start");
-      messageEl.textContent = "Click anywhere on the board to start Knight hop.";
+      messageEl.textContent = gameModeBlurb();
       sizeBoardToWindow();
     }
 
@@ -8817,6 +9043,10 @@
     }
 
     function handleSquareClick(squareName, squareEl) {
+      if (gameStartCountdownActive) {
+        return;
+      }
+
       if (currentMode === "kingFinder") {
         handleKingFinderClick(squareName, squareEl);
         return;
@@ -9094,6 +9324,7 @@
       }
       resetModalPosition();
       resultModal.classList.add("show");
+      updateMobileGameActionButtons();
     }
 
     function timeRankForSeconds(seconds) {
@@ -9107,6 +9338,7 @@
 
     function hideResultModal() {
       resultModal.classList.remove("show");
+      updateMobileGameActionButtons();
     }
 
     function migrateOldScores() {
@@ -9846,17 +10078,11 @@
       updateLeaderboardVisibility();
       renderScores();
       updateMobileBottomNavStatus();
+      updateMobileMenuSubtitle("game");
+      updateMobileGameActionButtons();
 
       if (showMessage) {
-        messageEl.textContent = currentMode === "kingFinder"
-          ? "King finder selected. Click anywhere on the board to start the game."
-          : currentMode === "pickup"
-            ? (pickupXtreme ? "PICK UP XTREME selected. Click anywhere on the board to start." : "PICK UP selected. Click anywhere on the board to start.")
-            : currentMode === "knightHop"
-              ? (knightHopXtreme ? "Knight hop XTREME selected. Click anywhere on the board to start." : "Knight hop selected. Click anywhere on the board to start.")
-              : currentMode === "oddOneOut"
-                ? (oddOneOutRainbow ? "ODD ONE OUT RAINBOW selected. Click anywhere on the board to start." : "ODD ONE OUT selected. Click anywhere on the board to start.")
-                : `${gameModes[currentMode].name} mode selected.`;
+        messageEl.textContent = gameModeBlurb();
       }
     }
 
@@ -10189,6 +10415,69 @@
 
 
 
+    function mobileGameplayIsActive() {
+      return Boolean(active && !roundOver);
+    }
+
+    function mobileGameplayCanReturn() {
+      return Boolean(
+        gameStartCountdownActive ||
+        active ||
+        roundOver ||
+        resultModal.classList.contains("show")
+      );
+    }
+
+    function updateMobileGameActionButtons() {
+      if (!mobileReturnBtn) return;
+      const gameplayActive = mobileGameplayIsActive();
+      const gameplayReturnable = mobileGameplayCanReturn();
+
+      document.body.classList.toggle("mobile-game-active", gameplayActive);
+      document.body.classList.toggle("mobile-game-returnable", gameplayReturnable);
+
+      mobileReturnBtn.textContent = gameplayReturnable ? "RETURN TO GAME" : "START GAME";
+
+      if (mobileRestartBtn) {
+        const onGamePage = document.body.classList.contains("mobile-page-game");
+        mobileRestartBtn.classList.toggle("hidden", !(gameplayReturnable && onGamePage));
+      }
+    }
+
+    function startCurrentModeFromMobileButton() {
+      if (mobileGameplayCanReturn()) {
+        closeMobileMenuPage();
+        return;
+      }
+
+      closeMobileMenuPage();
+      window.setTimeout(() => {
+        if (mobileGameplayCanReturn()) return;
+        startClockOnFirstClick();
+      }, 80);
+    }
+
+    function restartCurrentModeFromMobileButton() {
+      closeMobileMenuPage();
+      window.setTimeout(() => {
+        resetRound();
+        startClockOnFirstClick();
+      }, 80);
+    }
+
+    function updateMobileMenuSubtitle(resolvedPage = null) {
+      if (!mobileMenuSubtitle) return;
+      const page = resolvedPage || (document.body.classList.contains("mobile-page-game")
+        ? "game"
+        : document.body.classList.contains("mobile-page-board")
+          ? "board"
+          : document.body.classList.contains("mobile-page-scores")
+            ? "scores"
+            : "");
+
+      mobileMenuSubtitle.textContent = page === "game" ? gameModeBlurb() : "";
+    }
+
     function setMobileBottomNavMainState() {
       mobileNavButtons.forEach(button => {
         button.classList.toggle("active", button.dataset.mobilePage === "game");
@@ -10207,17 +10496,21 @@
       document.body.classList.remove("mobile-page-game", "mobile-page-board", "mobile-page-scores");
       document.body.classList.add(`mobile-page-${resolvedPage}`);
       mobileMenuTitle.textContent = titles[resolvedPage];
+      updateMobileMenuSubtitle(resolvedPage);
 
       mobileNavButtons.forEach(button => {
         button.classList.toggle("active", button.dataset.mobilePage === resolvedPage);
       });
 
+      updateMobileGameActionButtons();
       window.setTimeout(sizeBoardToWindow, 60);
     }
 
     function closeMobileMenuPage() {
       document.body.classList.remove("mobile-menu-open", "mobile-page-game", "mobile-page-board", "mobile-page-scores");
       setMobileBottomNavMainState();
+      updateMobileMenuSubtitle("");
+      updateMobileGameActionButtons();
       window.setTimeout(sizeBoardToWindow, 60);
     }
 
@@ -10234,7 +10527,8 @@
     }
 
     mobileBackBtn.addEventListener("click", closeMobileMenuPage);
-    mobileReturnBtn.addEventListener("click", closeMobileMenuPage);
+    mobileReturnBtn.addEventListener("click", startCurrentModeFromMobileButton);
+    mobileRestartBtn?.addEventListener("click", restartCurrentModeFromMobileButton);
 
     if (boardTypeToggle && boardTypeContent) {
       boardTypeToggle.addEventListener("click", () => {
@@ -10581,7 +10875,7 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.148").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.152").catch(() => {});
     });
   }
 </script>
