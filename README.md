@@ -14,12 +14,12 @@ Play KWIK CHESS at:
 
 ## Game modes
 
- **30s Sprint**  click as many called squares as possible in 30 seconds.
- **64 Squares**  find every square on the board as quickly as you can.
- **King Finder / King Finder XTREME**  remember where the kings were placed, then find them after the board clears.
- **Pick Up / Pick Up XTREME**  place the chess pieces back onto their correct starting squares. XTREME adds legal-move restrictions.
- **Knight Hop / Knight Hop XTREME**  move a knight around the board. XTREME is a knight’s tour-style challenge where every square must be visited once.
- **Odd One Out / Odd One Out Rainbow**  spot the square that does not match. It becomes harder as you level up.
+ - **30s Sprint**  click as many called squares as possible in 30 seconds.
+ - **64 Squares**  find every square on the board as quickly as you can.
+ - **King Finder / King Finder XTREME**  remember where the kings were placed, then find them after the board clears.
+ - **Pick Up / Pick Up XTREME**  place the chess pieces back onto their correct starting squares. XTREME adds legal-move restrictions.
+ - **Knight Hop / Knight Hop XTREME**  move a knight around the board. XTREME is a knight’s tour-style challenge where every square must be visited once.
+ - **Odd One Out / Odd One Out Rainbow**  spot the square that does not match. It becomes harder as you level up.
 
 ## Why I made it
 
