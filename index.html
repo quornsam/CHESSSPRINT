@@ -5,6 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>KWIK CHESS - Chess board training game</title>
+<link rel="manifest" href="./manifest.json"/>
+<meta name="theme-color" content="#0f1117"/>
+<link rel="apple-touch-icon" href="./icons/icon-192.png"/>
 <style>
     :root {
       --light-square: #f0d9b5;
@@ -6421,7 +6424,7 @@ body.mode-kingmaker .modal-note{
 }
 
 
-/* v0.165: production PWA label, no suffix */
+/* v0.165: production PWA label, no TEST suffix */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(34px,6.2vmin,52px) !important;
@@ -6469,7 +6472,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 }
 
 
-/* v0.165: production PWA label, no suffix after v0.162 oversize */
+/* v0.165: production PWA label, no TEST suffix after v0.162 oversize */
 body.mode-kingmaker .km-next-preview{
   overflow:visible !important;
   min-height:clamp(30px,5.2vmin,44px) !important;
@@ -6593,6 +6596,1295 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
   isolation:auto !important;
 }
 
+
+/* v0.172 TEST: KINGMAKER CHESS mode beta manual merges */
+.board.kingmaker-mode .square.km-chess-selected{
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 227, 103, .98),
+    inset 0 0 0 8px rgba(0,0,0,.42),
+    0 0 18px rgba(255, 227, 103, .65) !important;
+}
+
+.board.kingmaker-mode .square.km-chess-source .km-tile{
+  animation: km-chess-source-pop .22s ease both;
+}
+
+@keyframes km-chess-source-pop{
+  0%{ transform:scale(.94); }
+  60%{ transform:scale(1.08); }
+  100%{ transform:scale(1); }
+}
+
+
+/* v0.173 TEST: CHESS mode beta uses the in-game modal, not a browser alert */
+.modal-actions.single{
+  grid-template-columns:1fr;
+}
+
+.km-chess-beta-modal h2{
+  color:var(--accent);
+}
+
+.km-chess-beta-modal .modal-note{
+  margin-top:14px;
+  font-size:1.02rem;
+}
+
+
+/* v0.174 TEST: CHESS mode beta copy/title polish */
+.km-chess-beta-modal h2 span{
+  display:block;
+  font-size:.68em;
+  letter-spacing:-.04em;
+  margin-top:4px;
+}
+
+.km-chess-beta-modal .modal-note{
+  max-width:34rem;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+/* v0.176 TEST: KINGMAKER is the primary game button */
+.mode-button[data-mode="kingmaker"]{
+  grid-column:1 / -1;
+  min-height:54px;
+  font-size:1.03rem;
+  letter-spacing:.02em;
+}
+
+body.device-phone .mode-button[data-mode="kingmaker"],
+body.device-mobile .mode-button[data-mode="kingmaker"]{
+  grid-column:1 / -1 !important;
+  min-height:54px;
+}
+
+
+/* v0.177 TEST: KINGMAKER is double-width only, not double-height or oversized text */
+.mode-button.mode-kingmaker,
+.mode-button[data-mode="kingmaker"]{
+  min-height:unset !important;
+  height:auto !important;
+  font-size:inherit !important;
+  padding-block:inherit !important;
+}
+
+.mode-button.mode-kingmaker span,
+.mode-button[data-mode="kingmaker"] span{
+  font-size:inherit !important;
+  line-height:inherit !important;
+}
+
+body.device-phone .mode-button.mode-kingmaker,
+body.device-phone .mode-button[data-mode="kingmaker"],
+body.device-mobile .mode-button.mode-kingmaker,
+body.device-mobile .mode-button[data-mode="kingmaker"]{
+  min-height:unset !important;
+  height:auto !important;
+  font-size:inherit !important;
+}
+
+
+/* v0.178 TEST: force the Game mode panel buttons to be visually identical */
+.mode-grid{
+  align-items:stretch !important;
+  grid-auto-rows:56px !important;
+}
+
+.mode-grid .mode-button,
+.mode-grid .mode-button[data-mode],
+.mode-grid .mode-button[data-mode="kingmaker"]{
+  min-height:56px !important;
+  height:56px !important;
+  max-height:56px !important;
+  padding:10px 12px !important;
+  font-size:.82rem !important;
+  line-height:1.05 !important;
+  letter-spacing:.08em !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+}
+
+.mode-grid .mode-button *,
+.mode-grid .mode-button[data-mode="kingmaker"] *{
+  font-size:inherit !important;
+  line-height:inherit !important;
+  letter-spacing:inherit !important;
+}
+
+.mode-grid .mode-button[data-mode="kingmaker"]{
+  grid-column:span 2 !important;
+}
+
+body.device-phone .mode-grid,
+body.device-mobile .mode-grid{
+  grid-auto-rows:52px !important;
+}
+
+body.device-phone .mode-grid .mode-button,
+body.device-mobile .mode-grid .mode-button,
+body.device-phone .mode-grid .mode-button[data-mode="kingmaker"],
+body.device-mobile .mode-grid .mode-button[data-mode="kingmaker"]{
+  min-height:52px !important;
+  height:52px !important;
+  max-height:52px !important;
+  padding:9px 10px !important;
+  font-size:.78rem !important;
+  line-height:1.05 !important;
+}
+
+
+/* v0.180 TEST: Game selection + title/help in middle HUD box.
+   Rebuilt from v0.178. No v0.179 MutationObserver loop. */
+.stat#middleStat{ position:relative; }
+.classic-mode-title{ display:none; }
+
+.game-title-help-button{
+  display:none;
+  position:absolute;
+  top:7px;
+  right:8px;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.26);
+  background:rgba(255,255,255,.10);
+  color:var(--text);
+  font-weight:1000;
+  font-size:.82rem;
+  line-height:1;
+  cursor:pointer;
+}
+
+body.classic-title-strip #middleStat #scoreLabel,
+body.classic-title-strip #middleStat #score{
+  display:none !important;
+}
+
+body.classic-title-strip #middleStat .classic-mode-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100%;
+  padding:0 28px;
+  text-align:center;
+  color:var(--text);
+  font-weight:1000;
+  font-size:clamp(1.05rem, 3.1vw, 1.75rem);
+  line-height:.95;
+  letter-spacing:-.035em;
+}
+
+body.classic-title-strip #middleStat .game-title-help-button{
+  display:grid;
+  place-items:center;
+}
+
+.target-box.hide-target-title .target-label{
+  display:none !important;
+}
+
+.game-help-modal{ position:relative; text-align:left; }
+.game-help-modal h2{
+  padding-right:34px;
+  text-align:left;
+  font-size:clamp(1.7rem, 5vw, 2.8rem);
+}
+.game-help-modal .modal-note{
+  margin-top:14px;
+  font-size:1.02rem;
+  color:var(--text);
+}
+.game-help-close{ top:14px; right:14px; }
+
+body.device-phone.classic-title-strip #middleStat .classic-mode-title,
+body.device-mobile.classic-title-strip #middleStat .classic-mode-title{
+  font-size:clamp(.92rem, 5vw, 1.32rem);
+  padding:0 24px;
+}
+
+body.device-phone .game-title-help-button,
+body.device-mobile .game-title-help-button{
+  width:20px;
+  height:20px;
+  top:6px;
+  right:6px;
+  font-size:.75rem;
+}
+
+
+/* v0.181 TEST: HUD height locked, middle title highlighted, action box shorter */
+.top-strip{
+  align-items:stretch !important;
+  grid-auto-rows:82px !important;
+}
+
+.top-strip > .stat{
+  height:82px !important;
+  min-height:82px !important;
+  max-height:82px !important;
+  overflow:hidden !important;
+}
+
+body.classic-title-strip #middleStat{
+  border-color:rgba(80, 220, 130, 0.95) !important;
+  background:linear-gradient(180deg, rgba(80, 220, 130, 0.32), rgba(80, 220, 130, 0.15)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(80, 220, 130, 0.55),
+    0 0 18px rgba(80, 220, 130, 0.22) !important;
+}
+
+body.classic-title-strip #middleStat .classic-mode-title{
+  font-size:clamp(.88rem, 2.35vw, 1.48rem) !important;
+  line-height:.92 !important;
+  letter-spacing:.035em !important;
+  text-transform:uppercase;
+  max-height:58px;
+  overflow:hidden;
+  text-wrap:balance;
+}
+
+.target-box.action-box{
+  padding:4px 10px !important;
+}
+
+.target-box.action-box .target{
+  min-height:clamp(1.25rem, 3.1vw, 2.15rem) !important;
+  font-size:clamp(1.25rem, 3.1vw, 2.15rem) !important;
+  line-height:1.05 !important;
+  margin-top:0 !important;
+}
+
+.target-box.action-box .target-label{
+  margin-bottom:0 !important;
+}
+
+body.device-phone .top-strip,
+body.device-mobile .top-strip{
+  grid-auto-rows:74px !important;
+}
+
+body.device-phone .top-strip > .stat,
+body.device-mobile .top-strip > .stat{
+  height:74px !important;
+  min-height:74px !important;
+  max-height:74px !important;
+}
+
+body.device-phone.classic-title-strip #middleStat .classic-mode-title,
+body.device-mobile.classic-title-strip #middleStat .classic-mode-title{
+  font-size:clamp(.72rem, 4.15vw, 1.05rem) !important;
+  max-height:50px;
+}
+
+body.device-phone .target-box.action-box .target,
+body.device-mobile .target-box.action-box .target{
+  min-height:clamp(1.05rem, 4.4vw, 1.55rem) !important;
+  font-size:clamp(1.05rem, 4.4vw, 1.55rem) !important;
+}
+
+
+/* v0.182 TEST: yellow/gold selected state and genuinely half-height action box */
+body.classic-title-strip #middleStat{
+  border-color:rgba(246,200,95,0.35) !important;
+  background:linear-gradient(135deg, rgba(246,200,95,0.20), rgba(246,200,95,0.06)) !important;
+  box-shadow:none !important;
+}
+
+body.classic-title-strip #middleStat .classic-mode-title{
+  text-transform:none !important;
+}
+
+.mode-button.active,
+.mode-button[aria-pressed="true"],
+body.device-phone .mode-button.active,
+body.device-mobile .mode-button.active{
+  border-color:rgba(246,200,95,0.35) !important;
+  background:linear-gradient(135deg, rgba(246,200,95,0.20), rgba(246,200,95,0.06)) !important;
+  box-shadow:none !important;
+  color:var(--text) !important;
+}
+
+.target-box.action-box{
+  box-sizing:border-box !important;
+  height:70px !important;
+  min-height:70px !important;
+  max-height:70px !important;
+  padding:4px 10px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+}
+
+.target-box.action-box .target{
+  min-height:0 !important;
+  height:auto !important;
+  max-height:44px !important;
+  font-size:clamp(1.1rem, 2.5vw, 1.85rem) !important;
+  line-height:1.05 !important;
+  margin:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.target-box.action-box .target-label{
+  display:none !important;
+}
+
+body.device-phone .target-box.action-box,
+body.device-mobile .target-box.action-box{
+  height:54px !important;
+  min-height:54px !important;
+  max-height:54px !important;
+  padding:3px 8px !important;
+}
+
+body.device-phone .target-box.action-box .target,
+body.device-mobile .target-box.action-box .target{
+  max-height:42px !important;
+  font-size:clamp(.9rem, 4vw, 1.25rem) !important;
+}
+
+
+/* v0.183 TEST: active game/title colour always matches the action box, and action box is shorter */
+:root{
+  --action-bg: linear-gradient(135deg, rgba(246,200,95,0.20), rgba(246,200,95,0.06));
+  --action-border: rgba(246,200,95,0.35);
+  --action-shadow: none;
+}
+
+/* The target/action box owns the colour variables for each mode. */
+.target-box,
+.target-box.mode-sprint,
+.target-box.mode-sixtyFour,
+.target-box.mode-kingFinder,
+.target-box.mode-pickup,
+.target-box.mode-knightHop,
+.target-box.mode-oddOneOut,
+.target-box.mode-kingmaker,
+.target-box.mode-draughts{
+  --action-bg: linear-gradient(135deg, rgba(246,200,95,0.20), rgba(246,200,95,0.06));
+  --action-border: rgba(246,200,95,0.35);
+  --action-shadow: none;
+  background: var(--action-bg) !important;
+  border-color: var(--action-border) !important;
+  box-shadow: var(--action-shadow) !important;
+}
+
+/* Bonus action box remains purple, and the selected button/title follow it. */
+.target-box.bonus{
+  --action-bg: linear-gradient(135deg, rgba(155,124,255,0.26), rgba(155,124,255,0.08));
+  --action-border: rgba(155,124,255,0.50);
+  --action-shadow: none;
+  background: var(--action-bg) !important;
+  border-color: var(--action-border) !important;
+  box-shadow: var(--action-shadow) !important;
+}
+
+/* Active selected game button + middle HUD title box use the same variables. */
+.mode-button.active,
+.mode-button[aria-pressed="true"],
+body.device-phone .mode-button.active,
+body.device-mobile .mode-button.active,
+body.classic-title-strip #middleStat{
+  border-color: var(--action-border) !important;
+  background: var(--action-bg) !important;
+  box-shadow: var(--action-shadow) !important;
+  color: var(--text) !important;
+}
+
+/* Shorter action box for every content type: sentence, coordinate, piece icon/card. */
+.target-box{
+  box-sizing:border-box !important;
+  height:58px !important;
+  min-height:58px !important;
+  max-height:58px !important;
+  padding:3px 10px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+}
+
+.target-box .target-label{
+  flex:0 0 auto !important;
+  font-size:.58rem !important;
+  line-height:1 !important;
+  margin:0 0 1px !important;
+}
+
+.target-box .target{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:48px !important;
+  font-size:clamp(1.2rem, 3.05vw, 2.25rem) !important;
+  line-height:1 !important;
+  margin:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:normal !important;
+  overflow:hidden !important;
+  text-wrap:balance;
+}
+
+.target-box .target.instruction-target{
+  font-size:clamp(.92rem, 2.2vw, 1.35rem) !important;
+  line-height:1.05 !important;
+}
+
+.target-box .target.piece-target{
+  min-height:0 !important;
+  max-height:50px !important;
+}
+
+.target-box .target-piece-card{
+  width:46px !important;
+  height:46px !important;
+  max-width:46px !important;
+  max-height:46px !important;
+}
+
+.target-box.hide-target-title .target-label,
+.target-box.action-box .target-label{
+  display:none !important;
+}
+
+.target-box.hide-target-title .target,
+.target-box.action-box .target{
+  max-height:52px !important;
+}
+
+body.device-phone .target-box,
+body.device-mobile .target-box{
+  height:50px !important;
+  min-height:50px !important;
+  max-height:50px !important;
+  padding:2px 8px !important;
+}
+
+body.device-phone .target-box .target-label,
+body.device-mobile .target-box .target-label{
+  font-size:.52rem !important;
+}
+
+body.device-phone .target-box .target,
+body.device-mobile .target-box .target{
+  max-height:44px !important;
+  font-size:clamp(1rem, 4.6vw, 1.55rem) !important;
+}
+
+body.device-phone .target-box .target.instruction-target,
+body.device-mobile .target-box .target.instruction-target{
+  font-size:clamp(.78rem, 3.8vw, 1.1rem) !important;
+}
+
+body.device-phone .target-box .target-piece-card,
+body.device-mobile .target-box .target-piece-card{
+  width:38px !important;
+  height:38px !important;
+  max-width:38px !important;
+  max-height:38px !important;
+}
+
+
+/* v0.184 TEST: fixed-size action box, non-cropped pieces, per-game matching colours, orange help modal */
+
+/* Per-game action colour variables live on body so title box, action box and active game button all match. */
+body.game-mode-sprint{
+  --action-bg: linear-gradient(135deg, rgba(246,154,55,0.30), rgba(246,154,55,0.08));
+  --action-border: rgba(246,154,55,0.56);
+  --action-shadow: none;
+}
+
+body.game-mode-sixtyFour{
+  --action-bg: linear-gradient(135deg, rgba(60,166,255,0.28), rgba(60,166,255,0.08));
+  --action-border: rgba(60,166,255,0.56);
+  --action-shadow: none;
+}
+
+body.game-mode-kingFinder{
+  --action-bg: linear-gradient(135deg, rgba(157,93,255,0.30), rgba(157,93,255,0.08));
+  --action-border: rgba(157,93,255,0.58);
+  --action-shadow: none;
+}
+
+body.game-mode-pickup{
+  --action-bg: linear-gradient(135deg, rgba(38,196,107,0.28), rgba(38,196,107,0.08));
+  --action-border: rgba(38,196,107,0.56);
+  --action-shadow: none;
+}
+
+body.game-mode-knightHop{
+  --action-bg: linear-gradient(135deg, rgba(50,210,220,0.28), rgba(50,210,220,0.08));
+  --action-border: rgba(50,210,220,0.56);
+  --action-shadow: none;
+}
+
+body.game-mode-oddOneOut{
+  --action-bg: linear-gradient(135deg, rgba(255,92,190,0.28), rgba(255,210,70,0.09));
+  --action-border: rgba(255,115,210,0.58);
+  --action-shadow: none;
+}
+
+body.game-mode-kingmaker{
+  --action-bg: linear-gradient(135deg, rgba(246,200,95,0.24), rgba(246,154,55,0.08));
+  --action-border: rgba(246,200,95,0.50);
+  --action-shadow: none;
+}
+
+/* Force the action box itself to use the shared colour variables. */
+.target-box,
+.target-box.bonus,
+.target-box.mode-sprint,
+.target-box.mode-sixtyFour,
+.target-box.mode-kingFinder,
+.target-box.mode-pickup,
+.target-box.mode-knightHop,
+.target-box.mode-oddOneOut,
+.target-box.mode-kingmaker,
+.target-box.mode-draughts{
+  background: var(--action-bg) !important;
+  border-color: var(--action-border) !important;
+  box-shadow: var(--action-shadow) !important;
+}
+
+/* Selected game button and title HUD box match the action box for every game. */
+.mode-button.active,
+.mode-button[aria-pressed="true"],
+body.device-phone .mode-button.active,
+body.device-mobile .mode-button.active,
+body.classic-title-strip #middleStat{
+  background: var(--action-bg) !important;
+  border-color: var(--action-border) !important;
+  box-shadow: var(--action-shadow) !important;
+  color: var(--text) !important;
+}
+
+/* KINGMAKER has no title HUD box, so show the easy instructions button inside the Score HUD box. */
+body.mode-kingmaker #middleStat .game-title-help-button{
+  display:grid !important;
+  place-items:center;
+}
+
+/* Fixed action box: it must never grow or shrink with content. */
+.target-box,
+.target-box.action-box,
+.target-box.bonus{
+  box-sizing:border-box !important;
+  flex:0 0 50px !important;
+  height:50px !important;
+  min-height:50px !important;
+  max-height:50px !important;
+  padding:2px 9px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+}
+
+.target-box .target-label{
+  flex:0 0 9px !important;
+  height:9px !important;
+  min-height:9px !important;
+  max-height:9px !important;
+  font-size:7px !important;
+  line-height:9px !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+}
+
+/* The main contents of the action box. Coordinates, icons and sentences all fit here. */
+.target-box .target{
+  flex:1 1 0 !important;
+  min-height:0 !important;
+  height:37px !important;
+  max-height:37px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  white-space:normal !important;
+  text-align:center !important;
+  text-wrap:balance;
+  font-size:clamp(1.05rem, 2.55vw, 1.85rem) !important;
+  line-height:1 !important;
+}
+
+/* Instruction sentences get the whole box and shrink to fit. */
+.target-box.action-box .target-label,
+.target-box.hide-target-title .target-label{
+  display:none !important;
+}
+
+.target-box.action-box .target,
+.target-box.hide-target-title .target{
+  height:46px !important;
+  max-height:46px !important;
+}
+
+.target-box .target.instruction-target{
+  font-size:clamp(.78rem, 1.75vw, 1.08rem) !important;
+  line-height:1.04 !important;
+  letter-spacing:-.015em !important;
+}
+
+/* Piece targets: make the piece smaller instead of cropping it. */
+.target-box .target.piece-target{
+  min-height:0 !important;
+  height:37px !important;
+  max-height:37px !important;
+  overflow:visible !important;
+}
+
+.target-box .target-piece-card{
+  width:34px !important;
+  height:34px !important;
+  max-width:34px !important;
+  max-height:34px !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:visible !important;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.32)) !important;
+}
+
+.target-box .target-piece-symbol.unicode-piece{
+  width:34px !important;
+  height:34px !important;
+  font-size:31px !important;
+  line-height:1 !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:visible !important;
+  transform:none !important;
+}
+
+/* Make the in-title info button read as an i button. */
+.game-title-help-button{
+  font-family:inherit !important;
+  font-style:normal !important;
+  text-transform:none !important;
+}
+
+/* Orange/gradient centred instruction modal. */
+.game-help-modal{
+  background:
+    radial-gradient(circle at top, rgba(255,211,95,.30), transparent 42%),
+    linear-gradient(135deg, rgba(246,154,55,.96), rgba(91,46,20,.98)) !important;
+  border-color:rgba(255,211,95,.72) !important;
+  text-align:center !important;
+  color:#fff !important;
+}
+
+.game-help-modal h2{
+  text-align:center !important;
+  padding-right:0 !important;
+  color:#fff !important;
+  text-shadow:0 3px 14px rgba(0,0,0,.28);
+}
+
+.game-help-modal .modal-note{
+  text-align:center !important;
+  color:#fff !important;
+  max-width:34rem;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  line-height:1.35 !important;
+}
+
+.game-help-modal .game-help-close{
+  color:#fff !important;
+  background:rgba(0,0,0,.22) !important;
+  border-color:rgba(255,255,255,.42) !important;
+}
+
+/* Mobile fixed size and non-cropped piece target. */
+body.device-phone .target-box,
+body.device-mobile .target-box,
+body.device-phone .target-box.action-box,
+body.device-mobile .target-box.action-box,
+body.device-phone .target-box.bonus,
+body.device-mobile .target-box.bonus{
+  flex:0 0 44px !important;
+  height:44px !important;
+  min-height:44px !important;
+  max-height:44px !important;
+  padding:2px 7px !important;
+}
+
+body.device-phone .target-box .target-label,
+body.device-mobile .target-box .target-label{
+  flex-basis:8px !important;
+  height:8px !important;
+  max-height:8px !important;
+  font-size:6.5px !important;
+  line-height:8px !important;
+}
+
+body.device-phone .target-box .target,
+body.device-mobile .target-box .target{
+  height:32px !important;
+  max-height:32px !important;
+  font-size:clamp(.92rem, 4.1vw, 1.25rem) !important;
+}
+
+body.device-phone .target-box.action-box .target,
+body.device-mobile .target-box.action-box .target,
+body.device-phone .target-box.hide-target-title .target,
+body.device-mobile .target-box.hide-target-title .target{
+  height:40px !important;
+  max-height:40px !important;
+}
+
+body.device-phone .target-box .target.instruction-target,
+body.device-mobile .target-box .target.instruction-target{
+  font-size:clamp(.68rem, 3.3vw, .95rem) !important;
+}
+
+body.device-phone .target-box .target-piece-card,
+body.device-mobile .target-box .target-piece-card{
+  width:30px !important;
+  height:30px !important;
+  max-width:30px !important;
+  max-height:30px !important;
+}
+
+body.device-phone .target-box .target-piece-symbol.unicode-piece,
+body.device-mobile .target-box .target-piece-symbol.unicode-piece{
+  width:30px !important;
+  height:30px !important;
+  font-size:27px !important;
+}
+
+
+
+/* v0.185: bonus action-box piece overlap fix + clearer orange instruction modals */
+/* Older bonus-piece rules set 58px min-sizes with !important. These final overrides reset every dimension so the bonus piece cannot push into the label or spill out of the fixed action box. */
+.target-box.bonus .target-label{
+  flex:0 0 10px !important;
+  height:10px !important;
+  min-height:10px !important;
+  max-height:10px !important;
+  line-height:10px !important;
+  font-size:7.5px !important;
+  text-align:center !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+}
+
+.target-box.bonus .target.piece-target{
+  flex:0 0 34px !important;
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:hidden !important;
+  padding:0 !important;
+  margin:0 !important;
+  line-height:1 !important;
+}
+
+.target-box.bonus .target.piece-target .target-piece-card{
+  box-sizing:border-box !important;
+  flex:0 0 30px !important;
+  inline-size:30px !important;
+  block-size:30px !important;
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  min-height:30px !important;
+  max-width:30px !important;
+  max-height:30px !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  margin:0 auto !important;
+  line-height:1 !important;
+  overflow:hidden !important;
+  transform:none !important;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.26)) !important;
+}
+
+.target-box.bonus .target.piece-target .target-piece-symbol.unicode-piece{
+  box-sizing:border-box !important;
+  inline-size:28px !important;
+  block-size:28px !important;
+  width:28px !important;
+  height:28px !important;
+  min-width:28px !important;
+  min-height:28px !important;
+  max-width:28px !important;
+  max-height:28px !important;
+  display:grid !important;
+  place-items:center !important;
+  font-size:25px !important;
+  line-height:.88 !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  transform:translateY(.015em) !important;
+  text-align:center !important;
+}
+
+body.device-phone .target-box.bonus,
+body.device-mobile .target-box.bonus{
+  flex-basis:44px !important;
+  height:44px !important;
+  min-height:44px !important;
+  max-height:44px !important;
+}
+
+body.device-phone .target-box.bonus .target-label,
+body.device-mobile .target-box.bonus .target-label{
+  flex-basis:8px !important;
+  height:8px !important;
+  min-height:8px !important;
+  max-height:8px !important;
+  line-height:8px !important;
+  font-size:6px !important;
+}
+
+body.device-phone .target-box.bonus .target.piece-target,
+body.device-mobile .target-box.bonus .target.piece-target{
+  flex-basis:30px !important;
+  height:30px !important;
+  min-height:30px !important;
+  max-height:30px !important;
+}
+
+body.device-phone .target-box.bonus .target.piece-target .target-piece-card,
+body.device-mobile .target-box.bonus .target.piece-target .target-piece-card{
+  flex-basis:26px !important;
+  inline-size:26px !important;
+  block-size:26px !important;
+  width:26px !important;
+  height:26px !important;
+  min-width:26px !important;
+  min-height:26px !important;
+  max-width:26px !important;
+  max-height:26px !important;
+}
+
+body.device-phone .target-box.bonus .target.piece-target .target-piece-symbol.unicode-piece,
+body.device-mobile .target-box.bonus .target.piece-target .target-piece-symbol.unicode-piece{
+  inline-size:24px !important;
+  block-size:24px !important;
+  width:24px !important;
+  height:24px !important;
+  min-width:24px !important;
+  min-height:24px !important;
+  max-width:24px !important;
+  max-height:24px !important;
+  font-size:21px !important;
+}
+
+/* Make both instruction popups unmistakably orange/gradient and centrally aligned. */
+.game-help-modal,
+.instructions-modal{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,230,140,.38), transparent 46%),
+    linear-gradient(145deg, rgba(255,169,55,.98), rgba(201,91,24,.97) 48%, rgba(70,32,16,.98)) !important;
+  border:1px solid rgba(255,226,145,.82) !important;
+  box-shadow:0 30px 86px rgba(0,0,0,.62), inset 0 0 0 1px rgba(255,255,255,.18) !important;
+  text-align:center !important;
+  color:#fff !important;
+}
+
+.game-help-modal h2,
+.instructions-modal h2,
+.instructions-modal h3{
+  text-align:center !important;
+  padding-right:0 !important;
+  color:#fff !important;
+  text-shadow:0 3px 14px rgba(0,0,0,.34) !important;
+}
+
+.game-help-modal .modal-note,
+.instructions-modal p{
+  text-align:center !important;
+  color:#fff !important;
+  max-width:42rem !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  line-height:1.45 !important;
+  font-weight:800 !important;
+}
+
+.instructions-modal h3{
+  margin-top:20px !important;
+  margin-bottom:7px !important;
+}
+
+.instructions-modal h3:first-of-type{
+  margin-top:0 !important;
+}
+
+.game-help-close,
+.instructions-close{
+  color:#fff !important;
+  background:rgba(0,0,0,.25) !important;
+  border:1px solid rgba(255,255,255,.42) !important;
+}
+
+.game-title-help-button{
+  background:linear-gradient(135deg, #ffd46d, #f69a37) !important;
+  border-color:rgba(255,235,170,.8) !important;
+  color:#111 !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.25) !important;
+}
+
+body.mode-kingmaker #middleStat .game-title-help-button,
+body.classic-title-strip #middleStat .game-title-help-button{
+  display:grid !important;
+  place-items:center !important;
+}
+
+
+
+/* v0.186 TEST: Sprint bonus action box shows only the piece; Kingmaker help lives on Gold Tiles. */
+#rightStat {
+  position: relative;
+}
+
+.gold-tiles-help-button {
+  display: none;
+}
+
+body.mode-kingmaker #middleStat .game-title-help-button {
+  display: none !important;
+}
+
+body.mode-kingmaker #rightStat .gold-tiles-help-button {
+  display: grid !important;
+  place-items: center !important;
+}
+
+.target-box.bonus-piece-only .target-label {
+  display: none !important;
+}
+
+.target-box.bonus-piece-only {
+  justify-content: center !important;
+}
+
+.target-box.bonus-piece-only .target,
+.target-box.bonus-piece-only .target.piece-target {
+  height: 38px !important;
+  max-height: 38px !important;
+  min-height: 0 !important;
+}
+
+.target-box.bonus-piece-only .target-piece-card {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+}
+
+.target-box.bonus-piece-only .target-piece-symbol.unicode-piece {
+  font-size: 28px !important;
+}
+
+
+/* v0.187 TEST: reset scores is per current mode; Kingmaker help button stays on Gold Tiles, including mobile. */
+body.mode-kingmaker #gameTitleHelpBtn,
+body.device-phone.mode-kingmaker #gameTitleHelpBtn,
+body.device-mobile.mode-kingmaker #gameTitleHelpBtn,
+body.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-phone.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-mobile.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.mode-kingmaker #rightStat,
+body.device-phone.mode-kingmaker #rightStat,
+body.device-mobile.mode-kingmaker #rightStat {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn {
+  display: grid !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  place-items: center !important;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  z-index: 20 !important;
+}
+
+body:not(.mode-kingmaker) #gameTitleHelpGoldBtn {
+  display: none !important;
+}
+
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn {
+  width: 18px !important;
+  height: 18px !important;
+  top: 3px !important;
+  right: 3px !important;
+  font-size: .68rem !important;
+}
+
+
+/* v0.189 TEST: mobile Kingmaker help is only on the Gold Tiles stat box. */
+body.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-phone.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-mobile.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-phone.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-mobile.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.mode-kingmaker #rightStat,
+body.device-phone.mode-kingmaker #rightStat,
+body.device-mobile.mode-kingmaker #rightStat {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  place-items: center !important;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  z-index: 30 !important;
+}
+
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden {
+  width: 18px !important;
+  height: 18px !important;
+  top: 3px !important;
+  right: 3px !important;
+  font-size: .68rem !important;
+}
+
+body:not(.mode-kingmaker) #gameTitleHelpGoldBtn,
+body:not(.mode-kingmaker) #gameTitleHelpGoldBtn.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
+/* v0.189 TEST: actual Kingmaker help-button fix.
+   The old title-strip rule used `display:grid !important` on the middle title box.
+   Normal inline display:none and `.hidden` could not reliably beat it, especially during mobile class timing.
+   Key this to both game-mode-kingmaker and mode-kingmaker, then force the Gold Tiles button visible. */
+body.game-mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-phone.game-mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-phone.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-mobile.game-mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-mobile.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.game-mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-phone.game-mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-phone.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-mobile.game-mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button),
+body.device-mobile.mode-kingmaker #middleStat .game-title-help-button:not(.gold-tiles-help-button) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.game-mode-kingmaker #rightStat,
+body.mode-kingmaker #rightStat,
+body.device-phone.game-mode-kingmaker #rightStat,
+body.device-phone.mode-kingmaker #rightStat,
+body.device-mobile.game-mode-kingmaker #rightStat,
+body.device-mobile.mode-kingmaker #rightStat {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+body.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-phone.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  place-items: center !important;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  z-index: 40 !important;
+}
+
+body.device-phone.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.game-mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn {
+  width: 18px !important;
+  height: 18px !important;
+  top: 3px !important;
+  right: 3px !important;
+  font-size: .68rem !important;
+}
+
+
+/* v0.190: actual mobile Kingmaker info placement.
+   Diagnosis: the prior patch only fought the cascade and made the Gold Tiles icon visible.
+   It did not reserve/clear layout space, so on mobile the icon sat over the GOLD TILES label
+   and the old title-strip rules could still make the middle stat behave like a title box.
+   Kingmaker must use five stat boxes: Moves, Score, Gold Tiles, Best, Next.
+   The only Kingmaker help button lives inside Gold Tiles and does not cover the label. */
+body.mode-kingmaker.classic-title-strip #middleStat,
+body.device-phone.mode-kingmaker.classic-title-strip #middleStat,
+body.device-mobile.mode-kingmaker.classic-title-strip #middleStat {
+  border-color: rgba(255,255,255,0.06) !important;
+  background: var(--panel-2) !important;
+  box-shadow: none !important;
+}
+
+body.mode-kingmaker.classic-title-strip #middleStat #scoreLabel,
+body.mode-kingmaker.classic-title-strip #middleStat #score,
+body.device-phone.mode-kingmaker.classic-title-strip #middleStat #scoreLabel,
+body.device-phone.mode-kingmaker.classic-title-strip #middleStat #score,
+body.device-mobile.mode-kingmaker.classic-title-strip #middleStat #scoreLabel,
+body.device-mobile.mode-kingmaker.classic-title-strip #middleStat #score {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body.mode-kingmaker.classic-title-strip #middleStat .classic-mode-title,
+body.device-phone.mode-kingmaker.classic-title-strip #middleStat .classic-mode-title,
+body.device-mobile.mode-kingmaker.classic-title-strip #middleStat .classic-mode-title {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-phone.mode-kingmaker #middleStat #gameTitleHelpBtn,
+body.device-mobile.mode-kingmaker #middleStat #gameTitleHelpBtn {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.mode-kingmaker #rightStat,
+body.device-phone.mode-kingmaker #rightStat,
+body.device-mobile.mode-kingmaker #rightStat {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+body.mode-kingmaker #rightStat #roundLabel,
+body.device-phone.mode-kingmaker #rightStat #roundLabel,
+body.device-mobile.mode-kingmaker #rightStat #roundLabel {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  z-index: 2 !important;
+}
+
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  place-items: center !important;
+  position: absolute !important;
+  top: auto !important;
+  bottom: 5px !important;
+  right: 5px !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  border-radius: 999px !important;
+  font-size: .68rem !important;
+  line-height: 1 !important;
+  z-index: 50 !important;
+}
+
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-phone.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn,
+body.device-mobile.mode-kingmaker #rightStat #gameTitleHelpGoldBtn.hidden {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  bottom: 4px !important;
+  right: 4px !important;
+  font-size: .62rem !important;
+}
+
+body:not(.mode-kingmaker) #rightStat #gameTitleHelpGoldBtn,
+body:not(.mode-kingmaker) #rightStat #gameTitleHelpGoldBtn.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6639,13 +7931,16 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <div class="stat-label">Time</div>
 <div class="stat-value" id="timeLeft">30</div>
 </div>
-<div class="stat">
+<div class="stat" id="middleStat">
 <div class="stat-label" id="scoreLabel">Score</div>
 <div class="stat-value" id="score">0</div>
+<div class="classic-mode-title" id="classicModeTitle">KINGMAKER 2048</div>
+<button aria-label="How to play this game" class="game-title-help-button" id="gameTitleHelpBtn" type="button">i</button>
 </div>
-<div class="stat">
-<div class="stat-label">Round</div>
+<div class="stat" id="rightStat">
+<div class="stat-label" id="roundLabel">Round</div>
 <div class="stat-value" id="roundState">Ready</div>
+<button aria-label="How to play KINGMAKER 2048" class="game-title-help-button gold-tiles-help-button" id="gameTitleHelpGoldBtn" type="button" title="How to play KINGMAKER 2048">i</button>
 </div>
 <div class="stat kingmaker-only-stat">
 <div class="stat-label">Best</div>
@@ -6684,7 +7979,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <button class="action full-width hidden" id="newRoundBtn" type="button">New round</button>
 <div class="message" id="message">Click the target square to start the timer.</div>
 <div class="section-heading-row">
-<h2>Game mode</h2>
+<h2>Game selection</h2>
 <div class="heading-icon-row">
 <button aria-label="All leaderboards" class="tiny-info-button leaderboard-icon-button" id="leaderboardBtn" type="button" title="Leaderboards">▤</button>
 <button aria-label="Game instructions" class="tiny-info-button" id="instructionsBtn" type="button">i</button>
@@ -6813,8 +8108,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <button class="mobile-return-button" id="mobileReturnBtn" type="button">START game</button>
 <nav aria-label="Mobile menu" class="mobile-bottom-nav" id="mobileBottomNav">
 <button class="mobile-nav-button" data-mobile-page="game" type="button">
-<span class="mobile-nav-title">Game mode</span>
-<span class="mobile-nav-value" id="mobileNavGameValue">30s sprint</span>
+<span class="mobile-nav-title">Game selection</span>
+<span class="mobile-nav-value" id="mobileNavGameValue">KINGMAKER 2048</span>
 </button>
 <button class="mobile-nav-button" data-mobile-page="board" type="button">
 <span class="mobile-nav-title">Style</span>
@@ -6837,6 +8132,13 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 </div>
 </div>
 </div>
+<div aria-labelledby="gameHelpTitle" aria-modal="true" class="modal-backdrop" id="gameHelpModal" role="dialog">
+<div class="modal game-help-modal">
+<button aria-label="Close game instructions" class="instructions-close game-help-close" id="gameHelpClose" type="button">×</button>
+<h2 id="gameHelpTitle">How to play</h2>
+<p class="modal-note" id="gameHelpBody">Game instructions.</p>
+</div>
+</div>
 <div aria-labelledby="leaderboardModalTitle" aria-modal="true" class="leaderboard-modal-backdrop" id="leaderboardModal" role="dialog">
 <div class="leaderboard-modal">
 <button aria-label="Close leaderboards" class="leaderboard-modal-close" id="leaderboardModalClose" type="button">×</button>
@@ -6851,7 +8153,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.171</p>
+<p class="easter-version">Version 0.190</p>
 </div>
 </div>
 </div>
@@ -6866,6 +8168,10 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <div class="instructions-modal">
 <button aria-label="Close" class="instructions-close" id="instructionsClose" type="button">×</button>
 <h2 id="instructionsTitle">How to play</h2>
+<h3>KINGMAKER 2048</h3>
+<p>Merge matching chess pieces to climb from pawn to king. Arrow keys or swipes slide the board like 2048. You can also click one piece, then a matching piece, to merge it using a legal chess move. Kings turn gold and become fixed blockers. Score as high as you can before no merges remain.</p>
+<p>You can also merge single matching pieces manually if the first piece could move to the second piece in chess. Click the first piece, then click the matching piece. Pawns merge only with an adjacent matching pawn. Knights can hop. Bishops move diagonally with a clear path. Rooks move straight with a clear path. Queens move straight or diagonally with a clear path. Kings are fixed gold tiles and cannot manually merge.</p>
+<p>The game ends only when no slide move and no manual chess move is possible. Edge kings are worth more than middle kings, so dragging your gold towards the edge before the board jams matters.</p>
 <h3>30s sprint</h3>
 <p>You have 30 seconds to click the square shown at the top of the screen. Correct clicks score points, wrong clicks lose points, and bonus piece rounds may appear to keep you awake. This mode is about speed, board vision, and getting your mouse moving fast without freezing.</p>
 <h3>64 squares</h3>
@@ -6878,13 +8184,11 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 <p>A white knight starts on a random square. That square is already touched. Jump the knight until every square has been blacked out. Normal mode lets you revisit touched squares and records time plus moves. XTREME mode only allows untouched destination squares, so a perfect finish is 63 moves and the leaderboard records time.</p>
 <h3>ODD ONE OUT</h3>
 <p>Find the one square that is the wrong colour. Round one is obvious. Each round gets more subtle. One wrong click or a 15-second timeout ends the game. RAINBOW mode gives the board fresh rainbow colour bands every round.</p>
-<h3>KINGMAKER 2048</h3>
-<p>Swipe the board, use the arrow keys, or use WASD. Pieces slide like 2048. Only matching tile colours merge: white with white, black with black. Pieces climb from pawn to knight, bishop, rook, queen, then king. A king becomes a gold tile, locks in place, blocks movement, and scores heavily. When no move is possible, the board jams and your final score is saved.</p>
 <p class="instructions-footer">This is about having <span class="instructions-fun-egg" id="funEgg" role="button" tabindex="0">fun</span> and learning. If something breaks, just let Sam know.</p>
 </div>
 </div>
 <script>
-    const VERSION = "0.171";
+    const VERSION = "0.190";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -7067,7 +8371,12 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       }
     };
 
+    const classicTitleStripModes = new Set(["sprint", "sixtyFour", "kingFinder", "pickup", "knightHop", "oddOneOut"]);
+
     const gameModes = {
+      kingmaker: {
+        name: "KINGMAKER 2048"
+      },
       sprint: {
         name: "30s SPRINT"
       },
@@ -7085,9 +8394,6 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       },
       oddOneOut: {
         name: "ODD ONE OUT"
-      },
-      kingmaker: {
-        name: "KINGMAKER 2048"
       },
       draughts: {
         name: "DRAUGHTS",
@@ -7126,7 +8432,17 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     const timeLeftEl = document.getElementById("timeLeft");
     const scoreEl = document.getElementById("score");
     const scoreLabelEl = document.getElementById("scoreLabel");
+    const middleStat = document.getElementById("middleStat");
+    const rightStat = document.getElementById("rightStat");
+    const classicModeTitleEl = document.getElementById("classicModeTitle");
+    const gameTitleHelpBtn = document.getElementById("gameTitleHelpBtn");
+    const gameTitleHelpGoldBtn = document.getElementById("gameTitleHelpGoldBtn");
+    const roundLabelEl = document.getElementById("roundLabel");
     const roundStateEl = document.getElementById("roundState");
+    const gameHelpModal = document.getElementById("gameHelpModal");
+    const gameHelpTitle = document.getElementById("gameHelpTitle");
+    const gameHelpBody = document.getElementById("gameHelpBody");
+    const gameHelpClose = document.getElementById("gameHelpClose");
     const newRoundBtn = document.getElementById("newRoundBtn");
     const resetScoresBtn = document.getElementById("resetScoresBtn");
     const fullscreenBtn = document.getElementById("fullscreenBtn");
@@ -7170,6 +8486,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     const modeGrid = document.getElementById("modeGrid");
     const kingXtremePanel = document.getElementById("kingXtremePanel");
     const kingXtremeToggle = document.getElementById("kingXtremeToggle");
+    const kmNearEndPanel = document.getElementById("kmNearEndPanel");
+    const kmNearEndToggle = document.getElementById("kmNearEndToggle");
     const pieceGrid = document.getElementById("pieceGrid");
     const resultModal = document.getElementById("resultModal");
     const modalBox = resultModal.querySelector(".modal");
@@ -7179,6 +8497,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     const modalNote = document.getElementById("modalNote");
     const modalAgainBtn = document.getElementById("modalAgainBtn");
     const modalCloseBtn = document.getElementById("modalCloseBtn");
+    const kmChessBetaModal = document.getElementById("kmChessBetaModal");
+    const kmChessBetaClose = document.getElementById("kmChessBetaClose");
     const logoKing = document.getElementById("logoKing");
     const easterEggModal = document.getElementById("easterEggModal");
     const easterEggClose = document.getElementById("easterEggClose");
@@ -7214,6 +8534,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     const kingXtremeStorageKey = "chess-square-sprint-king-xtreme";
     const pickupXtremeStorageKey = "kwik-chess-pickup-xtreme";
     const knightHopXtremeStorageKey = "kwik-chess-knight-hop-xtreme";
+    const kingmakerChessModeStorageKey = "kwik-chess-kingmaker-chess-mode-beta";
     const oddOneOutRainbowStorageKey = "kwik-chess-odd-one-out-rainbow";
     const rainbowUnlockedStorageKey = "chess-sprint-rainbow-unlocked";
     const pieceStyleStorageKey = "chess-square-sprint-piece-style";
@@ -7222,7 +8543,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     let active = false;
     let roundOver = false;
     let score = 0;
-    let currentMode = "sprint";
+    let currentMode = "kingmaker";
     let currentPieceStyle = "woodcut";
     let currentThemeKey = "classic";
     let rainbowUnlocked = false;
@@ -7283,6 +8604,9 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     let kingFinderXtreme = false;
     let pickupXtreme = false;
     let knightHopXtreme = false;
+    let kingmakerChessMode = true;
+    let kmChessSelectedCell = null;
+    let kmNearCompleteTestMode = false;
     let oddOneOutRainbow = false;
     let leaderboardExpandedGroups = new Set();
     let kingFinderGuessStartedAt = 0;
@@ -7429,6 +8753,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
 
     function kmCleanupModeArtifacts() {
+      kmChessSelectedCell = null;
       kmHideKonamiLayer();
       board.classList.remove("kingmaker-mode", "km-konami-show");
       board.style.removeProperty("background");
@@ -7445,6 +8770,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     function updateKingmakerModeClass() {
       const on = isKingmakerMode();
       document.body.classList.toggle("mode-kingmaker", on);
+      document.body.classList.toggle("game-mode-kingmaker", on);
       board.classList.toggle("kingmaker-mode", on);
       if (!on) kmCleanupModeArtifacts();
     }
@@ -7622,13 +8948,30 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       return next;
     }
 
+    function kmCanChessMergeAnywhere() {
+      if (!kingmakerChessMode) return false;
+      for (let r1 = 0; r1 < KM_SIZE; r1++) {
+        for (let c1 = 0; c1 < KM_SIZE; c1++) {
+          const piece = kmBoard[r1]?.[c1];
+          if (!piece || piece.type >= KM_KING) continue;
+          for (let r2 = 0; r2 < KM_SIZE; r2++) {
+            for (let c2 = 0; c2 < KM_SIZE; c2++) {
+              if (r1 === r2 && c1 === c2) continue;
+              if (kmCanChessMerge({ r: r1, c: c1 }, { r: r2, c: c2 })) return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
     function kmCanMove() {
       const oldMadeKing = kmLastMoveMadeKing;
       const oldTypes = kmLastMergeTypes.slice();
-      const possible = ["left", "right", "up", "down"].some(direction => !kmBoardsEqual(kmBoard, kmComputeMovedBoard(direction)));
+      const possibleSlide = ["left", "right", "up", "down"].some(direction => !kmBoardsEqual(kmBoard, kmComputeMovedBoard(direction)));
       kmLastMoveMadeKing = oldMadeKing;
       kmLastMergeTypes = oldTypes;
-      return possible;
+      return possibleSlide || kmCanChessMergeAnywhere();
     }
 
     function kmClearBoardVisuals() {
@@ -7719,6 +9062,13 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     function kmPlayMoveSound() {
       kmTone(130, 0, .07, "triangle", .026);
       kmTone(196, .035, .06, "triangle", .018);
+    }
+
+    function kmPlayChessIllegalSound() {
+      primeAudioContext();
+      kmTone(118, 0, .075, "sawtooth", .030);
+      kmTone(82, .055, .12, "square", .018);
+      kmNoiseBurst(.015, .055, .012);
     }
 
     function kmPlayMergeSound(pieceType) {
@@ -7835,6 +9185,9 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
         const c = index % KM_SIZE;
         const holder = square.querySelector(".piece-holder");
         square.className = `square ${(r + c) % 2 === 0 ? "light" : "dark"}`;
+        if (kingmakerChessMode && kmChessSelectedCell && kmChessSelectedCell.r === r && kmChessSelectedCell.c === c) {
+          square.classList.add("km-chess-selected");
+        }
         holder.innerHTML = "";
         const piece = kmBoard[r]?.[c];
         if (!piece) return;
@@ -7891,6 +9244,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       kmRoundOver = false;
       kmBonusRunning = false;
       kmBonusHighlightKey = null;
+      kmChessSelectedCell = null;
       kmBoard = kmEmptyBoard();
       kmPreviousState = null;
       kmMoves = 0;
@@ -7900,6 +9254,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       kmLastMergeTypes = [];
       kmLastMoveMadeKing = false;
       kmInputLockedUntil = 0;
+      kingmakerChessMode = true;
+      kmNearCompleteTestMode = false;
       kmSpawnNextPiece();
       kmSetStatLabels();
       updateKingmakerModeClass();
@@ -8081,6 +9437,191 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       updateMobileGameActionButtons();
     }
 
+
+    function kmShowChessModeBetaPopup() {
+      // CHESS moves are now core KINGMAKER gameplay, so no beta popup is shown.
+    }
+
+    function kmHideChessModeBetaPopup() {
+      kmChessBetaModal?.classList.remove("show");
+    }
+
+    function kmSquareToCell(squareEl) {
+      const squares = Array.from(board.querySelectorAll(".square"));
+      const index = squares.indexOf(squareEl);
+      if (index < 0) return null;
+      return { r: Math.floor(index / KM_SIZE), c: index % KM_SIZE };
+    }
+
+    function kmPathClear(a, b) {
+      const dr = Math.sign(b.r - a.r);
+      const dc = Math.sign(b.c - a.c);
+      let r = a.r + dr;
+      let c = a.c + dc;
+      while (r !== b.r || c !== b.c) {
+        if (kmBoard[r]?.[c]) return false;
+        r += dr;
+        c += dc;
+      }
+      return true;
+    }
+
+    function kmCanChessMerge(from, to) {
+      if (!kingmakerChessMode || !from || !to) return false;
+      if (from.r === to.r && from.c === to.c) return false;
+      const a = kmBoard[from.r]?.[from.c];
+      const b = kmBoard[to.r]?.[to.c];
+      if (!kmSameMergeable(a, b)) return false;
+
+      const dr = to.r - from.r;
+      const dc = to.c - from.c;
+      const adr = Math.abs(dr);
+      const adc = Math.abs(dc);
+
+      if (a.type === KM_PAWN) return Math.max(adr, adc) === 1;
+      if (a.type === KM_KNIGHT) return (adr === 2 && adc === 1) || (adr === 1 && adc === 2);
+      if (a.type === KM_BISHOP) return adr === adc && kmPathClear(from, to);
+      if (a.type === KM_ROOK) return (dr === 0 || dc === 0) && kmPathClear(from, to);
+      if (a.type === KM_QUEEN) return ((adr === adc) || dr === 0 || dc === 0) && kmPathClear(from, to);
+      return false;
+    }
+
+    function kmSelectChessCell(cell) {
+      kmChessSelectedCell = cell;
+      kmRender();
+    }
+
+    function kmClearChessSelection() {
+      kmChessSelectedCell = null;
+      kmRender();
+    }
+
+    function kmHandleChessModeClick(squareEl) {
+      if (!isKingmakerMode() || !kingmakerChessMode || kmRoundOver || kmBonusRunning) return false;
+      const cell = kmSquareToCell(squareEl);
+      if (!cell) return false;
+      const piece = kmBoard[cell.r]?.[cell.c];
+
+      if (!kmChessSelectedCell) {
+        if (piece && piece.type < KM_KING) {
+          if (!active) {
+            active = true;
+            roundOver = false;
+            kmRoundOver = false;
+            updateMobileGameActionButtons();
+          }
+          kmSelectChessCell(cell);
+          messageEl.textContent = "CHESS mode: choose the matching piece to merge.";
+        }
+        return true;
+      }
+
+      if (kmChessSelectedCell.r === cell.r && kmChessSelectedCell.c === cell.c) {
+        kmClearChessSelection();
+        messageEl.textContent = "CHESS mode merge cancelled.";
+        return true;
+      }
+
+      if (!kmCanChessMerge(kmChessSelectedCell, cell)) {
+        if (piece && piece.type < KM_KING) {
+          kmSelectChessCell(cell);
+          messageEl.textContent = "CHESS mode: new piece selected.";
+        } else {
+          kmClearChessSelection();
+          messageEl.textContent = "CHESS mode: that move cannot merge.";
+        }
+        kmPlayChessIllegalSound();
+        return true;
+      }
+
+      const from = kmChessSelectedCell;
+      const source = kmBoard[from.r][from.c];
+      const newType = source.type + 1;
+      kmLastPreMoveBoard = kmCloneBoard(kmBoard);
+      kmLastMoveDirection = null;
+      kmLastMoveMadeKing = newType === KM_KING;
+      kmLastMergeTypes = [newType];
+      kmBoard[from.r][from.c] = KM_EMPTY;
+      kmBoard[cell.r][cell.c] = kmMakePiece(source.side, newType, true);
+      kmChessSelectedCell = null;
+      kmMoves += 1;
+      kmSpawnNextPiece();
+      kmRender();
+
+      const scoreNow = kmTotalScore();
+      if (scoreNow > kmBestScore) {
+        kmBestScore = scoreNow;
+        localStorage.setItem("kingmaker-score-best", String(kmBestScore));
+      }
+
+      if (newType === KM_KING) kmPlayKingSound();
+      else kmPlayMergeSound(newType);
+
+      messageEl.textContent = "CHESS mode merge.";
+      if (!kmCanMove()) kmEndGame();
+      else updateMobileGameActionButtons();
+      return true;
+    }
+
+    function kmLoadNearCompleteTestBoard() {
+      if (!isKingmakerMode()) return;
+      kingmakerChessMode = true;
+      kingXtremeToggle.checked = true;
+      localStorage.setItem(kingmakerChessModeStorageKey, "true");
+      kmNearCompleteTestMode = true;
+      if (kmNearEndToggle) kmNearEndToggle.checked = true;
+
+      active = true;
+      roundOver = false;
+      kmRoundOver = false;
+      kmBonusRunning = false;
+      kmBonusHighlightKey = null;
+      kmChessSelectedCell = null;
+      kmBoard = kmEmptyBoard();
+      kmPreviousState = null;
+      kmMoves = 854;
+      kmNextSpawn = kmMakePiece("white", KM_PAWN);
+      kmLastPreMoveBoard = null;
+      kmLastMoveDirection = null;
+      kmLastMergeTypes = [];
+      kmLastMoveMadeKing = false;
+      kmInputLockedUntil = 0;
+
+      for (let r = 0; r < KM_SIZE; r++) {
+        for (let c = 0; c < KM_SIZE; c++) {
+          kmBoard[r][c] = kmMakePiece((r + c) % 2 ? "black" : "white", KM_KING);
+        }
+      }
+
+      // Test position: full board, no standard 2048 slide move, one legal CHESS-mode bishop merge.
+      // H8 and G7 can merge diagonally. This is the bug case from v0.174.
+      kmBoard[0][7] = kmMakePiece("black", KM_BISHOP);
+      kmBoard[1][6] = kmMakePiece("black", KM_BISHOP);
+
+      kmSetStatLabels();
+      updateKingmakerModeClass();
+      kmHideBonusOverlay();
+      hideResultModal();
+      targetLabelEl.textContent = "KINGMAKER 2048";
+      newRoundBtn.textContent = "New game";
+      messageEl.textContent = "Nearly completed test board loaded. CHESS mode is on. Merge H8 with G7.";
+      kmRender();
+      updateKingXtremeVisibility();
+      updateMobileGameActionButtons();
+      sizeBoardToWindow();
+    }
+
+    function kmSetNearCompleteTestMode(enabled) {
+      kmNearCompleteTestMode = Boolean(enabled);
+      if (kmNearEndToggle) kmNearEndToggle.checked = kmNearCompleteTestMode;
+      if (kmNearCompleteTestMode) {
+        kmLoadNearCompleteTestBoard();
+      } else if (isKingmakerMode()) {
+        kmStartNewGame(false);
+        messageEl.textContent = "Nearly completed test board off.";
+      }
+    }
+
     function kmDirectionFromKey(key) {
       return ({ ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right" })[key] || null;
     }
@@ -8192,6 +9733,136 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       localStorage.setItem(scoreStorageKey, JSON.stringify(scores.filter(item => Number.isFinite(Number(item.score))).slice(-150)));
       trackEvent("game_complete", { mode: "kingmaker", variant: "normal", score: numericScore });
       trackReadableGameEvent("complete", "kingmaker", "normal", { score: numericScore });
+    }
+
+    function currentGameHelpText(mode = currentMode) {
+      if (mode === "kingmaker") return "Merge matching chess pieces to climb from pawn to king. Use arrow keys or swipes to slide the whole board like 2048. You can also click one piece, then a matching piece, to merge it using a legal chess move: pawns merge with adjacent pawns, knights hop, bishops go diagonally, rooks go straight, and queens go straight or diagonally when the path is clear. Kings turn gold, lock in place, and score bonuses. Edge kings are worth more. The game ends only when no slide move and no manual chess merge remains.";
+      if (mode === "sprint") return "Click the named square as fast as possible. Correct clicks score points. Wrong clicks cost points.";
+      if (mode === "sixtyFour") return "Clear all 64 squares as fast as possible. Each square appears once. Wrong clicks add time.";
+      if (mode === "kingFinder") return kingFinderXtreme
+        ? "Memorise the king, then find it after the whole board fills with pieces."
+        : "Memorise the king square, then click where the king was.";
+      if (mode === "pickup") return pickupXtreme
+        ? "Rebuild the starting position. In XTREME, pieces must move legally."
+        : "Move the pieces back to their starting squares as fast as possible.";
+      if (mode === "knightHop") return knightHopXtreme
+        ? "Move the knight until every allowed square is touched. No repeats."
+        : "Hop the knight around the board until all 64 squares are touched.";
+      if (mode === "oddOneOut") return oddOneOutRainbow
+        ? "Find the odd square. In Rainbow mode, the board colours change every round."
+        : "Find the one square that does not match the pattern.";
+      return gameModeBlurb(mode);
+    }
+
+    function usesClassicTitleStrip(mode = currentMode) {
+      return classicTitleStripModes.has(mode);
+    }
+
+    function targetLabelIsJustTitle() {
+      if (!usesClassicTitleStrip()) return false;
+      const label = (targetLabelEl.textContent || "").trim().toUpperCase();
+      const title = currentPanelTitle().trim().toUpperCase();
+      return Boolean(label && label === title);
+    }
+
+    function syncClassicTopStripLayout() {
+      if (!middleStat || !roundLabelEl || !classicModeTitleEl) return;
+
+      const useTitle = usesClassicTitleStrip();
+      const titleForHelp = currentPanelTitle();
+      const helpLabelForMode = `How to play ${titleForHelp}`;
+      [gameTitleHelpBtn, gameTitleHelpGoldBtn].forEach(button => {
+        if (!button) return;
+        if (button.getAttribute("aria-label") !== helpLabelForMode) button.setAttribute("aria-label", helpLabelForMode);
+        if (button.getAttribute("title") !== helpLabelForMode) button.setAttribute("title", helpLabelForMode);
+      });
+
+      const kingmakerActiveForHelp = isKingmakerMode();
+      const useClassicTitleForThisMode = useTitle && !kingmakerActiveForHelp;
+
+      document.body.classList.toggle("classic-title-strip", useClassicTitleForThisMode);
+      middleStat.classList.toggle("mode-title-stat", useClassicTitleForThisMode);
+
+      if (gameTitleHelpBtn) {
+        gameTitleHelpBtn.classList.toggle("hidden", kingmakerActiveForHelp);
+        gameTitleHelpBtn.toggleAttribute("hidden", kingmakerActiveForHelp);
+        gameTitleHelpBtn.setAttribute("aria-hidden", kingmakerActiveForHelp ? "true" : "false");
+        if (kingmakerActiveForHelp) {
+          gameTitleHelpBtn.style.setProperty("display", "none", "important");
+          gameTitleHelpBtn.style.setProperty("visibility", "hidden", "important");
+          gameTitleHelpBtn.style.setProperty("opacity", "0", "important");
+          gameTitleHelpBtn.style.setProperty("pointer-events", "none", "important");
+        } else {
+          gameTitleHelpBtn.style.removeProperty("display");
+          gameTitleHelpBtn.style.removeProperty("visibility");
+          gameTitleHelpBtn.style.removeProperty("opacity");
+          gameTitleHelpBtn.style.removeProperty("pointer-events");
+          gameTitleHelpBtn.removeAttribute("hidden");
+        }
+      }
+
+      if (gameTitleHelpGoldBtn) {
+        if (kingmakerActiveForHelp && rightStat && gameTitleHelpGoldBtn.parentElement !== rightStat) {
+          rightStat.appendChild(gameTitleHelpGoldBtn);
+        }
+        gameTitleHelpGoldBtn.classList.toggle("hidden", !kingmakerActiveForHelp);
+        gameTitleHelpGoldBtn.toggleAttribute("hidden", !kingmakerActiveForHelp);
+        gameTitleHelpGoldBtn.setAttribute("aria-hidden", kingmakerActiveForHelp ? "false" : "true");
+        if (kingmakerActiveForHelp) {
+          gameTitleHelpGoldBtn.style.setProperty("display", "grid", "important");
+          gameTitleHelpGoldBtn.style.setProperty("visibility", "visible", "important");
+          gameTitleHelpGoldBtn.style.setProperty("opacity", "1", "important");
+          gameTitleHelpGoldBtn.style.setProperty("pointer-events", "auto", "important");
+          gameTitleHelpGoldBtn.style.setProperty("position", "absolute", "important");
+        } else {
+          gameTitleHelpGoldBtn.style.setProperty("display", "none", "important");
+          gameTitleHelpGoldBtn.style.setProperty("visibility", "hidden", "important");
+          gameTitleHelpGoldBtn.style.setProperty("opacity", "0", "important");
+          gameTitleHelpGoldBtn.style.setProperty("pointer-events", "none", "important");
+        }
+      }
+
+      if (useClassicTitleForThisMode) {
+        const title = currentPanelTitle();
+        const metricLabel = scoreLabelEl.textContent || "Score";
+        const metricValue = scoreEl.textContent || "";
+
+        if (classicModeTitleEl.textContent !== title) classicModeTitleEl.textContent = title;
+
+        if (kingmakerActiveForHelp) {
+          if (roundLabelEl.textContent !== "Gold tiles") roundLabelEl.textContent = "Gold tiles";
+          // Do not overwrite roundStateEl here: Kingmaker's own stat renderer owns the gold-tile count.
+        } else {
+          if (roundLabelEl.textContent !== metricLabel) roundLabelEl.textContent = metricLabel;
+          if (roundStateEl.textContent !== metricValue) roundStateEl.textContent = metricValue;
+        }
+
+        targetBox.classList.toggle("hide-target-title", targetLabelIsJustTitle());
+      } else {
+        targetBox.classList.remove("hide-target-title");
+        const label = isKingmakerMode() ? "Gold tiles" : "Round";
+        if (roundLabelEl.textContent !== label) roundLabelEl.textContent = label;
+      }
+    }
+
+    function startClassicTopStripSync() {
+      const tick = () => {
+        syncClassicTopStripLayout();
+        window.requestAnimationFrame(tick);
+      };
+      window.requestAnimationFrame(tick);
+    }
+
+    function showCurrentGameHelp(event) {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      gameHelpTitle.textContent = currentPanelTitle();
+      gameHelpBody.textContent = currentGameHelpText();
+      gameHelpModal.classList.add("show");
+    }
+
+    function hideCurrentGameHelp() {
+      gameHelpModal.classList.remove("show");
     }
 
     function buildPieceButtons() {
@@ -8503,6 +10174,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     function updateTargetBoxModeClass() {
       targetBox.classList.remove("mode-sprint", "mode-sixtyFour", "mode-kingFinder", "mode-pickup", "mode-knightHop", "mode-oddOneOut", "mode-kingmaker", "mode-draughts");
       targetBox.classList.add(`mode-${currentMode}`);
+      document.body.classList.remove("game-mode-sprint", "game-mode-sixtyFour", "game-mode-kingFinder", "game-mode-pickup", "game-mode-knightHop", "game-mode-oddOneOut", "game-mode-kingmaker", "game-mode-draughts");
+      document.body.classList.add(`game-mode-${currentMode}`);
       document.body.classList.toggle("odd-one-out-active", currentMode === "oddOneOut");
       if (currentMode === "oddOneOut") {
         rainbowEgg.setAttribute("aria-label", "Toggle ODD ONE OUT Rainbow mode");
@@ -8514,12 +10187,14 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     }
 
     function setInstructionTarget(text = "Click anywhere on the board to start") {
+      targetBox.classList.add("action-box");
       targetSquareEl.classList.remove("piece-target");
       targetSquareEl.classList.add("instruction-target");
       targetSquareEl.textContent = text;
     }
 
     function clearInstructionTarget() {
+      targetBox.classList.remove("action-box");
       targetSquareEl.classList.remove("instruction-target");
     }
 
@@ -8530,6 +10205,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       board.classList.remove("king-finder-mode");
       board.classList.remove("king-find-hidden");
       targetBox.classList.remove("bonus");
+      targetBox.classList.remove("bonus-piece-only");
       targetSquareEl.classList.remove("piece-target");
       clearInstructionTarget();
       targetLabelEl.textContent = currentPanelTitle();
@@ -8600,7 +10276,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       targetBox.classList.add("bonus");
       clearInstructionTarget();
       targetSquareEl.classList.add("piece-target");
-      targetLabelEl.textContent = `Bonus: click the ${bonusTargetPiece.colour} ${bonusTargetPiece.name}`;
+      targetLabelEl.textContent = "";
+      targetBox.classList.add("bonus-piece-only");
       targetSquareEl.innerHTML = svgForPiece(bonusTargetPiece.key, bonusTargetPiece.colour, "target-piece-card");
       messageEl.textContent = `Bonus round. Click the ${bonusTargetPiece.colour} ${bonusTargetPiece.name}. Correct = +3.`;
       roundStateEl.textContent = "Bonus";
@@ -10738,6 +12415,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
       if (currentMode === "kingmaker") {
         if (kmRoundOver) kmStartNewGame();
+        else kmHandleChessModeClick(squareEl);
         return;
       }
 
@@ -11651,22 +13329,55 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       kingFinderXtremeLeaderboard.classList.toggle("hidden", !showKingXtreme);
     }
 
+    function activeScoreModeKeysForCurrentMode() {
+      if (currentMode === "sprint") return ["sprint", "legacySprint"];
+      if (currentMode === "kingFinder") return [kingFinderXtreme ? "kingFinderXtreme" : "kingFinder"];
+      if (currentMode === "pickup") return [pickupXtreme ? "pickupXtreme" : "pickup"];
+      if (currentMode === "knightHop") return [knightHopXtreme ? "knightHopXtreme" : "knightHop"];
+      if (currentMode === "oddOneOut") return [oddOneOutRainbow ? "oddOneOutRainbow" : "oddOneOut"];
+      return [currentMode];
+    }
+
+    function scoreBelongsToActiveMode(item) {
+      const modeKeys = activeScoreModeKeysForCurrentMode();
+      if (modeKeys.includes("legacySprint") && (!item.mode || item.mode === "sprint")) return true;
+      return modeKeys.includes(item.mode);
+    }
+
     function clearScores() {
-      localStorage.removeItem(scoreStorageKey);
-      localStorage.removeItem(oldScoreStorageKey);
+      const leaderboardName = currentPanelTitle();
+      const confirmed = window.confirm(`Clear the ${leaderboardName} leaderboard? This will not clear the other game modes.`);
+      if (!confirmed) return;
+
+      const remainingScores = getScores().filter(item => !scoreBelongsToActiveMode(item));
+      localStorage.setItem(scoreStorageKey, JSON.stringify(remainingScores));
+
+      if (currentMode === "sprint") {
+        localStorage.removeItem(oldScoreStorageKey);
+      }
+
+      if (currentMode === "kingmaker") {
+        kmBestScore = 0;
+        localStorage.removeItem("kingmaker-score-best");
+        const kmBestEl = document.getElementById("kmBest");
+        if (kmBestEl) kmBestEl.textContent = "0";
+      }
+
       renderScores();
-      messageEl.textContent = "Leaderboards cleared.";
+      updateMobileBottomNavStatus();
+      messageEl.textContent = `${leaderboardName} leaderboard cleared.`;
     }
 
     function loadMode() {
       const savedMode = localStorage.getItem(modeStorageKey);
-      setMode(gameModes[savedMode] ? savedMode : "sprint", false);
+      setMode(gameModes[savedMode] ? savedMode : "kingmaker", false);
     }
 
 
     function updateKingXtremeVisibility() {
       const showXtreme = currentMode === "kingFinder" || currentMode === "pickup" || currentMode === "knightHop" || currentMode === "oddOneOut";
       kingXtremePanel.classList.toggle("hidden", !showXtreme);
+      kingmakerChessMode = true;
 
       const label = kingXtremePanel.querySelector("span");
       const note = kingXtremePanel.querySelector("small");
@@ -11694,11 +13405,20 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       kingFinderXtreme = localStorage.getItem(kingXtremeStorageKey) === "true";
       pickupXtreme = localStorage.getItem(pickupXtremeStorageKey) === "true";
       knightHopXtreme = localStorage.getItem(knightHopXtremeStorageKey) === "true";
+      kingmakerChessMode = true;
       oddOneOutRainbow = localStorage.getItem(oddOneOutRainbowStorageKey) === "true";
       updateKingXtremeVisibility();
     }
 
     function setKingXtremeMode(enabled) {
+      if (currentMode === "kingmaker") {
+        kingmakerChessMode = true;
+        kmChessSelectedCell = null;
+        kmRender();
+        updateMobileBottomNavStatus();
+        return;
+      }
+
       if (currentMode === "pickup") {
         pickupXtreme = Boolean(enabled);
         kingXtremeToggle.checked = pickupXtreme;
@@ -11754,7 +13474,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
     function setMode(modeKey, showMessage = true) {
       const previousMode = currentMode;
-      currentMode = gameModes[modeKey] ? modeKey : "sprint";
+      currentMode = gameModes[modeKey] ? modeKey : "kingmaker";
       updateTargetBoxModeClass();
       localStorage.setItem(modeStorageKey, currentMode);
       if (showMessage && previousMode !== currentMode) {
@@ -12217,7 +13937,7 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
 
     function openMobileMenuPage(page) {
       const titles = {
-        game: "Game mode",
+        game: "Game selection",
         board: "Style",
         scores: "KWIK CHESS LEADERBOARDS"
       };
@@ -12274,12 +13994,25 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
       if (document.body.classList.contains("mobile-menu-open")) {
         closeMobileMenuPage();
       }
+      hideCurrentGameHelp();
       instructionsModal.classList.add("show");
     }
 
     function hideInstructions() {
       instructionsModal.classList.remove("show");
     }
+
+    kmChessBetaClose?.addEventListener("click", kmHideChessModeBetaPopup);
+    kmChessBetaModal?.addEventListener("click", event => {
+      if (event.target === kmChessBetaModal) kmHideChessModeBetaPopup();
+    });
+
+    gameTitleHelpBtn?.addEventListener("click", showCurrentGameHelp);
+    gameTitleHelpGoldBtn?.addEventListener("click", showCurrentGameHelp);
+    gameHelpClose?.addEventListener("click", hideCurrentGameHelp);
+    gameHelpModal?.addEventListener("click", event => {
+      if (event.target === gameHelpModal) hideCurrentGameHelp();
+    });
 
     instructionsBtn.addEventListener("click", showInstructions);
     leaderboardBtn.addEventListener("click", () => openLeaderboardModal());
@@ -12541,6 +14274,8 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
         hideEasterEgg();
         hideInstructions();
         hideLeaderboardModal();
+        kmHideChessModeBetaPopup();
+        hideCurrentGameHelp();
         closeMobileMenuPage();
         rainbowToast.classList.remove("show");
       }
@@ -12649,19 +14384,19 @@ body.device-mobile.mode-kingmaker .km-next-mini .km-glyph{
     renderScores();
     updateLeaderboardVisibility();
     setMobileBottomNavMainState();
+    startClassicTopStripSync();
     handleViewportChange(50);
 
   </script>
 
 
 
-
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js?v=0.171").catch(() => {});
-  });
-}
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js?v=0.190").catch(() => {});
+    });
+  }
 </script>
 
 </body>

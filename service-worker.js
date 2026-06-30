@@ -1,8 +1,9 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-171";
+const CACHE_NAME = "kwik-chess-pwa-v0-190";
 const ASSETS = [
   "./",
-  "./index.html?v=0.171",
+  "./index.html?v=0.190",
   "./manifest.json",
+  "./assets/logo-king.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./robots.txt",
@@ -15,7 +16,11 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("activate", event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener("fetch", event => {
@@ -26,6 +31,6 @@ self.addEventListener("fetch", event => {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => undefined);
       return response;
-    }).catch(() => caches.match("./index.html?v=0.171"));
+    }).catch(() => caches.match("./index.html?v=0.190") || caches.match("./index.html"));
   }));
 });
