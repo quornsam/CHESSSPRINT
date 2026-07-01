@@ -8371,12 +8371,360 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
   animation: none !important;
 }
 
+
+
+/* v0.205 TEST: king-logo glow on hover/tap.
+   The logo tile stays fixed-size from v0.204. Only the logo tile's glow/shadow changes.
+   Desktop: hover/focus.
+   Mobile/touch: active + temporary JS class on pointer/touch. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  transition: filter 140ms ease !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile {
+  transition:
+    box-shadow 150ms ease,
+    filter 150ms ease,
+    transform 150ms ease !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow {
+  filter: drop-shadow(0 0 12px rgba(246,200,91,.72)) drop-shadow(0 0 26px rgba(246,200,91,.34)) !important;
+  text-shadow: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow .logo-km-gold-tile {
+  filter: brightness(1.16) saturate(1.12) !important;
+  transform: scale(1.035) !important;
+  box-shadow:
+    0 0 0 2px rgba(255,247,176,.68),
+    0 0 18px rgba(255,247,176,.86),
+    0 0 36px rgba(246,200,91,.72),
+    0 0 62px rgba(246,200,91,.38),
+    0 10px 22px rgba(0,0,0,.34),
+    inset 0 0 0 3px rgba(255,255,255,.42),
+    inset 0 -10px 18px rgba(106,65,0,.18) !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow .logo-km-king-glyph {
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.55),
+    0 0 6px rgba(255,240,170,.58) !important;
+}
+
+/* Keep the v0.204 Safari sizing locked even while glowing. */
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile:active,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile:active {
+  --logo-cell-size: 0.968em !important;
+  --logo-tile-size: 0.8131em !important;
+  --logo-glyph-size: 0.6976em !important;
+}
+
+
+
+/* v0.206 TEST: subtler logo glow.
+   Keeps v0.204 fixed tile sizing; glow only, no visible resize. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow {
+  filter:
+    drop-shadow(0 0 6px rgba(246,200,91,.38))
+    drop-shadow(0 0 14px rgba(246,200,91,.18)) !important;
+  text-shadow: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow .logo-km-gold-tile {
+  filter: brightness(1.06) saturate(1.04) !important;
+  transform: none !important;
+  box-shadow:
+    0 0 0 2px rgba(255,247,176,.40),
+    0 0 10px rgba(255,247,176,.44),
+    0 0 20px rgba(246,200,91,.32),
+    0 8px 18px rgba(0,0,0,.30),
+    inset 0 0 0 3px rgba(255,255,255,.30),
+    inset 0 -10px 18px rgba(106,65,0,.18) !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active .logo-km-king-glyph,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow .logo-km-king-glyph {
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.50),
+    0 0 3px rgba(255,240,170,.36) !important;
+}
+
+/* v0.206 TEST: mobile Start/Return button spacing.
+   Keep the button clearly above the divider line above the three bottom nav buttons. */
+body.device-phone.mobile-menu-open .mobile-return-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .mobile-restart-button:not(.hidden) {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open .side-panel {
+  padding-bottom: calc(164px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game .side-panel {
+  padding-bottom: calc(222px + env(safe-area-inset-bottom)) !important;
+}
+
+
+
+/* v0.207 TEST: subtler king-logo glow than v0.205/v0.206. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow {
+  filter:
+    drop-shadow(0 0 5px rgba(246,200,91,.32))
+    drop-shadow(0 0 12px rgba(246,200,91,.16)) !important;
+  text-shadow: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:hover .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:focus-visible .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile:active .logo-km-gold-tile,
+.wordmark-king.logo-king.stable-kingmaker-logo-tile.logo-king-glow .logo-km-gold-tile {
+  filter: brightness(1.045) saturate(1.03) !important;
+  transform: none !important;
+  box-shadow:
+    0 0 0 2px rgba(255,247,176,.32),
+    0 0 9px rgba(255,247,176,.34),
+    0 0 18px rgba(246,200,91,.24),
+    0 8px 18px rgba(0,0,0,.30),
+    inset 0 0 0 3px rgba(255,255,255,.28),
+    inset 0 -10px 18px rgba(106,65,0,.18) !important;
+}
+
+/* v0.207 TEST: Kingmaker mobile game-selection action row.
+   In Kingmaker, Game selection shows two equal buttons in the same row/slot
+   where other modes show the single START GAME / RETURN TO GAME button. */
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  display: block !important;
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  z-index: 96 !important;
+  box-sizing: border-box !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button {
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  width: calc((100vw - max(10px, env(safe-area-inset-left)) - max(10px, env(safe-area-inset-right)) - 10px) / 2) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  left: auto !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  width: calc((100vw - max(10px, env(safe-area-inset-left)) - max(10px, env(safe-area-inset-right)) - 10px) / 2) !important;
+  border-color: rgba(246,200,91,0.5) !important;
+  background: rgba(246,200,91,0.16) !important;
+  color: #f6c85b !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .side-panel {
+  padding-bottom: calc(164px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Make sure the old stacked active-game spacing does not move Kingmaker's row. */
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+
+
+/* v0.208 TEST: Kingmaker mobile Game selection buttons stacked.
+   Return to current game sits above Start new game.
+   Start new game opens the warning modal without closing Game selection. */
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  display: block !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  width: auto !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  z-index: 96 !important;
+  box-sizing: border-box !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  border-color: rgba(246,200,91,0.5) !important;
+  background: rgba(246,200,91,0.16) !important;
+  color: #f6c85b !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .side-panel {
+  padding-bottom: calc(222px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Override the v0.207 side-by-side width/left/right values. */
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button,
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  width: auto !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+
+
+/* v0.209 TEST: exact Kingmaker mobile Game selection flow.
+   On the mobile Game selection screen, Kingmaker has two stacked action buttons:
+   Return to current game = closes Game selection and returns to the saved board.
+   Start new game = opens the warning modal while Game selection stays open. */
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  display: block !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  width: auto !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  z-index: 96 !important;
+  box-sizing: border-box !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  border-color: rgba(246,200,91,0.5) !important;
+  background: rgba(246,200,91,0.16) !important;
+  color: #f6c85b !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .side-panel,
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .side-panel {
+  padding-bottom: calc(222px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+
+
+/* v0.210 TEST: Kingmaker reset modal must appear over the mobile Game selection screen.
+   The general modal z-index is 50. The mobile Game selection side-panel is z-index 92.
+   So the Kingmaker reset modal was underneath the menu layer. This is the actual flow bug. */
+#kingmakerResetModal.modal-backdrop,
+body.device-phone.mobile-menu-open #kingmakerResetModal.modal-backdrop,
+body.device-mobile.mobile-menu-open #kingmakerResetModal.modal-backdrop {
+  z-index: 14000 !important;
+}
+
+#kingmakerResetModal.modal-backdrop.show {
+  display: flex !important;
+}
+
+/* Exact requested mobile Kingmaker Game selection behaviour:
+   two stacked controls on the Game selection screen. */
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button,
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  display: block !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  width: auto !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  box-sizing: border-box !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-return-button {
+  bottom: calc(142px + env(safe-area-inset-bottom)) !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .mobile-restart-button {
+  bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  border-color: rgba(246,200,91,0.5) !important;
+  background: rgba(246,200,91,0.16) !important;
+  color: #f6c85b !important;
+}
+
+body.device-phone.mobile-menu-open.mobile-page-game.mode-kingmaker .side-panel,
+body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-kingmaker .side-panel {
+  padding-bottom: calc(222px + env(safe-area-inset-bottom)) !important;
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KWIK CHESS">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="de8e2e37-e9d2-4c2c-abe7-1c3617a42505"></script>
+  <script>
+  /* v0.211 TEST: load Umami only on the public production site.
+     Local HTML tests, sandbox files, file:// URLs, localhost, previews and staging copies
+     must not create analytics events. */
+  (() => {
+    const productionHosts = new Set(["kwikchess.com", "www.kwikchess.com"]);
+    const host = window.location.hostname.toLowerCase();
+
+    window.KWIK_CHESS_ANALYTICS_ENABLED = productionHosts.has(host);
+
+    if (!window.KWIK_CHESS_ANALYTICS_ENABLED) return;
+
+    const script = document.createElement("script");
+    script.defer = true;
+    script.src = "https://cloud.umami.is/script.js";
+    script.dataset.websiteId = "de8e2e37-e9d2-4c2c-abe7-1c3617a42505";
+    document.head.appendChild(script);
+  })();
+</script>
   <meta name="description" content="KWIK CHESS is a fast chess board training game with modes for square recognition, chess-board memory, piece placement, knight movement, knight's tour practice and visual spotting.">
   <link rel="canonical" href="https://kwikchess.com/">
   <meta property="og:title" content="KWIK CHESS">
@@ -8618,6 +8966,16 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 </div>
 </div>
 </div>
+<div aria-labelledby="kingmakerResetTitle" aria-modal="true" class="modal-backdrop" id="kingmakerResetModal" role="dialog">
+<div class="modal">
+<h2 id="kingmakerResetTitle">New Kingmaker game?</h2>
+<p class="modal-note">this will reset your progress and start a new game, are you sure?</p>
+<div class="modal-actions">
+<button class="action secondary" id="kingmakerResetCancelBtn" type="button">No, take me back</button>
+<button class="action" id="kingmakerResetConfirmBtn" type="button">Yes, new game</button>
+</div>
+</div>
+</div>
 <div aria-labelledby="gameHelpTitle" aria-modal="true" class="modal-backdrop" id="gameHelpModal" role="dialog">
 <div class="modal game-help-modal">
 <button aria-label="Close game instructions" class="instructions-close game-help-close" id="gameHelpClose" type="button">×</button>
@@ -8639,7 +8997,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.204</p>
+<p class="easter-version">Version 0.211</p>
 </div>
 </div>
 </div>
@@ -8674,7 +9032,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 </div>
 </div>
 <script>
-    const VERSION = "0.204";
+    const VERSION = "0.211";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -8731,6 +9089,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 
     function trackEvent(name, props = {}) {
       try {
+        if (!window.KWIK_CHESS_ANALYTICS_ENABLED) return;
         if (!window.umami || typeof window.umami.track !== "function") return;
         window.umami.track(name, {
           version: VERSION,
@@ -9017,6 +9376,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
     const themeStorageKey = "chess-square-sprint-theme";
     const customThemeStorageKey = "chess-square-sprint-custom-theme";
     const modeStorageKey = "chess-square-sprint-mode";
+    const kingmakerProgressStorageKey = "kwik-chess-kingmaker-progress-v1";
     const kingXtremeStorageKey = "chess-square-sprint-king-xtreme";
     const pickupXtremeStorageKey = "kwik-chess-pickup-xtreme";
     const knightHopXtremeStorageKey = "kwik-chess-knight-hop-xtreme";
@@ -9225,7 +9585,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
         button.dataset.mode = key;
         button.textContent = mode.name;
         button.setAttribute("aria-pressed", "false");
-        button.addEventListener("click", () => setMode(key));
+        button.addEventListener("click", () => handleModeButtonClick(key));
         modeGrid.appendChild(button);
       });
     }
@@ -9286,6 +9646,148 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
     function kmBoardsEqual(a, b) {
       return a.every((row, r) => row.every((piece, c) => kmPiecesEqual(piece, b[r][c])));
     }
+
+    function kmProgressPiece(piece) {
+      return piece ? { side: piece.side === "black" ? "black" : "white", type: Number(piece.type) || KM_PAWN } : KM_EMPTY;
+    }
+
+    function kmBoardIsValidProgressBoard(boardData) {
+      if (!Array.isArray(boardData) || boardData.length !== KM_SIZE) return false;
+      return boardData.every(row =>
+        Array.isArray(row) &&
+        row.length === KM_SIZE &&
+        row.every(piece =>
+          piece === null ||
+          (
+            (piece.side === "white" || piece.side === "black") &&
+            Number.isInteger(Number(piece.type)) &&
+            Number(piece.type) >= KM_PAWN &&
+            Number(piece.type) <= KM_KING
+          )
+        )
+      );
+    }
+
+    function kmNormaliseProgressBoard(boardData) {
+      return boardData.map(row => row.map(piece => piece ? kmMakePiece(piece.side, Number(piece.type), false) : KM_EMPTY));
+    }
+
+    function kmSaveProgress() {
+      if (!isKingmakerMode()) return;
+      if (kmBonusRunning) return;
+      try {
+        const payload = {
+          version: 1,
+          board: kmBoard.map(row => row.map(kmProgressPiece)),
+          moves: kmMoves,
+          nextSpawn: kmProgressPiece(kmNextSpawn),
+          active: Boolean(active && !kmRoundOver),
+          savedAt: Date.now()
+        };
+        if (!kmBoardIsValidProgressBoard(payload.board)) return;
+        localStorage.setItem(kingmakerProgressStorageKey, JSON.stringify(payload));
+      } catch {}
+    }
+
+    function kmClearSavedProgress() {
+      try {
+        localStorage.removeItem(kingmakerProgressStorageKey);
+      } catch {}
+    }
+
+    function kmLoadSavedProgress() {
+      try {
+        const raw = localStorage.getItem(kingmakerProgressStorageKey);
+        if (!raw) return false;
+        const payload = JSON.parse(raw);
+        if (!payload || !kmBoardIsValidProgressBoard(payload.board)) return false;
+
+        kmBoard = kmNormaliseProgressBoard(payload.board);
+        kmMoves = Math.max(0, Number(payload.moves) || 0);
+        kmNextSpawn = payload.nextSpawn && payload.nextSpawn.type
+          ? kmMakePiece(payload.nextSpawn.side === "black" ? "black" : "white", Math.min(KM_KING, Math.max(KM_PAWN, Number(payload.nextSpawn.type) || KM_PAWN)))
+          : kmRandomSpawnPiece();
+
+        active = Boolean(payload.active);
+        roundOver = false;
+        kmRoundOver = false;
+        kmBonusRunning = false;
+        kmBonusHighlightKey = null;
+        kmChessSelectedCell = null;
+        kmPreviousState = null;
+        kmLastPreMoveBoard = null;
+        kmLastMoveDirection = null;
+        kmLastMergeTypes = [];
+        kmLastMoveMadeKing = false;
+        kmInputLockedUntil = 0;
+        kingmakerChessMode = true;
+
+        scoreLabelEl.textContent = "Score";
+        targetLabelEl.textContent = "KINGMAKER 2048";
+        newRoundBtn.textContent = "Game saved";
+        messageEl.textContent = "";
+        kmSetStatLabels();
+        updateKingmakerModeClass();
+        kmHideBonusOverlay();
+        hideResultModal();
+        kmRender();
+        updateMobileGameActionButtons();
+        sizeBoardToWindow();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function showKingmakerResetConfirm() {
+      const modal = document.getElementById("kingmakerResetModal");
+      if (!modal) {
+        if (window.confirm("this will reset your progress and start a new game, are you sure?")) {
+          confirmKingmakerNewGame();
+        }
+        return;
+      }
+      modal.classList.add("show");
+    }
+
+    function hideKingmakerResetConfirm() {
+      document.getElementById("kingmakerResetModal")?.classList.remove("show");
+    }
+
+    function confirmKingmakerNewGame() {
+      hideKingmakerResetConfirm();
+      kmClearSavedProgress();
+      currentMode = "kingmaker";
+      localStorage.setItem(modeStorageKey, currentMode);
+      document.querySelectorAll(".mode-button").forEach(button => {
+        const isActiveMode = button.dataset.mode === currentMode;
+        button.classList.toggle("active", isActiveMode);
+        button.setAttribute("aria-pressed", isActiveMode ? "true" : "false");
+      });
+      kmStartNewGame(false);
+      updateKingXtremeVisibility();
+      updateLeaderboardVisibility();
+      renderScores();
+      updateMobileBottomNavStatus();
+      updateMobileMenuSubtitle("game");
+      updateMobileGameActionButtons();
+      if (document.body.classList.contains("mobile-menu-open")) {
+        closeMobileMenuPage();
+      }
+    }
+
+    function handleModeButtonClick(modeKey) {
+      if (modeKey === "kingmaker" && currentMode === "kingmaker") {
+        if (document.body.classList.contains("device-phone") && document.body.classList.contains("mobile-menu-open")) {
+          updateMobileGameActionButtons();
+          return;
+        }
+        showKingmakerResetConfirm();
+        return;
+      }
+      setMode(modeKey);
+    }
+
 
     function kmSameMergeable(a, b) {
       return Boolean(a && b && a.side === b.side && a.type === b.type && a.type < KM_KING);
@@ -9715,6 +10217,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 
       kmLastMoveDirection = null;
       kmLastPreMoveBoard = null;
+      kmSaveProgress();
     }
 
     function kmSetStatLabels() {
@@ -9725,6 +10228,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
     }
 
     function kmStartNewGame(started = true) {
+      kmClearSavedProgress();
       active = Boolean(started);
       roundOver = false;
       kmRoundOver = false;
@@ -9748,7 +10252,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
       kmHideBonusOverlay();
       targetLabelEl.textContent = "KINGMAKER 2048";
       messageEl.textContent = "";
-      newRoundBtn.textContent = "New game";
+      newRoundBtn.textContent = "Game saved";
       kmRender();
       updateMobileGameActionButtons();
       sizeBoardToWindow();
@@ -10089,7 +10593,7 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
       kmHideBonusOverlay();
       hideResultModal();
       targetLabelEl.textContent = "KINGMAKER 2048";
-      newRoundBtn.textContent = "New game";
+      newRoundBtn.textContent = "Game saved";
       messageEl.textContent = "Nearly completed test board loaded. CHESS mode is on. Merge H8 with G7.";
       kmRender();
       updateKingXtremeVisibility();
@@ -13960,9 +14464,21 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 
     function setMode(modeKey, showMessage = true) {
       const previousMode = currentMode;
-      currentMode = gameModes[modeKey] ? modeKey : "kingmaker";
+      const requestedMode = gameModes[modeKey] ? modeKey : "kingmaker";
+
+      if (requestedMode === "kingmaker" && previousMode === "kingmaker" && showMessage) {
+        showKingmakerResetConfirm();
+        return;
+      }
+
+      if (previousMode === "kingmaker" && requestedMode !== "kingmaker") {
+        kmSaveProgress();
+      }
+
+      currentMode = requestedMode;
       updateTargetBoxModeClass();
       localStorage.setItem(modeStorageKey, currentMode);
+
       if (showMessage && previousMode !== currentMode) {
         trackEvent("game_mode_selected", {
           mode: currentMode,
@@ -13986,18 +14502,30 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
         button.setAttribute("aria-pressed", isActiveMode ? "true" : "false");
       });
 
-      resetRound();
+      if (currentMode === "kingmaker") {
+        clearDraughtsMode();
+        clearKnightHopMode();
+        clearPickupMode();
+        clearSixtyFourMarks();
+        updateKingmakerModeClass();
+        kmSetStatLabels();
+        if (!kmLoadSavedProgress()) {
+          kmStartNewGame(false);
+        }
+      } else {
+        resetRound();
 
-      if (currentMode === "kingFinder") {
-        scoreLabelEl.textContent = "Kings";
-        scoreEl.textContent = "0/10";
-        timeLeftEl.textContent = "5";
-        roundStateEl.textContent = "Ready";
-        targetMode = "kingFinder";
-        targetLabelEl.textContent = currentPanelTitle();
-        setInstructionTarget("Click anywhere on the board to start");
-      } else if (currentMode === "pickup") {
-        preparePickupMode();
+        if (currentMode === "kingFinder") {
+          scoreLabelEl.textContent = "Kings";
+          scoreEl.textContent = "0/10";
+          timeLeftEl.textContent = "5";
+          roundStateEl.textContent = "Ready";
+          targetMode = "kingFinder";
+          targetLabelEl.textContent = currentPanelTitle();
+          setInstructionTarget("Click anywhere on the board to start");
+        } else if (currentMode === "pickup") {
+          preparePickupMode();
+        }
       }
 
       updateKingmakerModeClass();
@@ -14363,21 +14891,37 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 
     function updateMobileGameActionButtons() {
       if (!mobileReturnBtn) return;
+      const onGamePage = document.body.classList.contains("mobile-page-game");
+      const isKingmaker = currentMode === "kingmaker";
       const gameplayActive = mobileGameplayIsActive();
-      const gameplayReturnable = mobileGameplayCanReturn();
+      const gameplayReturnable = isKingmaker ? true : mobileGameplayCanReturn();
 
-      document.body.classList.toggle("mobile-game-active", gameplayActive);
+      document.body.classList.toggle("mobile-game-active", gameplayActive || isKingmaker);
       document.body.classList.toggle("mobile-game-returnable", gameplayReturnable);
 
-      mobileReturnBtn.textContent = gameplayReturnable ? "RETURN TO GAME" : "START GAME";
+      if (isKingmaker && onGamePage) {
+        mobileReturnBtn.textContent = "Return to current game";
+      } else {
+        mobileReturnBtn.textContent = gameplayReturnable ? "RETURN TO GAME" : "START GAME";
+      }
 
       if (mobileRestartBtn) {
-        const onGamePage = document.body.classList.contains("mobile-page-game");
-        mobileRestartBtn.classList.toggle("hidden", !(gameplayReturnable && onGamePage));
+        if (isKingmaker && onGamePage) {
+          mobileRestartBtn.textContent = "Start new game";
+          mobileRestartBtn.classList.remove("hidden");
+        } else {
+          mobileRestartBtn.textContent = "RESTART GAME";
+          mobileRestartBtn.classList.toggle("hidden", !(gameplayReturnable && onGamePage && currentMode !== "kingmaker"));
+        }
       }
     }
 
     function startCurrentModeFromMobileButton() {
+      if (currentMode === "kingmaker") {
+        closeMobileMenuPage();
+        return;
+      }
+
       if (mobileGameplayCanReturn()) {
         closeMobileMenuPage();
         return;
@@ -14391,12 +14935,13 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
     }
 
     function restartCurrentModeFromMobileButton() {
+      if (currentMode === "kingmaker") {
+        showKingmakerResetConfirm();
+        return;
+      }
+
       closeMobileMenuPage();
       window.setTimeout(() => {
-        if (currentMode === "kingmaker") {
-          kmStartNewGame();
-          return;
-        }
         resetRound();
         startClockOnFirstClick();
       }, 80);
@@ -14487,6 +15032,12 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
     function hideInstructions() {
       instructionsModal.classList.remove("show");
     }
+
+    document.getElementById("kingmakerResetCancelBtn")?.addEventListener("click", hideKingmakerResetConfirm);
+    document.getElementById("kingmakerResetConfirmBtn")?.addEventListener("click", confirmKingmakerNewGame);
+    document.getElementById("kingmakerResetModal")?.addEventListener("click", event => {
+      if (event.target === document.getElementById("kingmakerResetModal")) hideKingmakerResetConfirm();
+    });
 
     kmChessBetaClose?.addEventListener("click", kmHideChessModeBetaPopup);
     kmChessBetaModal?.addEventListener("click", event => {
@@ -14655,7 +15206,13 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
       if (event.target === easterEggModal) hideEasterEgg();
     });
 
-    newRoundBtn.addEventListener("click", resetRound);
+    newRoundBtn.addEventListener("click", () => {
+      if (currentMode === "kingmaker") {
+        messageEl.textContent = "Kingmaker progress is saved. To start a new Kingmaker game, click the KINGMAKER 2048 game-selection button.";
+        return;
+      }
+      resetRound();
+    });
 
     function vanishDraughtsAndReturnToSprint() {
       draughtsCompleted = false;
@@ -14880,9 +15437,41 @@ body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.204").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.211").catch(() => {});
     });
   }
+</script>
+
+
+<script>
+  /* v0.205 TEST: give touch devices the same king-logo glow feedback as hover. */
+  (() => {
+    const logo = document.getElementById("logoKing");
+    if (!logo) return;
+
+    let glowTimer = null;
+
+    function pulseLogoGlow() {
+      logo.classList.add("logo-king-glow");
+      clearTimeout(glowTimer);
+      glowTimer = setTimeout(() => logo.classList.remove("logo-king-glow"), 850);
+    }
+
+    logo.addEventListener("pointerenter", () => {
+      if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+        logo.classList.add("logo-king-glow");
+      }
+    });
+
+    logo.addEventListener("pointerleave", () => {
+      if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+        logo.classList.remove("logo-king-glow");
+      }
+    });
+
+    logo.addEventListener("pointerdown", pulseLogoGlow, { passive: true });
+    logo.addEventListener("touchstart", pulseLogoGlow, { passive: true });
+  })();
 </script>
 
 </body>

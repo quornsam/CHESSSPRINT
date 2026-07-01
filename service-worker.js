@@ -1,4 +1,4 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-204";
+const CACHE_NAME = "kwik-chess-pwa-v0-211";
 const ASSETS = [
   "./manifest.json",
   "./assets/logo-king.png",
@@ -8,7 +8,7 @@ const ASSETS = [
   "./robots.txt",
   "./sitemap.xml"
 ];
-const INDEX_URL = "./index.html?v=0.204";
+const INDEX_URL = "./index.html?v=0.211";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
