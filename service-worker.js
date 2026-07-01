@@ -1,7 +1,5 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-197";
+const CACHE_NAME = "kwik-chess-pwa-v0-198";
 const ASSETS = [
-  "./",
-  "./index.html?v=0.197",
   "./manifest.json",
   "./assets/logo-king.png",
   "./icons/icon-180.png",
@@ -10,10 +8,13 @@ const ASSETS = [
   "./robots.txt",
   "./sitemap.xml"
 ];
+const INDEX_URL = "./index.html?v=0.198";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS).catch(() => undefined)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll([...ASSETS, INDEX_URL]).catch(() => undefined))
+  );
 });
 
 self.addEventListener("activate", event => {
@@ -26,12 +27,28 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-  event.respondWith(caches.match(event.request).then(cached => {
-    if (cached) return cached;
-    return fetch(event.request).then(response => {
+
+  const request = event.request;
+  const isDocument = request.mode === "navigate" || request.destination === "document";
+
+  if (isDocument) {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(INDEX_URL, copy)).catch(() => undefined);
+          return response;
+        })
+        .catch(() => caches.match(INDEX_URL).then(cached => cached || caches.match("./index.html") || Response.error()))
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then(cached => cached || fetch(request).then(response => {
       const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => undefined);
+      caches.open(CACHE_NAME).then(cache => cache.put(request, copy)).catch(() => undefined);
       return response;
-    }).catch(() => caches.match("./index.html?v=0.197") || caches.match("./index.html"));
-  }));
+    }))
+  );
 });
