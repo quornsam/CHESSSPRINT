@@ -1,9 +1,10 @@
-const CACHE_NAME = "kwik-chess-pwa-v0-190";
+const CACHE_NAME = "kwik-chess-pwa-v0-197";
 const ASSETS = [
   "./",
-  "./index.html?v=0.190",
+  "./index.html?v=0.197",
   "./manifest.json",
   "./assets/logo-king.png",
+  "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./robots.txt",
@@ -31,6 +32,6 @@ self.addEventListener("fetch", event => {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => undefined);
       return response;
-    }).catch(() => caches.match("./index.html?v=0.190") || caches.match("./index.html"));
+    }).catch(() => caches.match("./index.html?v=0.197") || caches.match("./index.html"));
   }));
 });
