@@ -260,7 +260,7 @@
       user-select: none;
       touch-action: manipulation;
       flex: 0 0 auto;
-      background: #fff;
+      background: var(--board-border, #111);
     }
 
     .square {
@@ -8701,6 +8701,23 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
   padding-bottom: calc(222px + env(safe-area-inset-bottom)) !important;
 }
 
+
+
+/* v0.213 TEST: stop the ugly white-board first-paint flash.
+   The board used to paint background:#fff while it was empty, before JS built the 64 squares.
+   Now the empty board pre-paints as a normal chessboard. Once JS adds the real squares,
+   saved theme/game state takes over. */
+.board:empty {
+  background:
+    conic-gradient(
+      var(--light-square-bg, #f0d9b5) 25%,
+      var(--dark-square-bg, #b58863) 0 50%,
+      var(--light-square-bg, #f0d9b5) 0 75%,
+      var(--dark-square-bg, #b58863) 0
+    )
+    0 0 / 25% 25% !important;
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -8997,7 +9014,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.212</p>
+<p class="easter-version">Version 0.213</p>
 </div>
 </div>
 </div>
@@ -9032,7 +9049,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 </div>
 </div>
 <script>
-    const VERSION = "0.212";
+    const VERSION = "0.213";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -15510,7 +15527,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.212").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.213").catch(() => {});
     });
   }
 </script>
