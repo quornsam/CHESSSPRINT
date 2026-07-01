@@ -8010,6 +8010,367 @@ body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile {
   transform: translateY(0.02em) !important;
 }
 
+
+
+/* v0.199 TEST: mobile logo king render fix.
+   The live Kingmaker logo tile was reusing the gameplay king glyph with a CSS filter drop-shadow.
+   On small mobile rendering that filtered, transformed text can rasterise badly and look split / half bright.
+   For the logo tile only, remove the glyph filter and use a controlled text-shadow glow instead. */
+.wordmark-king.logo-king.live-kingmaker-logo-tile,
+.wordmark-king.logo-king.live-kingmaker-logo-tile .live-kingmaker-logo-cell,
+.wordmark-king.logo-king.live-kingmaker-logo-tile .km-tile.gold-tile {
+  isolation: isolate !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+.logo-king.live-kingmaker-logo-tile:hover,
+.logo-king.live-kingmaker-logo-tile:focus-visible,
+.wordmark-king.logo-king.live-kingmaker-logo-tile:hover,
+.wordmark-king.logo-king.live-kingmaker-logo-tile:focus-visible {
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.wordmark-king.logo-king.live-kingmaker-logo-tile .km-glyph.km-king {
+  filter: none !important;
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.45),
+    0 0 4px rgba(255,240,170,.42) !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: geometricPrecision !important;
+}
+
+body.device-phone .wordmark-king.logo-king.live-kingmaker-logo-tile .km-glyph.km-king,
+body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile .km-glyph.km-king {
+  transform: translateY(.005em) !important;
+}
+
+
+
+/* v0.200 TEST: stable logo tile.
+   Cause of the mobile shrink/darken: the logo was reusing live gameplay classes
+   .km-tile.gold-tile and .km-glyph.km-king. Those classes are also targeted by
+   Kingmaker board CSS, pseudo-elements, brightness filters, mobile glyph rules,
+   and interaction states. Safari can keep touch hover/focus states alive, so the
+   logo tile visually changed shape/brightness.
+
+   Repair: clone the exact Kingmaker gold tile appearance into logo-only classes.
+   Same geometry as gameplay, but no gameplay class names on the logo asset. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.95em;
+  --logo-glyph-size: 0.6847em;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: var(--logo-cell-size) !important;
+  height: var(--logo-cell-size) !important;
+  min-width: var(--logo-cell-size) !important;
+  min-height: var(--logo-cell-size) !important;
+  max-width: var(--logo-cell-size) !important;
+  max-height: var(--logo-cell-size) !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 0.01em !important;
+  line-height: 1 !important;
+  transform: translateY(0.02em) !important;
+  color: inherit !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  overflow: visible !important;
+  vertical-align: middle !important;
+  isolation: isolate !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.968em;
+  --logo-glyph-size: 0.6976em;
+}
+
+.logo-king.stable-kingmaker-logo-tile:hover,
+.logo-king.stable-kingmaker-logo-tile:focus,
+.logo-king.stable-kingmaker-logo-tile:focus-visible,
+.logo-king.stable-kingmaker-logo-tile:active {
+  filter: none !important;
+  text-shadow: none !important;
+  transform: translateY(0.02em) !important;
+  outline: none !important;
+}
+
+.stable-kingmaker-logo-cell {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+.logo-km-gold-tile {
+  width: 84% !important;
+  height: 84% !important;
+  min-width: 84% !important;
+  min-height: 84% !important;
+  max-width: 84% !important;
+  max-height: 84% !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 18% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: visible !important;
+  user-select: none !important;
+  background: radial-gradient(circle at 34% 26%, #fff2a3, #f6c85b 52%, #9a650e 100%) !important;
+  border: 1px solid rgba(70,42,0,.38) !important;
+  box-shadow:
+    0 0 0 2px rgba(246,200,91,.24),
+    0 0 18px rgba(246,200,91,.42),
+    0 0 34px rgba(246,200,91,.24),
+    0 8px 18px rgba(0,0,0,.3),
+    inset 0 0 0 3px rgba(255,255,255,.25),
+    inset 0 -10px 18px rgba(106,65,0,.18) !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.logo-km-gold-tile::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -10% !important;
+  border-radius: 22% !important;
+  background: radial-gradient(circle, rgba(246,200,91,.34), rgba(246,200,91,0) 68%) !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+.logo-km-gold-tile::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 8% !important;
+  border-radius: 14% !important;
+  border: 2px solid rgba(0,0,0,.16) !important;
+  pointer-events: none !important;
+}
+
+.logo-km-king-glyph {
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "DejaVu Sans", serif !important;
+  font-size: var(--logo-glyph-size) !important;
+  line-height: .92 !important;
+  display: inline-block !important;
+  color: #171000 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.45),
+    0 0 4px rgba(255,240,170,.42) !important;
+  filter: none !important;
+  transform: scale(1.02,.92) translateY(.005em) !important;
+  z-index: 1 !important;
+  animation: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: geometricPrecision !important;
+}
+
+/* Stop the old live-logo rule from touching anything if the old class is not present. */
+.wordmark-king.logo-king.live-kingmaker-logo-tile {
+  display: none !important;
+}
+
+
+/* v0.202 TEST: Safari-safe logo glyph sizing.
+   No CSS multiplication. These are the exact precomputed gameplay ratios:
+   desktop glyph 0.95em × 0.7207 = 0.6847em;
+   mobile glyph 0.968em × 0.7207 = 0.6976em. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.95em !important;
+  --logo-glyph-size: 0.6847em !important;
+  width: var(--logo-cell-size) !important;
+  height: var(--logo-cell-size) !important;
+  min-width: var(--logo-cell-size) !important;
+  min-height: var(--logo-cell-size) !important;
+  max-width: var(--logo-cell-size) !important;
+  max-height: var(--logo-cell-size) !important;
+}
+
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.968em !important;
+  --logo-glyph-size: 0.6976em !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph {
+  font-size: var(--logo-glyph-size) !important;
+}
+
+
+
+/* v0.203 TEST: actual underlying mobile logo shrink fix.
+   Found cause: the existing mobile layout rule below still targets the new logo
+   because the logo keeps the shared class .wordmark-king:
+
+   body.device-phone .wordmark-king { font-size: 0.9em !important; ... }
+
+   That rule is applied AFTER load when detectDeviceAndOptimise() adds device-phone /
+   device-mobile to <body>. Because the logo dimensions are in em, the tile appears
+   to shrink/change shape during page load. This logo-specific rule wins later in
+   the cascade and pins the logo mark back to the parent wordmark size. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  font-size: 1em !important;
+  line-height: 1 !important;
+  flex: 0 0 var(--logo-cell-size) !important;
+  width: var(--logo-cell-size) !important;
+  height: var(--logo-cell-size) !important;
+  min-width: var(--logo-cell-size) !important;
+  min-height: var(--logo-cell-size) !important;
+  max-width: var(--logo-cell-size) !important;
+  max-height: var(--logo-cell-size) !important;
+  transform: translateY(0.02em) !important;
+  filter: none !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.968em !important;
+  --logo-glyph-size: 0.6976em !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile {
+  width: 84% !important;
+  height: 84% !important;
+  min-width: 84% !important;
+  min-height: 84% !important;
+  max-width: 84% !important;
+  max-height: 84% !important;
+  aspect-ratio: 1 / 1 !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph {
+  font-size: var(--logo-glyph-size) !important;
+  transform: scale(1.02,.92) translateY(.005em) !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+
+
+/* v0.204 TEST: underlying Safari tile-shrink repair.
+   The screenshot showed the king glyph stayed the right size, but the gold tile behind it narrowed.
+   That means the glyph sizing was fixed, but the tile background was still using percentage sizing:
+   width: 84%; height: 84%.
+   In Safari, that percentage width was resolving against a changing/narrow inline logo wrapper during load,
+   while the king glyph used a stable em size. So the tile became thin while the king remained correct.
+
+   Repair: the logo tile no longer uses percentages. It uses explicit precomputed em dimensions:
+   desktop cell 0.95em, tile 0.95em × 0.84 = 0.798em, glyph 0.95em × 0.7207 = 0.6847em.
+   mobile cell 0.968em, tile 0.968em × 0.84 = 0.8131em, glyph 0.968em × 0.7207 = 0.6976em. */
+.wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.95em !important;
+  --logo-tile-size: 0.798em !important;
+  --logo-glyph-size: 0.6847em !important;
+  font-size: 1em !important;
+  line-height: 1 !important;
+  flex: 0 0 var(--logo-cell-size) !important;
+  width: var(--logo-cell-size) !important;
+  height: var(--logo-cell-size) !important;
+  min-width: var(--logo-cell-size) !important;
+  min-height: var(--logo-cell-size) !important;
+  max-width: var(--logo-cell-size) !important;
+  max-height: var(--logo-cell-size) !important;
+  aspect-ratio: auto !important;
+  transform: translateY(0.02em) !important;
+  filter: none !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile {
+  --logo-cell-size: 0.968em !important;
+  --logo-tile-size: 0.8131em !important;
+  --logo-glyph-size: 0.6976em !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .stable-kingmaker-logo-cell {
+  width: var(--logo-cell-size) !important;
+  height: var(--logo-cell-size) !important;
+  min-width: var(--logo-cell-size) !important;
+  min-height: var(--logo-cell-size) !important;
+  max-width: var(--logo-cell-size) !important;
+  max-height: var(--logo-cell-size) !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: visible !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-gold-tile {
+  width: var(--logo-tile-size) !important;
+  height: var(--logo-tile-size) !important;
+  min-width: var(--logo-tile-size) !important;
+  min-height: var(--logo-tile-size) !important;
+  max-width: var(--logo-tile-size) !important;
+  max-height: var(--logo-tile-size) !important;
+  aspect-ratio: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph,
+body.device-phone .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph,
+body.device-mobile .wordmark-king.logo-king.stable-kingmaker-logo-tile .logo-km-king-glyph {
+  font-size: var(--logo-glyph-size) !important;
+  line-height: .92 !important;
+  transform: scale(1.02,.92) translateY(.005em) !important;
+  filter: none !important;
+  animation: none !important;
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -8044,7 +8405,7 @@ body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile {
 <div class="app" id="app">
 <header class="app-header">
 <div class="title-wrap">
-<h1 class="wordmark"><span class="wordmark-text wordmark-word wordmark-left"><span class="wordmark-letter">K</span><span class="wordmark-letter">W</span><span aria-label="Activate Rainbow mode" class="rainbow-egg wordmark-letter" id="rainbowEgg" role="button" tabindex="0">I</span><span class="wordmark-letter">K</span></span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king live-kingmaker-logo-tile" id="logoKing" role="button" tabindex="0"><span class="live-kingmaker-logo-cell" aria-hidden="true"><span class="km-tile gold-tile"><span class="km-glyph km-king">♔</span></span></span></span><span class="wordmark-text wordmark-word wordmark-right"><span class="wordmark-letter">C</span><span class="wordmark-letter">H</span><span class="wordmark-letter">E</span><span class="wordmark-letter">S</span><span class="wordmark-letter">S</span></span></h1>
+<h1 class="wordmark"><span class="wordmark-text wordmark-word wordmark-left"><span class="wordmark-letter">K</span><span class="wordmark-letter">W</span><span aria-label="Activate Rainbow mode" class="rainbow-egg wordmark-letter" id="rainbowEgg" role="button" tabindex="0">I</span><span class="wordmark-letter">K</span></span><span aria-label="About KWIK CHESS" class="wordmark-king logo-king stable-kingmaker-logo-tile" id="logoKing" role="button" tabindex="0"><span class="stable-kingmaker-logo-cell" aria-hidden="true"><span class="logo-km-gold-tile"><span class="logo-km-king-glyph">♔</span></span></span></span><span class="wordmark-text wordmark-word wordmark-right"><span class="wordmark-letter">C</span><span class="wordmark-letter">H</span><span class="wordmark-letter">E</span><span class="wordmark-letter">S</span><span class="wordmark-letter">S</span></span></h1>
 </div>
 <div class="header-actions">
 <button class="action secondary" id="fullscreenBtn">Fullscreen</button>
@@ -8278,7 +8639,7 @@ body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile {
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.198</p>
+<p class="easter-version">Version 0.204</p>
 </div>
 </div>
 </div>
@@ -8313,7 +8674,7 @@ body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile {
 </div>
 </div>
 <script>
-    const VERSION = "0.198";
+    const VERSION = "0.204";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -14519,7 +14880,7 @@ body.device-mobile .wordmark-king.logo-king.live-kingmaker-logo-tile {
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.198").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.204").catch(() => {});
     });
   }
 </script>
