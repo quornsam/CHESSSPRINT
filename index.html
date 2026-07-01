@@ -8997,7 +8997,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.211</p>
+<p class="easter-version">Version 0.212</p>
 </div>
 </div>
 </div>
@@ -9032,7 +9032,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 </div>
 </div>
 <script>
-    const VERSION = "0.211";
+    const VERSION = "0.212";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -9405,6 +9405,8 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
     let oddOneOutRoundEndTime = 0;
     let oddOneOutFailureReason = "wrong";
     let oddOneOutResultPending = false;
+    let oddOneOutResultTimer = null;
+    let oddOneOutNextRoundTimer = null;
     let targetMode = "square";
     const KM_SIZE = 8;
     const KM_EMPTY = null;
@@ -11359,15 +11361,75 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
       updateMobileGameActionButtons();
     }
 
+    function stopCurrentNonKingmakerSessionForModeChange(previousMode) {
+      if (previousMode === "kingmaker") return;
+
+      clearGameStartCountdown();
+      hideKingCountdownWord();
+
+      clearInterval(timer);
+      timer = null;
+      startTime = 0;
+      endTime = 0;
+      clockRunning = false;
+
+      clearOddOneOutTimer();
+      clearTimeout(oddOneOutResultTimer);
+      clearTimeout(oddOneOutNextRoundTimer);
+      oddOneOutResultTimer = null;
+      oddOneOutNextRoundTimer = null;
+      oddOneOutPlaying = false;
+      oddOneOutResultPending = false;
+      oddOneOutAutoFinishPending = false;
+
+      clearKingFinderTimers();
+      clearKingFinderAnswerMark();
+      kingFinderStarted = false;
+      kingFinderAcceptingGuess = false;
+      kingFinderPhase = "idle";
+
+      clearPickupMode();
+      clearKnightHopMode();
+      clearDraughtsMode();
+      clearSixtyFourMarks();
+      clearBoardPieces();
+
+      board.classList.remove(
+        "bonus-mode",
+        "king-finder-mode",
+        "king-find-hidden",
+        "odd-one-out-rainbow",
+        "pickup-mode",
+        "knight-hop-mode"
+      );
+
+      targetBox.classList.remove("bonus", "bonus-piece-only", "pickup-ready");
+      targetSquareEl.classList.remove("piece-target");
+      targetMode = "square";
+      bonusUsed = false;
+      bonusTargetSquare = null;
+      bonusTargetPiece = null;
+
+      active = false;
+      roundOver = false;
+      gameStartCountdownActive = false;
+    }
+
     function resetRound() {
       active = false;
       roundOver = false;
       clockRunning = false;
-      gameStartCountdownActive = false;
+      clearGameStartCountdown();
+      hideKingCountdownWord();
       lastInputMethod = null;
       clearInterval(timer);
+      timer = null;
       clearInterval(oddOneOutTimer);
+      clearTimeout(oddOneOutResultTimer);
+      clearTimeout(oddOneOutNextRoundTimer);
       oddOneOutTimer = null;
+      oddOneOutResultTimer = null;
+      oddOneOutNextRoundTimer = null;
       oddOneOutAutoFinishPending = false;
       oddOneOutFailureReason = "wrong";
       oddOneOutResultPending = false;
@@ -12323,7 +12385,12 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
         score = oddOneOutLevel;
         playCorrectSound(260 + Math.min(720, oddOneOutLevel * 12));
         oddOneOutLevel += 1;
-        window.setTimeout(renderOddOneOutRound, 120);
+        clearTimeout(oddOneOutNextRoundTimer);
+        oddOneOutNextRoundTimer = window.setTimeout(() => {
+          oddOneOutNextRoundTimer = null;
+          if (currentMode !== "oddOneOut" || !oddOneOutPlaying || roundOver) return;
+          renderOddOneOutRound();
+        }, 120);
         return;
       }
 
@@ -12352,7 +12419,10 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
       saveScore(finalLevel);
       renderScores();
       playWrongSound();
-      window.setTimeout(() => {
+      clearTimeout(oddOneOutResultTimer);
+      oddOneOutResultTimer = window.setTimeout(() => {
+        oddOneOutResultTimer = null;
+        if (currentMode !== "oddOneOut") return;
         oddOneOutResultPending = false;
         showResultModal(finalLevel, null);
       }, 1050);
@@ -13524,6 +13594,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
     }
 
     function updateTimer() {
+      if (currentMode === "kingmaker" || !active || roundOver) return;
       const now = Date.now();
 
       if (currentMode === "kingFinder") {
@@ -14473,6 +14544,8 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 
       if (previousMode === "kingmaker" && requestedMode !== "kingmaker") {
         kmSaveProgress();
+      } else if (previousMode !== requestedMode && previousMode !== "kingmaker") {
+        stopCurrentNonKingmakerSessionForModeChange(previousMode);
       }
 
       currentMode = requestedMode;
@@ -15437,7 +15510,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.211").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.212").catch(() => {});
     });
   }
 </script>
