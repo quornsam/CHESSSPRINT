@@ -8718,6 +8718,426 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
     0 0 / 25% 25% !important;
 }
 
+
+
+/* v0.216 TEST: corrected startup boot screen.
+   This sits on top of the app immediately, hiding the pre-init board/action-band state. */
+body.app-booting {
+  background: #000 !important;
+}
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .42s ease, visibility .42s ease;
+}
+
+body.app-ready .boot-screen {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-screen-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(92vw, 900px);
+  padding: 24px;
+}
+
+.boot-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.5vw, 22px);
+  color: #fff;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-align: center;
+  user-select: none;
+}
+
+.boot-word {
+  display: inline-block;
+  font-size: clamp(1.65rem, 5.8vw, 3.8rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.boot-logo {
+  --boot-cell-size: clamp(68px, 14vw, 118px);
+  --boot-tile-size: calc(var(--boot-cell-size) * 0.84);
+  --boot-glyph-size: calc(var(--boot-cell-size) * 0.7207);
+  display: inline-grid;
+  place-items: center;
+  width: var(--boot-cell-size);
+  height: var(--boot-cell-size);
+  flex: 0 0 var(--boot-cell-size);
+}
+
+.boot-logo-cell {
+  width: var(--boot-cell-size);
+  height: var(--boot-cell-size);
+  display: grid;
+  place-items: center;
+}
+
+.boot-logo-tile {
+  width: var(--boot-tile-size);
+  height: var(--boot-tile-size);
+  border-radius: 18%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: visible;
+  background: radial-gradient(circle at 34% 26%, #fff2a3, #f6c85b 52%, #9a650e 100%);
+  border: 1px solid rgba(70,42,0,.38);
+  box-shadow:
+    0 0 0 2px rgba(246,200,91,.24),
+    0 0 18px rgba(246,200,91,.42),
+    0 0 34px rgba(246,200,91,.24),
+    0 10px 24px rgba(0,0,0,.36),
+    inset 0 0 0 3px rgba(255,255,255,.25),
+    inset 0 -10px 18px rgba(106,65,0,.18);
+  animation: bootLogoPulse 1.8s ease-in-out infinite;
+}
+
+.boot-logo-tile::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: 22%;
+  background: radial-gradient(circle, rgba(246,200,91,.44), rgba(246,200,91,0) 68%);
+  z-index: -1;
+  pointer-events: none;
+  animation: bootLogoGlow 1.8s ease-in-out infinite;
+}
+
+.boot-logo-glyph {
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "DejaVu Sans", serif;
+  font-size: var(--boot-glyph-size);
+  line-height: .92;
+  display: inline-block;
+  color: #171000;
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.52),
+    0 0 6px rgba(255,240,170,.44);
+  transform: scale(1.02,.92) translateY(.005em);
+}
+
+@keyframes bootLogoPulse {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.08) saturate(1.06);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes bootLogoGlow {
+  0%, 100% {
+    opacity: .58;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .92;
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 560px) {
+  .boot-title {
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .boot-word {
+    font-size: clamp(1.1rem, 6.6vw, 2.2rem);
+    letter-spacing: .04em;
+  }
+
+  .boot-logo {
+    --boot-cell-size: clamp(54px, 18vw, 88px);
+  }
+}
+
+
+
+/* v0.217 TEST: keep the boot-screen king tile/icon upright.
+   The title words stay bold italic, but the king tile and king glyph do not inherit italics. */
+.boot-logo,
+.boot-logo-cell,
+.boot-logo-tile,
+.boot-logo-glyph {
+  font-style: normal !important;
+}
+
+
+
+/* v0.219 TEST: clearer metallic sheen.
+   Base text is darker chrome, so the bright travelling sheen is visible.
+   It travels letter-by-letter from K to final S. */
+.boot-word {
+  color: transparent !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: .015em;
+}
+
+.boot-letter {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  background-image: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #d7d7d7 24%,
+    #7d7d7d 48%,
+    #f3f3f3 56%,
+    #9a9a9a 72%,
+    #ececec 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.38),
+    0 0 12px rgba(255,255,255,.06);
+}
+
+.boot-letter::after {
+  content: attr(data-letter);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background-image: linear-gradient(
+    105deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 26%,
+    rgba(255,255,255,.12) 38%,
+    rgba(255,255,255,1) 48%,
+    rgba(255,235,145,1) 52%,
+    rgba(255,255,255,1) 56%,
+    rgba(255,255,255,.12) 66%,
+    rgba(255,255,255,0) 78%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 280% 100%;
+  background-position: -210% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 7px rgba(255,245,190,.75));
+  opacity: 0;
+  animation: bootLetterSheen 3.25s ease-in-out infinite;
+  animation-delay: calc(var(--i) * .115s);
+  pointer-events: none;
+}
+
+@keyframes bootLetterSheen {
+  0%, 18% {
+    background-position: -210% 0;
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  52% {
+    background-position: 210% 0;
+    opacity: 1;
+  }
+  66%, 100% {
+    background-position: 210% 0;
+    opacity: 0;
+  }
+}
+
+/* v0.219 TEST: king tile combines option C and E:
+   a steady gold tile, a shine sweep across the tile, and small sparkle accents. */
+.boot-logo-tile {
+  filter: brightness(1.02) saturate(1.05) !important;
+  animation: none !important;
+  overflow: hidden;
+}
+
+.boot-logo-tile::before {
+  opacity: .42 !important;
+  transform: scale(1.02);
+  animation: none !important;
+}
+
+.boot-logo-tile::after {
+  content: "";
+  position: absolute;
+  inset: -32%;
+  background: linear-gradient(
+    110deg,
+    rgba(255,255,255,0) 34%,
+    rgba(255,255,255,.78) 48%,
+    rgba(255,255,255,0) 62%
+  );
+  transform: translateX(-135%);
+  animation: bootTileSweep 3.36s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.boot-logo-glyph {
+  position: relative;
+  z-index: 2;
+}
+
+.boot-sparkles {
+  position: absolute;
+  inset: -20%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.boot-sparkles i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #fff6bd;
+  box-shadow: 0 0 10px #f6c85b, 0 0 18px rgba(255,255,255,.46);
+  opacity: 0;
+  animation: bootSparkle 3.24s ease-in-out infinite;
+}
+
+.boot-sparkles i:nth-child(1) { left: 12%; top: 18%; animation-delay: .10s; }
+.boot-sparkles i:nth-child(2) { right: 6%; top: 28%; animation-delay: .55s; }
+.boot-sparkles i:nth-child(3) { left: 20%; bottom: 8%; animation-delay: 1.05s; }
+.boot-sparkles i:nth-child(4) { right: 18%; bottom: 12%; animation-delay: 1.55s; }
+
+@keyframes bootTileSweep {
+  0%, 24% {
+    transform: translateX(-135%);
+    opacity: 0;
+  }
+  42% {
+    opacity: .9;
+  }
+  58% {
+    transform: translateX(135%);
+    opacity: .78;
+  }
+  78%, 100% {
+    transform: translateX(135%);
+    opacity: 0;
+  }
+}
+
+@keyframes bootSparkle {
+  0%, 34%, 100% {
+    opacity: 0;
+    transform: scale(.35);
+  }
+  43% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  55% {
+    opacity: 0;
+    transform: scale(.45);
+  }
+}
+
+
+
+/* v0.220 TEST: faster, cleaner boot sheen.
+   Starts immediately and completes across K-W-I-K-C-H-E-S-S before the boot screen fades.
+   Text is mostly plain off-white now, not heavy chrome. */
+.boot-letter {
+  background-image: none !important;
+  color: #eeeeee !important;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.28),
+    0 0 7px rgba(255,255,255,.07) !important;
+}
+
+.boot-letter::after {
+  background-image: linear-gradient(
+    105deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 28%,
+    rgba(255,255,255,.18) 40%,
+    rgba(255,246,186,.98) 49%,
+    rgba(255,255,255,1) 52%,
+    rgba(255,246,186,.98) 55%,
+    rgba(255,255,255,.18) 66%,
+    rgba(255,255,255,0) 78%,
+    rgba(255,255,255,0) 100%
+  ) !important;
+  background-size: 260% 100% !important;
+  background-position: -190% 0;
+  filter: drop-shadow(0 0 5px rgba(255,238,150,.52)) !important;
+  animation: bootLetterSheenFast 1.296s ease-out 1 both !important;
+  animation-delay: calc(var(--i) * .054s) !important;
+}
+
+@keyframes bootLetterSheenFast {
+  0% {
+    background-position: -190% 0;
+    opacity: 0;
+  }
+  8% {
+    opacity: .95;
+  }
+  72% {
+    background-position: 190% 0;
+    opacity: .95;
+  }
+  100% {
+    background-position: 190% 0;
+    opacity: 0;
+  }
+}
+
+
+
+/* v0.222 TEST: mobile boot logo size balance.
+   On phones the king tile was overpowering the letters.
+   This ties the logo size to the letter size so the tile sits as a proper middle mark. */
+@media (max-width: 560px) {
+  .boot-title {
+    --boot-mobile-type-size: clamp(1.16rem, 6.8vw, 2rem);
+    gap: clamp(6px, 1.7vw, 10px) !important;
+  }
+
+  .boot-word {
+    font-size: var(--boot-mobile-type-size) !important;
+  }
+
+  .boot-logo {
+    --boot-cell-size: calc(var(--boot-mobile-type-size) * 1.18) !important;
+    --boot-tile-size: calc(var(--boot-cell-size) * .84) !important;
+    --boot-glyph-size: calc(var(--boot-cell-size) * .7207) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .boot-title {
+    --boot-mobile-type-size: clamp(1.06rem, 6.45vw, 1.55rem);
+  }
+
+  .boot-logo {
+    --boot-cell-size: calc(var(--boot-mobile-type-size) * 1.12) !important;
+  }
+}
+
 </style>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -8766,7 +9186,28 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
   }
   </script>
 </head>
-<body>
+
+<body class="app-booting">
+<div aria-live="polite" class="boot-screen" id="bootScreen" role="status">
+  <div class="boot-screen-inner">
+    <div class="boot-title" aria-label="KWIK CHESS">
+      <span class="boot-word boot-word-left">
+        <span class="boot-letter" style="--i:0" data-letter="K">K</span><span class="boot-letter" style="--i:1" data-letter="W">W</span><span class="boot-letter" style="--i:2" data-letter="I">I</span><span class="boot-letter" style="--i:3" data-letter="K">K</span>
+      </span>
+      <span class="boot-logo" aria-hidden="true">
+        <span class="boot-logo-cell">
+          <span class="boot-logo-tile">
+            <span class="boot-sparkles"><i></i><i></i><i></i><i></i></span>
+            <span class="boot-logo-glyph">♔</span>
+          </span>
+        </span>
+      </span>
+      <span class="boot-word boot-word-right">
+        <span class="boot-letter" style="--i:4" data-letter="C">C</span><span class="boot-letter" style="--i:5" data-letter="H">H</span><span class="boot-letter" style="--i:6" data-letter="E">E</span><span class="boot-letter" style="--i:7" data-letter="S">S</span><span class="boot-letter" style="--i:8" data-letter="S">S</span>
+      </span>
+    </div>
+  </div>
+</div>
 <div class="app" id="app">
 <header class="app-header">
 <div class="title-wrap">
@@ -9014,7 +9455,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <p>Sam Cornwell built this. His daughter Olive helped him vibe code it. As chief tester, Olive did a hella lot of work.</p>
 <p>Sam loves chess, although he's not very good. Manages about 1500 elo on Blitz over on TakeTakeTake — follow him. He's no contender but loves getting a good thrashing by a GM and learning new things.</p>
 <p>KWIK CHESS is designed to help people get used to moving the mouse quickly over a chess board. It can also be really useful to keep your brain sharp.</p>
-<p class="easter-version">Version 0.213</p>
+<p class="easter-version">Version 0.222</p>
 </div>
 </div>
 </div>
@@ -9049,7 +9490,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 </div>
 </div>
 <script>
-    const VERSION = "0.213";
+    const VERSION = "0.222";
     const GAME_LENGTH_SECONDS = 30;
 
     function analyticsDeviceType() {
@@ -15502,6 +15943,27 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
       window.visualViewport.addEventListener("scroll", () => handleViewportChange(60));
     }
 
+    const BOOT_SCREEN_MINIMUM_MS = 1680;
+    const bootScreenStartedAt = Date.now();
+
+    function markAppReady() {
+      if (document.body.classList.contains("app-ready")) return;
+      const elapsed = Date.now() - bootScreenStartedAt;
+      const wait = Math.max(0, BOOT_SCREEN_MINIMUM_MS - elapsed);
+
+      window.setTimeout(() => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            document.body.classList.add("app-ready");
+            window.setTimeout(() => {
+              document.getElementById("bootScreen")?.setAttribute("aria-hidden", "true");
+              document.body.classList.remove("app-booting");
+            }, 460);
+          });
+        });
+      }, wait);
+    }
+
     detectDeviceAndOptimise();
     updateTargetBoxModeClass();
     buildBoard();
@@ -15519,6 +15981,8 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
     setMobileBottomNavMainState();
     startClassicTopStripSync();
     handleViewportChange(50);
+    markAppReady();
+    window.addEventListener("load", markAppReady, { once: true });
 
   </script>
 
@@ -15527,7 +15991,7 @@ body.device-phone.mobile-menu-open.mobile-game-active.mobile-page-game.mode-king
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=0.213").catch(() => {});
+      navigator.serviceWorker.register("./service-worker.js?v=0.222").catch(() => {});
     });
   }
 </script>
